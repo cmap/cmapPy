@@ -1,0 +1,5 @@
+	parse_times
+functional_tests/mini_folder/row_meta_only_example_n2x1203.gctx	4.223138
+functional_tests/mini_folder/col_meta_only_example_n355x355.gctx	1.334976
+functional_tests/mini_folder/both_metadata_example_n1476x978.gctx	4.551205
+functional_tests/mini_folder/tsne_n2x1203.gctx	4.446953
