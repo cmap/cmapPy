@@ -1,10 +1,10 @@
 import logging
-import setup_GCToo_logger as setup_logger
+from cmapPy.pandasGEXpress import setup_GCToo_logger as setup_logger
 import os 
 import numpy as np 
 import pandas as pd 
 import h5py
-import GCToo
+import GCToo 
 
 
 __author__ = "Oana Enache"

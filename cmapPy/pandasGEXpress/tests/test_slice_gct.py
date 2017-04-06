@@ -3,10 +3,10 @@ import logging
 import os
 import pandas as pd
 
-import setup_GCToo_logger as setup_logger
-import GCToo
-import slice_gct
-import parse_gct as pg
+from cmapPy.pandasGEXpress import setup_GCToo_logger as setup_logger
+from cmapPy.pandasGEXpress import GCToo as GCToo 
+from cmapPy.pandasGEXpress import slice_gct as slice_gct
+from cmapPy.pandasGEXpress import parse_gct as pg
 
 logger = logging.getLogger(setup_logger.LOGGER_NAME)
 

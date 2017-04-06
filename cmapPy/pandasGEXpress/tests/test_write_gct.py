@@ -1,12 +1,12 @@
 import unittest
 import logging
-import setup_GCToo_logger as setup_logger
+from cmapPy.pandasGEXpress import setup_GCToo_logger as setup_logger
 import os
 import numpy as np
 import pandas as pd
-import GCToo as GCToo
-import parse_gct as pg
-import write_gct as wg
+from cmapPy.pandasGEXpress import GCToo as GCToo
+from cmapPy.pandasGEXpress import parse_gct as pg
+from cmapPy.pandasGEXpress import write_gct as wg
 
 FUNCTIONAL_TESTS_PATH = "functional_tests"
 logger = logging.getLogger(setup_logger.LOGGER_NAME)

@@ -2,9 +2,9 @@
 Slices a random subset of a GCToo instance of a user-specified size. 
 """
 import logging
-import setup_GCToo_logger as setup_logger
+from cmapPy.pandasGEXpress import setup_GCToo_logger as setup_logger
 import numpy
-import GCToo
+import GCToo 
 
 
 __author__ = "Oana Enache"

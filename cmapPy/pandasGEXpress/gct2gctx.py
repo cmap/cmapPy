@@ -9,7 +9,7 @@ Note: Only supports v1.3 .gct files.
 """
 
 import logging
-import setup_GCToo_logger as setup_logger
+from cmapPy.pandasGEXpress import setup_GCToo_logger as setup_logger
 import argparse
 import sys
 import GCToo

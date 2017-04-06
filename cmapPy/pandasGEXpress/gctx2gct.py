@@ -9,12 +9,12 @@ Note: Only supports v1.0 .gctx files.
 """
 
 import logging
-import setup_GCToo_logger as setup_logger
+from cmapPy.pandasGEXpress import setup_GCToo_logger as setup_logger
 import argparse
 import sys
 import GCToo
-import parse_gctx
-import write_gct
+import parse_gctx 
+import write_gct 
 
 __author__ = "Oana Enache"
 __email__ = "oana@broadinstitute.org"

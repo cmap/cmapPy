@@ -39,10 +39,10 @@ import logging
 import setup_GCToo_logger as setup_logger
 import pandas as pd
 
-import GCToo 
-import parse
-import write_gct 
-import write_gctx
+import GCToo
+import parse 
+import write_gct
+import write_gctx 
 
 __author__ = "Lev Litichevskiy"
 __email__ = "lev@broadinstitute.org"

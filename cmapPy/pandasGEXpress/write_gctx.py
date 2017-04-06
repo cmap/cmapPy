@@ -1,8 +1,8 @@
 import logging 
-import setup_GCToo_logger as setup_logger 
+from cmapPy.pandasGEXpress import setup_GCToo_logger as setup_logger 
 import h5py
 import numpy
-import GCToo
+import GCToo 
 
 __author__ = "Oana Enache"
 __email__ = "oana@broadinstitute.org"

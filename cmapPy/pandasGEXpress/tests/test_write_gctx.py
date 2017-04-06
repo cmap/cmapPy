@@ -1,12 +1,12 @@
 import logging
-import setup_GCToo_logger as setup_logger
+from cmapPy.pandasGEXpress import setup_GCToo_logger as setup_logger
 import unittest
 import h5py
 import os
 import numpy
-import parse_gctx
-import write_gctx
-import mini_gctoo_for_testing
+from cmapPy.pandasGEXpress import parse_gctx as parse_gctx
+from cmapPy.pandasGEXpress import write_gctx as write_gctx
+from cmapPy.pandasGEXpress import mini_gctoo_for_testing as mini_gctoo_for_testing
 
 __author__ = "Oana Enache"
 __email__ = "oana@broadinstitute.org"

@@ -1,9 +1,9 @@
 import unittest
 import pandas as pd
 import numpy as np
-import GCToo
 import logging
-import setup_GCToo_logger
+from cmapPy.pandasGEXpress import setup_GCToo_logger as setup_GCToo_logger
+from cmapPy.pandasGEXpress import GCToo as GCToo 
 from random import shuffle
 
 logger = logging.getLogger(setup_GCToo_logger.LOGGER_NAME)

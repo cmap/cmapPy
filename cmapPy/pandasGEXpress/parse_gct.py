@@ -60,11 +60,11 @@ assemble_multi_index_df method in GCToo.py assembles them.
 """
 
 import logging
-import setup_GCToo_logger as setup_logger
+from cmapPy.pandasGEXpress import setup_GCToo_logger as setup_logger
 import pandas as pd
 import numpy as np 
 import os.path
-import GCToo
+import GCToo 
 import slice_gct
 
 __author__ = "Lev Litichevskiy, Oana Enache"

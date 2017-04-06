@@ -15,7 +15,7 @@ import pandas as pd
 import re
 
 import setup_GCToo_logger as setup_logger
-import GCToo
+import GCToo 
 import parse_gct as pg
 import write_gct as wg
 

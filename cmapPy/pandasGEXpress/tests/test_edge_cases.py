@@ -5,11 +5,11 @@ Functional tests comparing gct vs gctx parsing for equivalent file content
 
 import unittest
 import logging
-import setup_GCToo_logger as setup_logger
 import pandas
 import numpy
-import parse_gct
-import parse_gctx
+from cmapPy.pandasGEXpress import setup_GCToo_logger as setup_logger
+from cmapPy.pandasGEXpress import parse_gct as parse_gct
+from cmapPy.pandasGEXpress import parse_gctx as parse_gctx 
 from pandas.util.testing import assert_series_equal
 
 FUNCTIONAL_TESTS_PATH = "functional_tests"

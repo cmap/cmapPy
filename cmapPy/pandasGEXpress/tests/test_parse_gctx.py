@@ -1,15 +1,15 @@
 import logging
-import setup_GCToo_logger as setup_logger
+from cmapPy.pandasGEXpress import setup_GCToo_logger as setup_logger
 import unittest
 import os
 import pandas as pd
 import numpy as np
-import GCToo
+from cmapPy.pandasGEXpress import GCToo
 import h5py
-import parse_gctx
-import mini_gctoo_for_testing
-import slice_gct
-import write_gctx 
+from cmapPy.pandasGEXpress import parse_gctx as parse_gctx
+from cmapPy.pandasGEXpress import mini_gctoo_for_testing as mini_gctoo_for_testing
+from cmapPy.pandasGEXpress import slice_gct as slice_gct
+from cmapPy.pandasGEXpress import write_gctx as write_gctx 
 from pandas.util.testing import assert_frame_equal
 
 __author__ = "Oana Enache"
