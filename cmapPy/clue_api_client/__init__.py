@@ -1,1 +1,1 @@
-from clue_api_client import ClueApiClient
+from .clue_api_client import ClueApiClient
