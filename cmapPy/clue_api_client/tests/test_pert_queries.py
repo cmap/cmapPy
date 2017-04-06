@@ -1,8 +1,8 @@
 import unittest
-import setup_logger
+from cmapPy.clue_api_client import setup_logger as setup_logger
 import logging
 import test_clue_api_client
-import pert_queries as pq
+from cmapPy.clue_api_client import pert_queries as pq
 
 __authors__ = "David L. Lahr"
 __email__ = "dlahr@broadinstitute.org"

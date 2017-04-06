@@ -1,7 +1,7 @@
 import unittest
-import setup_logger
+from cmapPy.clue_api_client import setup_logger as setup_logger
 import logging
-import clue_api_client
+from cmapPy.clue_api_client import clue_api_client as clue_api_client
 import os.path
 import ConfigParser
 import collections

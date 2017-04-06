@@ -1,8 +1,8 @@
 import unittest
-import setup_logger
+from cmapPy.clue_api_client import setup_logger
 import logging
 import test_clue_api_client
-import macchiato_queries as mq
+from cmapPy.clue_api_client import macchiato_queries as mq
 
 __authors__ = "David L. Lahr"
 __email__ = "dlahr@broadinstitute.org"
