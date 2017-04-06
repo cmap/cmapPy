@@ -3,6 +3,6 @@ recursive-include *.gct
 recursive-include *.gctx
 recursive-include *.rst
 recursive-include *.cfg 
-include README
-include LICENSE
+include README.rst
+include LICENSE.txt
 include requirements.txt
