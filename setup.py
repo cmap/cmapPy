@@ -15,16 +15,13 @@ import sys
 if not sys.version_info[0] == 2:
     sys.exit("Apologies! Python 3 isn't supported yet.")
 
-with open("requirements.txt") as f:
-    requirements = f.read().splitlines()
-
 setup(
     name='cmapPy',
 
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='1.0.1',
+    version='1.0.2',
 
     description='Assorted tools for interacting with .gct, .gctx files and other Connectivity Map (Broad Institute) data/tools',
     long_description="",
@@ -71,7 +68,7 @@ setup(
     # your project is installed. For an analysis of "install_requires" vs pip's
     # requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=requirements,
+    install_requires=['numpy>=1.11.2', 'pandas>=0.18', 'h5py>=2.6.0', 'requests>=2.13.0'],
 
     # List additional groups of dependencies here (e.g. development
     # dependencies). You can install these using the following syntax,
