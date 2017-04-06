@@ -1,1 +1,6 @@
-include README.md
+recursive-include cmapPy *.py
+recursive-include *.gct
+recursive-include *.gctx
+include README
+include LICENSE
+include requirements.txt
