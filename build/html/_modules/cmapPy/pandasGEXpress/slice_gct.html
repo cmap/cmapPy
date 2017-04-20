@@ -1,0 +1,392 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>cmapPy.pandasGEXpress.slice_gct &mdash; cmapPy 1.0.2 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="cmapPy 1.0.2 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> cmapPy
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../build.html">Installation</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../clue_api_client.html">Clue API Client</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pandasGEXpress.html">pandasGEXpress</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contribution guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../licenses.html">BSD 3-Clause License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citing.html">Citation Information</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">cmapPy</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      
+    <li>cmapPy.pandasGEXpress.slice_gct</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for cmapPy.pandasGEXpress.slice_gct</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">slice_gct.py</span>
+
+<span class="sd">Extract a subset of data from a gct file. If called from the command line,</span>
+<span class="sd">ids can be provided as a list or as a path to a grp file. If using the</span>
+<span class="sd">slice method in Python, ids or boolean arrays can be used.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="kn">import</span> <span class="nn">setup_GCToo_logger</span> <span class="k">as</span> <span class="nn">setup_logger</span>
+<span class="kn">import</span> <span class="nn">GCToo</span> 
+<span class="kn">import</span> <span class="nn">parse_gct</span> <span class="k">as</span> <span class="nn">pg</span>
+<span class="kn">import</span> <span class="nn">write_gct</span> <span class="k">as</span> <span class="nn">wg</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Lev Litichevskiy&quot;</span>
+<span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;lev@broadinstitute.org&quot;</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">setup_logger</span><span class="o">.</span><span class="n">LOGGER_NAME</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="build_parser"><a class="viewcode-back" href="../../../pandasGEXpress.html#cmapPy.pandasGEXpress.slice_gct.build_parser">[docs]</a><span class="k">def</span> <span class="nf">build_parser</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Build argument parser.&quot;&quot;&quot;</span>
+
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="n">__doc__</span><span class="p">,</span>
+                                     <span class="n">formatter_class</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentDefaultsHelpFormatter</span><span class="p">)</span>
+
+    <span class="c1"># Required args</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--in_gct_path&quot;</span><span class="p">,</span> <span class="s2">&quot;-i&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;file path to input gct file&quot;</span><span class="p">)</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--rid&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;filepath to grp file or string array for including rows&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--cid&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;filepath to grp file or string array for including cols&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--exclude_rid&quot;</span><span class="p">,</span> <span class="s2">&quot;-er&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;filepath to grp file or string array for excluding rows&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--exclude_cid&quot;</span><span class="p">,</span> <span class="s2">&quot;-ec&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;filepath to grp file or string array for excluding cols&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--out_name&quot;</span><span class="p">,</span> <span class="s2">&quot;-o&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;ds_sliced.gct&quot;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;what to name the output file&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--verbose&quot;</span><span class="p">,</span> <span class="s2">&quot;-v&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;whether to increase the # of messages reported&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">parser</span></div>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="c1"># Read the input gct</span>
+    <span class="n">in_gct</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">in_gct_path</span><span class="p">)</span>
+
+    <span class="c1"># Read in each of the command line arguments</span>
+    <span class="n">rid</span> <span class="o">=</span> <span class="n">_read_arg</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">rid</span><span class="p">)</span>
+    <span class="n">cid</span> <span class="o">=</span> <span class="n">_read_arg</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">cid</span><span class="p">)</span>
+    <span class="n">exclude_rid</span> <span class="o">=</span> <span class="n">_read_arg</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">exclude_rid</span><span class="p">)</span>
+    <span class="n">exclude_cid</span> <span class="o">=</span> <span class="n">_read_arg</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">exclude_cid</span><span class="p">)</span>
+
+    <span class="c1"># Slice the gct</span>
+    <span class="n">out_gct</span> <span class="o">=</span> <span class="n">slice_gctoo</span><span class="p">(</span><span class="n">in_gct</span><span class="p">,</span> <span class="n">rid</span><span class="o">=</span><span class="n">rid</span><span class="p">,</span> <span class="n">cid</span><span class="o">=</span><span class="n">cid</span><span class="p">,</span> <span class="n">exclude_rid</span><span class="o">=</span><span class="n">exclude_rid</span><span class="p">,</span> <span class="n">exclude_cid</span><span class="o">=</span><span class="n">exclude_cid</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">out_gct</span><span class="o">.</span><span class="n">data_df</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Slicing yielded an empty gct!&quot;</span>
+
+    <span class="c1"># Write the output gct</span>
+    <span class="n">wg</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">out_gct</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">out_name</span><span class="p">,</span> <span class="n">data_null</span><span class="o">=</span><span class="s2">&quot;NaN&quot;</span><span class="p">,</span> <span class="n">metadata_null</span><span class="o">=</span><span class="s2">&quot;NA&quot;</span><span class="p">,</span> <span class="n">filler_null</span><span class="o">=</span><span class="s2">&quot;NA&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="read_grp"><a class="viewcode-back" href="../../../pandasGEXpress.html#cmapPy.pandasGEXpress.slice_gct.read_grp">[docs]</a><span class="k">def</span> <span class="nf">read_grp</span><span class="p">(</span><span class="n">in_path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Read .grp file to a list. &quot;&quot;&quot;</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">in_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">lines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+            <span class="c1"># second conditional ignores comment lines</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span> <span class="k">if</span> <span class="n">line</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s1">&#39;^#&#39;</span><span class="p">,</span> <span class="n">line</span><span class="p">)]</span></div>
+
+
+<span class="k">def</span> <span class="nf">_read_arg</span><span class="p">(</span><span class="n">arg</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    If arg is a list with 1 element that corresponds to a valid file path, use</span>
+<span class="sd">    plategrp to read the grp file. Otherwise, check that arg is a list of strings.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        arg (list or None)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        arg_out (list or None)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># If arg is None, just return it back</span>
+    <span class="k">if</span> <span class="n">arg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">arg_out</span> <span class="o">=</span> <span class="n">arg</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># If len(arg) == 1 and arg[0] is a valid filepath, read it as a grp file</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">arg</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="n">arg_out</span> <span class="o">=</span> <span class="n">read_grp</span><span class="p">(</span><span class="n">arg</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">arg_out</span> <span class="o">=</span> <span class="n">arg</span>
+
+        <span class="c1"># Make sure that arg_out is a list of strings</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg_out</span><span class="p">,</span> <span class="nb">list</span><span class="p">),</span> <span class="s2">&quot;arg_out must be a list.&quot;</span>
+        <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">arg_out</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;arg_out must be a list of strings.&quot;</span>
+
+    <span class="k">return</span> <span class="n">arg_out</span>
+
+
+<div class="viewcode-block" id="slice_gctoo"><a class="viewcode-back" href="../../../pandasGEXpress.html#cmapPy.pandasGEXpress.slice_gct.slice_gctoo">[docs]</a><span class="k">def</span> <span class="nf">slice_gctoo</span><span class="p">(</span><span class="n">gctoo</span><span class="p">,</span> <span class="n">row_bool</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">col_bool</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rid</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cid</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exclude_rid</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exclude_cid</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Extract a subset of data from a GCToo object in a variety of ways.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        gctoo (GCToo object)</span>
+<span class="sd">        row_bool (list of bools): length must equal gctoo.data_df.shape[0]</span>
+<span class="sd">        col_bool (list of bools): length must equal gctoo.data_df.shape[1]</span>
+<span class="sd">        rid (list of strings): length must equal gctoo.data_df.shape[0]</span>
+<span class="sd">        cid (list of strings): length must equal gctoo.data_df.shape[0]</span>
+<span class="sd">        exclude_rid (bool): if true, select row ids EXCLUDING &#39;rid&#39; (default: False)</span>
+<span class="sd">        exclude_cid (bool): if true, select col ids EXCLUDING &#39;cid&#39; (default: False)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        out_gctoo (GCToo object): gctoo after slicing</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="p">(</span><span class="n">rid</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">row_bool</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">),</span> <span class="p">(</span>
+        <span class="s2">&quot;rid and row_bool should not BOTH be provided.&quot;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="p">(</span><span class="n">cid</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">col_bool</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">),</span> <span class="p">(</span>
+        <span class="s2">&quot;cid and col_bool should not BOTH be provided.&quot;</span><span class="p">)</span>
+
+    <span class="c1">### ROWS</span>
+    <span class="c1"># Use rid if provided</span>
+    <span class="k">if</span> <span class="n">rid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">rows_to_keep</span> <span class="o">=</span> <span class="p">[</span><span class="n">gctoo_row</span> <span class="k">for</span> <span class="n">gctoo_row</span> <span class="ow">in</span> <span class="n">gctoo</span><span class="o">.</span><span class="n">data_df</span><span class="o">.</span><span class="n">index</span> <span class="k">if</span> <span class="n">gctoo_row</span> <span class="ow">in</span> <span class="n">rid</span><span class="p">]</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Use row_bool if provided</span>
+        <span class="k">if</span> <span class="n">row_bool</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">row_bool</span><span class="p">)</span> <span class="o">==</span> <span class="n">gctoo</span><span class="o">.</span><span class="n">data_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">(</span>
+                <span class="s2">&quot;row_bool must have length equal to gctoo.data_df.shape[0]. &quot;</span> <span class="o">+</span>
+                <span class="s2">&quot;len(row_bool): </span><span class="si">{}</span><span class="s2">, gctoo.data_df.shape[0]: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="nb">len</span><span class="p">(</span><span class="n">row_bool</span><span class="p">),</span> <span class="n">gctoo</span><span class="o">.</span><span class="n">data_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+            <span class="n">rows_to_keep</span> <span class="o">=</span> <span class="n">gctoo</span><span class="o">.</span><span class="n">data_df</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">row_bool</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># If rid and row_bool are both None, return all rows</span>
+            <span class="n">rows_to_keep</span> <span class="o">=</span> <span class="n">gctoo</span><span class="o">.</span><span class="n">data_df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span>
+
+    <span class="c1"># Use exclude_rid if provided</span>
+    <span class="k">if</span> <span class="n">exclude_rid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Keep only those rows that are not in exclude_rid</span>
+        <span class="n">rows_to_keep</span> <span class="o">=</span> <span class="p">[</span><span class="n">row_to_keep</span> <span class="k">for</span> <span class="n">row_to_keep</span> <span class="ow">in</span> <span class="n">rows_to_keep</span> <span class="k">if</span> <span class="n">row_to_keep</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exclude_rid</span><span class="p">]</span>
+
+    <span class="c1">### COLUMNS</span>
+    <span class="c1"># Use cid if provided</span>
+    <span class="k">if</span> <span class="n">cid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cid</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">cid</span><span class="p">)</span>
+        <span class="n">cols_to_keep</span> <span class="o">=</span> <span class="n">cid</span><span class="p">[</span><span class="n">cid</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">gctoo</span><span class="o">.</span><span class="n">data_df</span><span class="o">.</span><span class="n">columns</span><span class="p">)]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Use col_bool if provided</span>
+        <span class="k">if</span> <span class="n">col_bool</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">col_bool</span><span class="p">)</span> <span class="o">==</span> <span class="n">gctoo</span><span class="o">.</span><span class="n">data_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">(</span>
+                <span class="s2">&quot;col_bool must have length equal to gctoo.data_df.shape[1]. &quot;</span> <span class="o">+</span>
+                <span class="s2">&quot;len(col_bool): </span><span class="si">{}</span><span class="s2">, gctoo.data_df.shape[1]: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="nb">len</span><span class="p">(</span><span class="n">col_bool</span><span class="p">),</span> <span class="n">gctoo</span><span class="o">.</span><span class="n">data_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+            <span class="n">cols_to_keep</span> <span class="o">=</span> <span class="n">gctoo</span><span class="o">.</span><span class="n">data_df</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">col_bool</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># If cid and col_bool are both None, return all cols</span>
+            <span class="n">cols_to_keep</span> <span class="o">=</span> <span class="n">gctoo</span><span class="o">.</span><span class="n">data_df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span>
+
+    <span class="c1"># Use exclude_cid if provided</span>
+    <span class="k">if</span> <span class="n">exclude_cid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Keep only those cols that are not in exclude_cid</span>
+        <span class="n">cols_to_keep</span> <span class="o">=</span> <span class="p">[</span><span class="n">col_to_keep</span> <span class="k">for</span> <span class="n">col_to_keep</span> <span class="ow">in</span> <span class="n">cols_to_keep</span> <span class="k">if</span> <span class="n">col_to_keep</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exclude_cid</span><span class="p">]</span>
+
+    <span class="c1"># Convert labels to boolean array</span>
+    <span class="n">rows_to_keep_bools</span> <span class="o">=</span> <span class="n">gctoo</span><span class="o">.</span><span class="n">data_df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">rows_to_keep</span><span class="p">)</span>
+    <span class="n">cols_to_keep_bools</span> <span class="o">=</span> <span class="n">gctoo</span><span class="o">.</span><span class="n">data_df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">cols_to_keep</span><span class="p">)</span>
+
+    <span class="c1"># Make the output gct</span>
+    <span class="n">out_gctoo</span> <span class="o">=</span> <span class="n">GCToo</span><span class="o">.</span><span class="n">GCToo</span><span class="p">(</span>
+        <span class="n">src</span><span class="o">=</span> <span class="n">gctoo</span><span class="o">.</span><span class="n">src</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="n">gctoo</span><span class="o">.</span><span class="n">version</span><span class="p">,</span>
+        <span class="n">data_df</span><span class="o">=</span><span class="n">gctoo</span><span class="o">.</span><span class="n">data_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">rows_to_keep_bools</span><span class="p">,</span> <span class="n">cols_to_keep_bools</span><span class="p">],</span>
+        <span class="n">row_metadata_df</span><span class="o">=</span><span class="n">gctoo</span><span class="o">.</span><span class="n">row_metadata_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">rows_to_keep_bools</span><span class="p">,</span> <span class="p">:],</span>
+        <span class="n">col_metadata_df</span><span class="o">=</span><span class="n">gctoo</span><span class="o">.</span><span class="n">col_metadata_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">cols_to_keep_bools</span><span class="p">,</span> <span class="p">:])</span>
+
+    <span class="k">return</span> <span class="n">out_gctoo</span></div>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">build_parser</span><span class="p">()</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+    <span class="n">setup_logger</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">verbose</span><span class="p">)</span>
+
+    <span class="n">main</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Connectivity Map at Broad Institute of MIT and Harvard, Inc..
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'1.0.2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

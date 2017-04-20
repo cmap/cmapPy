@@ -1,0 +1,11 @@
+.. _client:
+
+clue_api_client
+===============
+
+
+clue_api_client is a Python library containing tools to simplify querying the Connectivity Map (clue) API. 
+
+Maintainer: David Lahr, dlahr@broadinstitute.org
+
+

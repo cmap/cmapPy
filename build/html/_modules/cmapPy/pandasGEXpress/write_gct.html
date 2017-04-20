@@ -1,0 +1,359 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>cmapPy.pandasGEXpress.write_gct &mdash; cmapPy 1.0.2 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="cmapPy 1.0.2 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> cmapPy
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../build.html">Installation</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../clue_api_client.html">Clue API Client</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pandasGEXpress.html">pandasGEXpress</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contribution guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../licenses.html">BSD 3-Clause License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citing.html">Citation Information</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">cmapPy</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      
+    <li>cmapPy.pandasGEXpress.write_gct</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for cmapPy.pandasGEXpress.write_gct</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">setup_GCToo_logger</span> <span class="k">as</span> <span class="nn">setup_logger</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Lev Litichevskiy&quot;</span>
+<span class="n">__email__</span> <span class="o">=</span> <span class="s2">&quot;lev@broadinstitute.org&quot;</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">setup_logger</span><span class="o">.</span><span class="n">LOGGER_NAME</span><span class="p">)</span>
+
+<span class="c1"># Only writes GCT1.3</span>
+<span class="n">VERSION</span> <span class="o">=</span> <span class="s2">&quot;1.3&quot;</span>
+
+
+<div class="viewcode-block" id="write"><a class="viewcode-back" href="../../../pandasGEXpress.html#cmapPy.pandasGEXpress.write_gct.write">[docs]</a><span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="n">gctoo</span><span class="p">,</span> <span class="n">out_fname</span><span class="p">,</span> <span class="n">data_null</span><span class="o">=</span><span class="s2">&quot;NaN&quot;</span><span class="p">,</span> <span class="n">metadata_null</span><span class="o">=</span><span class="s2">&quot;-666&quot;</span><span class="p">,</span> <span class="n">filler_null</span><span class="o">=</span><span class="s2">&quot;-666&quot;</span><span class="p">,</span> <span class="n">data_float_format</span><span class="o">=</span><span class="s2">&quot;:.4f&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Write a gctoo object to a gct file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        gctoo (gctoo object)</span>
+<span class="sd">        out_fname (string): filename for output gct file</span>
+<span class="sd">        data_null (string): how to represent missing values in the data (default = &quot;NaN&quot;)</span>
+<span class="sd">        metadata_null (string): how to represent missing values in the metadata (default = &quot;-666&quot;)</span>
+<span class="sd">        filler_null (string): what value to fill the top-left filler block with (default = &quot;-666&quot;)</span>
+<span class="sd">        data_float_format (string): how many decimal points to keep in representing data</span>
+<span class="sd">            (default = 4 digits; None will keep all digits)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Create handle for output file</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">out_fname</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.gct&quot;</span><span class="p">):</span>
+        <span class="n">out_fname</span> <span class="o">+=</span> <span class="s2">&quot;.gct&quot;</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">out_fname</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Write first two lines</span>
+    <span class="n">dims</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">gctoo</span><span class="o">.</span><span class="n">data_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">str</span><span class="p">(</span><span class="n">gctoo</span><span class="o">.</span><span class="n">data_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">gctoo</span><span class="o">.</span><span class="n">row_metadata_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="nb">str</span><span class="p">(</span><span class="n">gctoo</span><span class="o">.</span><span class="n">col_metadata_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
+    <span class="n">write_version_and_dims</span><span class="p">(</span><span class="n">VERSION</span><span class="p">,</span> <span class="n">dims</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+
+    <span class="c1"># Write top half of the gct</span>
+    <span class="n">write_top_half</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">gctoo</span><span class="o">.</span><span class="n">row_metadata_df</span><span class="p">,</span> <span class="n">gctoo</span><span class="o">.</span><span class="n">col_metadata_df</span><span class="p">,</span>
+                   <span class="n">metadata_null</span><span class="p">,</span> <span class="n">filler_null</span><span class="p">)</span>
+
+    <span class="c1"># Write bottom half of the gct</span>
+    <span class="n">write_bottom_half</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">gctoo</span><span class="o">.</span><span class="n">row_metadata_df</span><span class="p">,</span> <span class="n">gctoo</span><span class="o">.</span><span class="n">data_df</span><span class="p">,</span>
+                      <span class="n">data_null</span><span class="p">,</span> <span class="n">data_float_format</span><span class="p">,</span> <span class="n">metadata_null</span><span class="p">)</span>
+
+    <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;GCT has been written to </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">out_fname</span><span class="p">))</span></div>
+
+
+<span class="k">def</span> <span class="nf">write_version_and_dims</span><span class="p">(</span><span class="n">version</span><span class="p">,</span> <span class="n">dims</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Write first two lines of gct file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        version (string): 1.3 by default</span>
+<span class="sd">        dims (list of strings): length = 4</span>
+<span class="sd">        f (file handle): handle of output file</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        nothing</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">((</span><span class="s2">&quot;#&quot;</span> <span class="o">+</span> <span class="n">version</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">))</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">((</span><span class="n">dims</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">dims</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">dims</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">dims</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">write_top_half</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">row_metadata_df</span><span class="p">,</span> <span class="n">col_metadata_df</span><span class="p">,</span> <span class="n">metadata_null</span><span class="p">,</span> <span class="n">filler_null</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Write the top half of the gct file: top-left filler values, row metadata</span>
+<span class="sd">    headers, and top-right column metadata.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        f (file handle): handle for output file</span>
+<span class="sd">        row_metadata_df (pandas df)</span>
+<span class="sd">        col_metadata_df (pandas df)</span>
+<span class="sd">        metadata_null (string): how to represent missing values in the metadata</span>
+<span class="sd">        filler_null (string): what value to fill the top-left filler block with</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Initialize the top half of the gct including the third line</span>
+    <span class="n">size_of_top_half_df</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">col_metadata_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                           <span class="mi">1</span> <span class="o">+</span> <span class="n">row_metadata_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">col_metadata_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">top_half_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">size_of_top_half_df</span><span class="p">,</span> <span class="n">filler_null</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">))</span>
+
+    <span class="c1"># Assemble the third line of the gct: &quot;id&quot;, then rhds, then cids</span>
+    <span class="n">top_half_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="n">row_metadata_df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">col_metadata_df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span><span class="p">))</span>
+
+    <span class="c1"># Insert the chds</span>
+    <span class="n">top_half_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">top_half_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">col_metadata_df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span>
+
+    <span class="c1"># Insert the column metadata, but first convert to strings and replace NaNs</span>
+    <span class="n">col_metadata_indices</span> <span class="o">=</span> <span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">top_half_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+                            <span class="nb">range</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">row_metadata_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">top_half_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="n">top_half_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">col_metadata_indices</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">col_metadata_indices</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">col_metadata_df</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">metadata_null</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+
+    <span class="c1"># Write top_half_df to file</span>
+    <span class="n">top_half_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">write_bottom_half</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">row_metadata_df</span><span class="p">,</span> <span class="n">data_df</span><span class="p">,</span> <span class="n">data_null</span><span class="p">,</span> <span class="n">data_float_format</span><span class="p">,</span> <span class="n">metadata_null</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Write the bottom half of the gct file: row metadata and data.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        f (file handle): handle for output file</span>
+<span class="sd">        row_metadata_df (pandas df)</span>
+<span class="sd">        data_df (pandas df)</span>
+<span class="sd">        data_null (string): how to represent missing values in the data</span>
+<span class="sd">        metadata_null (string): how to represent missing values in the metadata</span>
+<span class="sd">        data_float_format (string): how many decimal points to keep in representing data</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Initialize the bottom half of the gct</span>
+    <span class="n">size_of_bottom_half_df</span> <span class="o">=</span> <span class="p">(</span><span class="n">row_metadata_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                              <span class="mi">1</span> <span class="o">+</span> <span class="n">row_metadata_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">data_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">bottom_half_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">size_of_bottom_half_df</span><span class="p">,</span> <span class="n">metadata_null</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">))</span>
+
+    <span class="c1"># Insert the rids</span>
+    <span class="n">bottom_half_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">row_metadata_df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span>
+
+    <span class="c1"># Insert the row metadata, but first convert to strings and replace NaNs</span>
+    <span class="n">row_metadata_col_indices</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">row_metadata_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">bottom_half_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="n">row_metadata_col_indices</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">row_metadata_df</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">metadata_null</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+
+    <span class="c1"># Insert the data</span>
+    <span class="n">data_col_indices</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">row_metadata_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">bottom_half_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">bottom_half_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="n">data_col_indices</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_df</span><span class="o">.</span><span class="n">values</span>
+
+    <span class="c1"># Write bottom_half_df to file</span>
+    <span class="n">bottom_half_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span>
+                          <span class="n">na_rep</span><span class="o">=</span><span class="n">data_null</span><span class="p">,</span>
+                          <span class="n">float_format</span><span class="o">=</span><span class="n">data_float_format</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">append_dims_and_file_extension</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">data_df</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Append dimensions and file extension to output filename.</span>
+<span class="sd">    N.B. Dimensions are cols x rows.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        fname (string): output filename</span>
+<span class="sd">        data_df (pandas df)</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        out_fname (string): output filename with matrix dims and .gct appended</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># If there&#39;s no .gct at the end of output file name, add the dims and .gct</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">fname</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.gct&quot;</span><span class="p">):</span>
+        <span class="n">out_fname</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">_n</span><span class="si">{1}</span><span class="s1">x</span><span class="si">{2}</span><span class="s1">.gct&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">data_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">data_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">out_fname</span>
+
+    <span class="c1"># Otherwise, only add the dims</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">basename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">fname</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">out_fname</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">_n</span><span class="si">{1}</span><span class="s1">x</span><span class="si">{2}</span><span class="s1">.gct&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">basename</span><span class="p">,</span> <span class="n">data_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">data_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">out_fname</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Connectivity Map at Broad Institute of MIT and Harvard, Inc..
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'1.0.2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

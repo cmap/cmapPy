@@ -1,0 +1,4 @@
+.. _citing:
+
+Citation Information
+====================
