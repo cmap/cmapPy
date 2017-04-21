@@ -1,0 +1,454 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>cmapPy.pandasGEXpress.GCToo &mdash; cmapPy 1.0.2 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="cmapPy 1.0.2 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> cmapPy
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../build.html">Installation</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../clue_api_client.html">Clue API Client</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pandasGEXpress.html">pandasGEXpress</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contribution guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../licenses.html">BSD 3-Clause License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citing.html">Citation Information</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">cmapPy</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      
+    <li>cmapPy.pandasGEXpress.GCToo</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for cmapPy.pandasGEXpress.GCToo</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">DATA:</span>
+<span class="sd">-----------------------------</span>
+<span class="sd">|  |          cid           |</span>
+<span class="sd">-----------------------------</span>
+<span class="sd">|  |                        |</span>
+<span class="sd">|r |                        |</span>
+<span class="sd">|i |          data          |</span>
+<span class="sd">|d |                        |</span>
+<span class="sd">|  |                        |</span>
+<span class="sd">-----------------------------</span>
+<span class="sd">ROW METADATA:</span>
+<span class="sd">--------------------------</span>
+<span class="sd">|id|        rhd          |</span>
+<span class="sd">--------------------------</span>
+<span class="sd">|  |                     |</span>
+<span class="sd">|r |                     |</span>
+<span class="sd">|i |    row_metadata     |</span>
+<span class="sd">|d |                     |</span>
+<span class="sd">|  |                     |</span>
+<span class="sd">--------------------------</span>
+<span class="sd">COLUMN METADATA:</span>
+<span class="sd">N.B. The df is transposed from how it looks in a gct file.</span>
+<span class="sd">---------------------</span>
+<span class="sd">|id|      chd       |</span>
+<span class="sd">---------------------</span>
+<span class="sd">|  |                |</span>
+<span class="sd">|  |                |</span>
+<span class="sd">|  |                |</span>
+<span class="sd">|c |                |</span>
+<span class="sd">|i |  col_metadata  |</span>
+<span class="sd">|d |                |</span>
+<span class="sd">|  |                |</span>
+<span class="sd">|  |                |</span>
+<span class="sd">|  |                |</span>
+<span class="sd">---------------------</span>
+
+<span class="sd">N.B. rids, cids, rhds, and chds must be:</span>
+<span class="sd">- unique</span>
+<span class="sd">- matching in both content &amp; order everywhere they&#39;re found </span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">cmapPy.pandasGEXpress</span> <span class="k">import</span> <span class="n">setup_GCToo_logger</span> <span class="k">as</span> <span class="n">setup_logger</span>
+
+<span class="n">__authors__</span> <span class="o">=</span> <span class="s1">&#39;Oana Enache, Lev Litichevskiy, Dave Lahr&#39;</span>
+<span class="n">__email__</span> <span class="o">=</span> <span class="s1">&#39;dlahr@broadinstitute.org&#39;</span>
+
+<div class="viewcode-block" id="GCToo"><a class="viewcode-back" href="../../../pandasGEXpress.html#cmapPy.pandasGEXpress.GCToo.GCToo">[docs]</a><span class="k">class</span> <span class="nc">GCToo</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class representing parsed gct(x) objects as pandas dataframes.</span>
+<span class="sd">    Contains 3 component dataframes (row_metadata_df, column_metadata_df,</span>
+<span class="sd">    and data_df) as well as an assembly of these 3 into a multi index df</span>
+<span class="sd">    that provides an alternate way of selecting data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_df</span><span class="p">,</span> <span class="n">row_metadata_df</span><span class="p">,</span> <span class="n">col_metadata_df</span><span class="p">,</span>
+                 <span class="n">src</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">make_multiindex</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">logger_name</span><span class="o">=</span><span class="n">setup_logger</span><span class="o">.</span><span class="n">LOGGER_NAME</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">logger_name</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">src</span> <span class="o">=</span> <span class="n">src</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">version</span> <span class="o">=</span> <span class="n">version</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">row_metadata_df</span> <span class="o">=</span> <span class="n">row_metadata_df</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">col_metadata_df</span> <span class="o">=</span> <span class="n">col_metadata_df</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_df</span> <span class="o">=</span> <span class="n">data_df</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">multi_index_df</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">for</span> <span class="n">df_field</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;row_metadata_df&quot;</span><span class="p">,</span> <span class="s2">&quot;col_metadata_df&quot;</span><span class="p">,</span> <span class="s2">&quot;data_df&quot;</span><span class="p">]:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="n">df_field</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">check_df</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+        <span class="c1"># check rids match in data &amp; meta</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id_match_check</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_metadata_df</span><span class="p">,</span> <span class="s2">&quot;row&quot;</span><span class="p">)</span>
+
+        <span class="c1"># check cids match in data &amp; meta</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id_match_check</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_metadata_df</span><span class="p">,</span> <span class="s2">&quot;col&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">make_multiindex</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assemble_multi_index_df</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_initialized</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s2">&quot;_initialized&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_initialized</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;data_df&quot;</span><span class="p">,</span> <span class="s2">&quot;row_metadata_df&quot;</span><span class="p">,</span> <span class="s2">&quot;col_metadata_df&quot;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_df</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;row_metadata_df&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">id_match_check</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_df</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="s2">&quot;row&quot;</span><span class="p">)):</span>
+                        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_df</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+                        <span class="nb">super</span><span class="p">(</span><span class="n">GCToo</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="p">(</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;col_metadata_df&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">id_match_check</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_df</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="s2">&quot;col&quot;</span><span class="p">)):</span>
+                        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+                        <span class="nb">super</span><span class="p">(</span><span class="n">GCToo</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="p">(</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;data_df&quot;</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id_match_check</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_metadata_df</span><span class="p">,</span> <span class="s2">&quot;row&quot;</span><span class="p">)</span>
+                                                <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">id_match_check</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_metadata_df</span><span class="p">,</span> <span class="s2">&quot;col&quot;</span><span class="p">))):</span>
+                        <span class="c1"># in this case we need to reindex both row/col metadata so that indexes are ordered</span>
+                        <span class="c1"># the same as the new data_df</span>
+                        <span class="nb">super</span><span class="p">(</span><span class="n">GCToo</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="s2">&quot;row_metadata_df&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_metadata_df</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">index</span><span class="p">))</span>
+                        <span class="nb">super</span><span class="p">(</span><span class="n">GCToo</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="s2">&quot;col_metadata_df&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_metadata_df</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">index</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;multi_index_df&quot;</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Cannot reassign value of multi_index_df attribute; &quot;</span>  <span class="o">+</span>
+                    <span class="s2">&quot;if you&#39;d like a new multiindex df, please create a new GCToo instance&quot;</span> <span class="o">+</span>
+                    <span class="s2">&quot;with appropriate data_df, row_metadata_df, and col_metadata_df fields.&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;GCToo.__setattr__: &quot;</span> <span class="o">+</span> <span class="n">msg</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">super</span><span class="p">(</span><span class="n">GCToo</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span> <span class="c1"># for init we first want to set everything</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">GCToo</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">check_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Verifies that df is a pandas DataFrame instance and</span>
+<span class="sd">        that its index and column values are unique.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">is_unique</span><span class="p">:</span>
+                <span class="n">repeats</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">duplicated</span><span class="p">()]</span><span class="o">.</span><span class="n">values</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Index values must be unique but aren&#39;t. The following entries appear more than once: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">repeats</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;GCToo GCToo.check_df &quot;</span> <span class="o">+</span> <span class="n">msg</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">is_unique</span><span class="p">:</span>
+                <span class="n">repeats</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">duplicated</span><span class="p">()]</span><span class="o">.</span><span class="n">values</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Columns values must be unique but aren&#39;t. The following entries appear more than once: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">repeats</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;GCToo GCToo.check_df &quot;</span> <span class="o">+</span> <span class="n">msg</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;expected Pandas DataFrame, got something else:  </span><span class="si">{}</span><span class="s2">  of type:  </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">df</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;GCToo GCToo.check_df &quot;</span> <span class="o">+</span> <span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">id_match_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_df</span><span class="p">,</span> <span class="n">meta_df</span><span class="p">,</span> <span class="n">dim</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Verifies that id values match between:</span>
+<span class="sd">            - row case: index of data_df &amp; index of row metadata</span>
+<span class="sd">            - col case: columns of data_df &amp; index of column metadata</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">dim</span> <span class="o">==</span> <span class="s2">&quot;row&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_df</span><span class="o">.</span><span class="n">index</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">meta_df</span><span class="o">.</span><span class="n">index</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">set</span><span class="p">(</span><span class="n">data_df</span><span class="o">.</span><span class="n">index</span><span class="p">)</span> <span class="o">==</span> <span class="nb">set</span><span class="p">(</span><span class="n">meta_df</span><span class="o">.</span><span class="n">index</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;The rids are inconsistent between data_df and row_metadata_df.</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span>
+                 <span class="s2">&quot;data_df.index.values:</span><span class="se">\n</span><span class="si">{}</span><span class="se">\n</span><span class="s2">row_metadata_df.index.values:</span><span class="se">\n</span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data_df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">meta_df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;GCToo GCToo.id_match_check &quot;</span> <span class="o">+</span> <span class="n">msg</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">dim</span> <span class="o">==</span> <span class="s2">&quot;col&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">meta_df</span><span class="o">.</span><span class="n">index</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">set</span><span class="p">(</span><span class="n">data_df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span> <span class="o">==</span> <span class="nb">set</span><span class="p">(</span><span class="n">meta_df</span><span class="o">.</span><span class="n">index</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;The cids are inconsistent between data_df and col_metadata_df.</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span>
+                 <span class="s2">&quot;data_df.columns.values:</span><span class="se">\n</span><span class="si">{}</span><span class="se">\n</span><span class="s2">col_metadata_df.index.values:</span><span class="se">\n</span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data_df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">meta_df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;GCToo GCToo.id_match_check &quot;</span> <span class="o">+</span> <span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Prints a string representation of a GCToo object.&quot;&quot;&quot;</span>
+        <span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="p">)</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="s2">&quot;src: </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">src</span><span class="p">)</span>
+
+
+        <span class="n">data</span> <span class="o">=</span> <span class="s2">&quot;data_df: [</span><span class="si">{}</span><span class="s2"> rows x </span><span class="si">{}</span><span class="s2"> columns]</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="n">row_meta</span> <span class="o">=</span> <span class="s2">&quot;row_metadata_df: [</span><span class="si">{}</span><span class="s2"> rows x </span><span class="si">{}</span><span class="s2"> columns]</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">row_metadata_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_metadata_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="n">col_meta</span> <span class="o">=</span> <span class="s2">&quot;col_metadata_df: [</span><span class="si">{}</span><span class="s2"> rows x </span><span class="si">{}</span><span class="s2"> columns]&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">col_metadata_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_metadata_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="n">full_string</span> <span class="o">=</span> <span class="p">(</span><span class="n">version</span> <span class="o">+</span> <span class="n">source</span> <span class="o">+</span> <span class="n">data</span> <span class="o">+</span> <span class="n">row_meta</span> <span class="o">+</span> <span class="n">col_meta</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">full_string</span>
+
+    <span class="k">def</span> <span class="nf">assemble_multi_index_df</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Assembles three component dataframes into a multiindex dataframe.</span>
+<span class="sd">        Sets the result to self.multi_index_df.</span>
+<span class="sd">        IMPORTANT: Cross-section (&quot;xs&quot;) is the best command for selecting</span>
+<span class="sd">        data. Be sure to use the flag &quot;drop_level=False&quot; with this command,</span>
+<span class="sd">        or else the dataframe that is returned will not have the same</span>
+<span class="sd">        metadata as the input.</span>
+<span class="sd">        N.B. &quot;level&quot; means metadata header.</span>
+<span class="sd">        N.B. &quot;axis=1&quot; indicates column annotations.</span>
+<span class="sd">        Examples:</span>
+<span class="sd">            1) Select the probe with pr_lua_id=&quot;LUA-3404&quot;:</span>
+<span class="sd">            lua3404_df = multi_index_df.xs(&quot;LUA-3404&quot;, level=&quot;pr_lua_id&quot;, drop_level=False)</span>
+<span class="sd">            2) Select all DMSO samples:</span>
+<span class="sd">            DMSO_df = multi_index_df.xs(&quot;DMSO&quot;, level=&quot;pert_iname&quot;, axis=1, drop_level=False)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1">#prepare row index</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Row metadata shape: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">row_metadata_df</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Is empty? </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">row_metadata_df</span><span class="o">.</span><span class="n">empty</span><span class="p">))</span>
+        <span class="n">row_copy</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">row_metadata_df</span><span class="o">.</span><span class="n">index</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_metadata_df</span><span class="o">.</span><span class="n">empty</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_metadata_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">row_copy</span><span class="p">[</span><span class="s2">&quot;rid&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">row_copy</span><span class="o">.</span><span class="n">index</span>
+        <span class="n">row_index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">MultiIndex</span><span class="o">.</span><span class="n">from_arrays</span><span class="p">(</span><span class="n">row_copy</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="n">row_copy</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+
+        <span class="c1">#prepare column index</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Col metadata shape: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_metadata_df</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+        <span class="n">col_copy</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col_metadata_df</span><span class="o">.</span><span class="n">index</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_metadata_df</span><span class="o">.</span><span class="n">empty</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_metadata_df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">col_copy</span><span class="p">[</span><span class="s2">&quot;cid&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">col_copy</span><span class="o">.</span><span class="n">index</span>
+        <span class="n">transposed_col_metadata</span> <span class="o">=</span> <span class="n">col_copy</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">col_index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">MultiIndex</span><span class="o">.</span><span class="n">from_arrays</span><span class="p">(</span><span class="n">transposed_col_metadata</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="n">transposed_col_metadata</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+
+        <span class="c1"># Create multi index dataframe using the values of data_df and the indexes created above</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Data df shape: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_df</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">multi_index_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data_df</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">row_index</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">col_index</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">multi_index_df_to_component_dfs</span><span class="p">(</span><span class="n">multi_index_df</span><span class="p">,</span> <span class="n">rid</span><span class="o">=</span><span class="s2">&quot;rid&quot;</span><span class="p">,</span> <span class="n">cid</span><span class="o">=</span><span class="s2">&quot;cid&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Convert a multi-index df into 3 component dfs. &quot;&quot;&quot;</span>
+
+    <span class="c1"># Id level of the multiindex will become the index</span>
+    <span class="n">rids</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">multi_index_df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_level_values</span><span class="p">(</span><span class="n">rid</span><span class="p">))</span>
+    <span class="n">cids</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">multi_index_df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">get_level_values</span><span class="p">(</span><span class="n">cid</span><span class="p">))</span>
+
+    <span class="c1"># It&#39;s possible that the index and/or columns of multi_index_df are not</span>
+    <span class="c1"># actually multi-index; need to check for this</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">multi_index_df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">MultiIndex</span><span class="p">):</span>
+
+        <span class="c1"># If so, drop rid because it won&#39;t go into the body of the metadata</span>
+        <span class="n">mi_df_index</span> <span class="o">=</span> <span class="n">multi_index_df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">droplevel</span><span class="p">(</span><span class="n">rid</span><span class="p">)</span>
+
+        <span class="c1"># Names of the multiindex levels become the headers</span>
+        <span class="n">rhds</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">mi_df_index</span><span class="o">.</span><span class="n">names</span><span class="p">)</span>
+
+        <span class="c1"># Assemble metadata values</span>
+        <span class="n">row_metadata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">mi_df_index</span><span class="o">.</span><span class="n">get_level_values</span><span class="p">(</span><span class="n">level</span><span class="p">)</span><span class="o">.</span><span class="n">values</span> <span class="k">for</span> <span class="n">level</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">rhds</span><span class="p">)])</span><span class="o">.</span><span class="n">T</span>
+
+    <span class="c1"># If the index is not multi-index, then rhds and row metadata should be empty</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">rhds</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">row_metadata</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Check if columns of multi_index_df are in fact multi-index</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">multi_index_df</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">MultiIndex</span><span class="p">):</span>
+
+        <span class="c1"># If so, drop cid because it won&#39;t go into the body of the metadata</span>
+        <span class="n">mi_df_columns</span> <span class="o">=</span> <span class="n">multi_index_df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">droplevel</span><span class="p">(</span><span class="n">cid</span><span class="p">)</span>
+
+        <span class="c1"># Names of the multiindex levels become the headers</span>
+        <span class="n">chds</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">mi_df_columns</span><span class="o">.</span><span class="n">names</span><span class="p">)</span>
+
+        <span class="c1"># Assemble metadata values</span>
+        <span class="n">col_metadata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">mi_df_columns</span><span class="o">.</span><span class="n">get_level_values</span><span class="p">(</span><span class="n">level</span><span class="p">)</span><span class="o">.</span><span class="n">values</span> <span class="k">for</span> <span class="n">level</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">chds</span><span class="p">)])</span><span class="o">.</span><span class="n">T</span>
+
+    <span class="c1"># If the columns are not multi-index, then rhds and row metadata should be empty</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">chds</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">col_metadata</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Create component dfs</span>
+    <span class="n">row_metadata_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_records</span><span class="p">(</span><span class="n">row_metadata</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">(</span><span class="n">rids</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;rid&quot;</span><span class="p">),</span> <span class="n">columns</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">(</span><span class="n">rhds</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;rhd&quot;</span><span class="p">))</span>
+    <span class="n">col_metadata_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_records</span><span class="p">(</span><span class="n">col_metadata</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">(</span><span class="n">cids</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;cid&quot;</span><span class="p">),</span> <span class="n">columns</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">(</span><span class="n">chds</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;chd&quot;</span><span class="p">))</span>
+    <span class="n">data_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">multi_index_df</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">(</span><span class="n">rids</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;rid&quot;</span><span class="p">),</span> <span class="n">columns</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">(</span><span class="n">cids</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;cid&quot;</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">data_df</span><span class="p">,</span> <span class="n">row_metadata_df</span><span class="p">,</span> <span class="n">col_metadata_df</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Connectivity Map at Broad Institute of MIT and Harvard, Inc..
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'1.0.2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
