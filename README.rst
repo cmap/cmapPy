@@ -1,6 +1,15 @@
+.. image:: https://badge.fury.io/py/cmapPy.svg
+    :target: https://badge.fury.io/py/cmapPy
+
+.. image:: https://readthedocs.org/projects/cmappy/badge/?version=latest
+    :target: http://cmappy.readthedocs.io/en/latest/?badge=latest
+    :alt: Documentation Status
+
 **cmapPy:** Tools for interacting with .gctx and .gct files, and other Connectivity Map resources
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 **Connectivity Map, Broad Institute of MIT and Harvard**
+
+`<http://cmappy.readthedocs.io/en/latest/>`_
 
 For more information on the file formats and available resources, please see `clue.io/gctx <https://clue.io/gctx>`_.
 
