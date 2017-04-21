@@ -9,6 +9,8 @@
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 **Connectivity Map, Broad Institute of MIT and Harvard**
 
+`<http://cmappy.readthedocs.io/en/latest/>`_
+
 For more information on the file formats and available resources, please see `clue.io/gctx <https://clue.io/gctx>`_.
 
 Maintainer
