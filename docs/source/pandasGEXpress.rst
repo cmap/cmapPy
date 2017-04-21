@@ -3,6 +3,10 @@
 pandasGEXpress
 ==============
 
+pandasGEXpress package (integrated with Python's `pandas <http://pandas.pydata.org/>`_ package) allowing users to easily read, modify, and write .gct and .gctx files. Note that .gctx files are more performant than .gct, and we recommend their use. 
+
+.. image:: pandasgexpress_fig.png
+
 GCToo Class
 -----------
 .. autoclass:: cmapPy.pandasGEXpress.GCToo.GCToo
