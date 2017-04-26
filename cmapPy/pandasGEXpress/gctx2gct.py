@@ -34,10 +34,10 @@ def build_parser():
 		help="Whether to print a bunch of output.", action="store_true", default=False)
 	return parser
 
-
-def main(args):
+def main():
+	args = build_parser().parse_args(sys.argv[1:])
+	setup_logger.setup(verbose=args.verbose)
 	in_gctoo = parse_gctx.parse(args.filename, convert_neg_666=False)
-
 	if args.output_filepath == None:
 		out_name = str.split(in_gctoo.src, "/")[-1].split(".")[0]
 	else:
@@ -45,10 +45,5 @@ def main(args):
 		
 	write_gct.write(in_gctoo, out_name)
 
-
 if __name__ == "__main__":
-	args = build_parser().parse_args(sys.argv[1:])
-
-	setup_logger.setup(verbose=args.verbose)
-
-	main(args)
+	main()

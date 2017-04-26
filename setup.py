@@ -6,10 +6,6 @@ from os import path
 
 here = path.abspath(path.dirname(__file__))
 
-# Get the long description from the README file
-with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
-    long_description = f.read()
-
 # Make sure isn't using Python 3, since we currently don't support that
 import sys
 if not sys.version_info[0] == 2:
@@ -21,10 +17,10 @@ setup(
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='1.0.1',
+    version='1.0.7',
 
     description='Assorted tools for interacting with .gct, .gctx files and other Connectivity Map (Broad Institute) data/tools',
-    long_description="",
+    long_description="cmapPy: Tools for interacting with .gctx and .gct files, and other Connectivity Map resources. See our documentation at http://cmappy.readthedocs.io/en/latest/, and for more information on the file formats and available resources, please see clue.io/gctx.",
 
     # The project's main homepage.
     url='https://github.com/cmap/cmapPy',
@@ -62,7 +58,7 @@ setup(
 
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().
-    packages=find_packages(exclude=['contrib', 'docs', 'tests']),
+    packages=find_packages(exclude=['contrib','docs', 'tests']),
 
     # List run-time dependencies here.  These will be installed by pip when
     # your project is installed. For an analysis of "install_requires" vs pip's
@@ -91,7 +87,7 @@ setup(
     # To provide executable scripts, use entry points in preference to the
     # "scripts" keyword. Entry points provide cross-platform support and allow
     # pip to create the appropriate form of executable for the target platform.
-    entry_points={},
+    entry_points={'console_scripts': ['gctx2gct=cmapPy.pandasGEXpress.gctx2gct:main', 'gct2gctx=cmapPy.pandasGEXpress.gct2gctx:main', 'concat_gctoo=cmapPy.pandasGEXpress.concat_gctoo:main']},
 
     tests_require=['unittest']
 )

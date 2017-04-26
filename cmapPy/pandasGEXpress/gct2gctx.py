@@ -35,7 +35,9 @@ def build_parser():
 		help="Whether to print a bunch of output.", action="store_true", default=False)
 	return parser
 
-def main(args):
+def main():
+	args = build_parser().parse_args(sys.argv[1:])
+	setup_logger.setup(verbose=args.verbose)
 	in_gctoo = parse_gct.parse(args.filename, convert_neg_666=False)
 	logger.debug("Original out name: {}".format(in_gctoo.src))
 
@@ -48,8 +50,4 @@ def main(args):
 
 
 if __name__ == "__main__":
-	args = build_parser().parse_args(sys.argv[1:])
-
-	setup_logger.setup(verbose=args.verbose)
-
-	main(args)
+	main()

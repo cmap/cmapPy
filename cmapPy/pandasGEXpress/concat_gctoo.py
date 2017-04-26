@@ -87,7 +87,10 @@ def build_parser():
     return parser
 
 
-def main(args):
+def main():
+    # get args
+    args = build_parser().parse_args(sys.argv[1:])
+    setup_logger.setup(verbose=args.verbose)
 
     # Get files directly
     if args.input_filepaths is not None:
@@ -423,7 +426,4 @@ def reset_ids_in_meta_df(meta_df):
 
 
 if __name__ == "__main__":
-    args = build_parser().parse_args(sys.argv[1:])
-    setup_logger.setup(verbose=args.verbose)
-
-    main(args)
+    main()
