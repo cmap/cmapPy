@@ -13,6 +13,8 @@
 
   
   
+  
+  
 
   
 
@@ -30,6 +32,9 @@
   
 
   
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="cmapPy 1.0.2 documentation" href="index.html"/> 
 
   
@@ -39,6 +44,7 @@
 
 <body class="wy-body-for-nav" role="document">
 
+   
   <div class="wy-grid-for-nav">
 
     
@@ -79,7 +85,10 @@
           
             
             
-                <ul>
+              
+            
+            
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="build.html">Installation</a></li>
 </ul>
 <ul>
@@ -103,8 +112,10 @@
 
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">cmapPy</a>
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">cmapPy</a>
+        
       </nav>
 
 
@@ -113,23 +124,40 @@
         <div class="rst-content">
           
 
- 
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="index.html">Docs</a> &raquo;</li>
-      
-    <li>Available Modules</li>
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Available Modules</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="_sources/available_modules.txt" rel="nofollow"> View page source</a>
+            
+            <a href="_sources/available_modules.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -148,12 +176,21 @@
 <h2>pandasGEXpress<a class="headerlink" href="#pandasgexpress" title="Permalink to this headline">¶</a></h2>
 <blockquote>
 <div><p>A package (integrated with Python&#8217;s pandas package) allowing users to easily read, modify, and write .gct and .gctx files.</p>
+<p>Also features the following command-line tools:</p>
+<blockquote>
+<div><p><code class="docutils literal"><span class="pre">gct2gctx</span></code>: converts .gct to .gctx file. Type <code class="docutils literal"><span class="pre">gct2gctx</span> <span class="pre">-h</span></code> for help.</p>
+<p><code class="docutils literal"><span class="pre">gctx2gct</span></code>: converts .gctx to .gct file. Type <code class="docutils literal"><span class="pre">gctx2gct</span> <span class="pre">-h</span></code> for help.</p>
+<p><code class="docutils literal"><span class="pre">concat_gctoo</span></code>: Concats two or more .gct/x files as specified by user. Type <code class="docutils literal"><span class="pre">concat_gctoo</span> <span class="pre">-h</span></code> for help.</p>
+</div></blockquote>
 <p>Maintainer: Oana Enache, <a class="reference external" href="mailto:oana&#37;&#52;&#48;broadinstitute&#46;org">oana<span>&#64;</span>broadinstitute<span>&#46;</span>org</a></p>
 </div></blockquote>
 </div>
 </div>
 
 
+           </div>
+           <div class="articleComments">
+            
            </div>
           </div>
           <footer>
@@ -188,7 +225,8 @@
             VERSION:'1.0.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
         };
     </script>
       <script type="text/javascript" src="_static/jquery.js"></script>
