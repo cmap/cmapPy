@@ -15,7 +15,7 @@ Other resources
 ---------------
 
 * `GitHub project <https://github.com/cmap/cmapPy>`_
-
+* `Tutorial, using data from GEO <https://github.com/cmap/cmapPy/blob/master/tutorials/cmapPy_pandasGEXpress_tutorial.ipynb>`_
 
 Introductory info
 -----------------
