@@ -70,8 +70,6 @@ pandasGEXpress represents .gctx and .gct files as instances of a GCToo object; i
  
 * ``GCToo.py``: main class for storing contents of .gctx, .gct files.
 * ``concat_gctoo.py``: Concatenate (horizontally or vertically) two or more GCToo instances in a  Python session or two {.gct, .gctx} files from the command line. 
-* ``gct2gctx.py``: Command line tool to convert a .gct file to .gctx.
-* ``gct2gctx.py``: Command line tool to convert a .gctx file to a .gct
 * ``parse.py``: Parse in .gct, .gctx files to a new GCToo instance
 * ``plate_grp.py``: Read and write .grp files to a list.
 * ``random_slice.py``: Slices a random subset of a GCToo file to a specified size. 
@@ -79,6 +77,12 @@ pandasGEXpress represents .gctx and .gct files as instances of a GCToo object; i
 * ``write_gct.py``: Write a .gct file from a GCToo instance. 
 * ``write_gctx.py``: Write a .gctx file from a GCToo instance.
 A suite of unit tests is also included in the ``/tests`` directory. Sample files for testing can be found in ``/tests/functional_tests``.
+
+**Command line tools**
+
+* ``gct2gctx``: Command line tool to convert a .gct file to .gctx.
+* ``gct2gctx``: Command line tool to convert a .gctx file to a .gct
+* ``concat_gctoo``: Command line tool to stack .gct/x objects either vertically or horizontally 
 
 Tutorials and example use
 """""""""""""""""""""""""
