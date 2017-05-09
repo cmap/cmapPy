@@ -16,8 +16,6 @@ For more information on the file formats and available resources, please see `cl
 Maintainer
 ==========
 
-Oana Enache
-
 oana@broadinstitute.org
 
 Requirements
