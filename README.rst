@@ -64,7 +64,7 @@ Subpackages included
 
 Contents Overview
 """""""""""""""""
-pandasGEXpress represents .gctx and .gct files as instances of a GCToo object; in essence, this is a class that contains and maintains requirements between separate pandas DataFrames of the files' expression data, row metadata, and column metadata and some file attributes (source, version). More details on `clue.io/gctx <https://clue.io/gctx>`_. **Note that we currently only support GCTX version 1.0 and GCT versions 1.2 and 1.3**. 
+pandasGEXpress represents .gctx and .gct files as instances of a GCToo object; in essence, this is a class that contains and maintains requirements between separate pandas DataFrames of the files' expression data, row metadata, and column metadata and some file attributes (source, version). More details on `clue.io/code <https://clue.io/code>`_. **Note that we currently only support GCTX version 1.0 and GCT versions 1.2 and 1.3**. 
  
 * ``GCToo.py``: main class for storing contents of .gctx, .gct files.
 * ``concat_gctoo.py``: Concatenate (horizontally or vertically) two or more GCToo instances in a  Python session or two {.gct, .gctx} files from the command line. 
@@ -84,7 +84,7 @@ A suite of unit tests is also included in the ``/tests`` directory. Sample files
 
 Tutorials and example use
 """""""""""""""""""""""""
-We recommend referencing our Tutorial section on `clue.io/gctx <https://clue.io/gctx>`_ to see further demonstrations on how one might use a combination of cmapPy and pandas methods for common data analysis and manipulation tasks. 
+We recommend referencing our Tutorial section on `clue.io/code <https://clue.io/code>`_ to see further demonstrations on how one might use a combination of cmapPy and pandas methods for common data analysis and manipulation tasks. 
 
 ***************
 2) cmap_api_client
