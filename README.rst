@@ -11,7 +11,7 @@
 
 `<http://cmappy.readthedocs.io/en/latest/>`_
 
-For more information on the file formats and available resources, please see `clue.io/gctx <https://clue.io/gctx>`_.
+For more information on the file formats and available resources, please see `clue.io/code <https://clue.io/code>`_.
 
 Maintainer
 ==========
