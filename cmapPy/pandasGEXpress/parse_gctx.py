@@ -34,7 +34,8 @@ def parse(gctx_file_path, convert_neg_666=True, rid=None, cid=None,
 			(see Note below for more details on this). Default = False.
 		- rid (list of strings): only read the row ids in this list from the gctx. Default=None. 
 		- cid (list of strings): only read the column ids in this list from the gctx. Default=None. 
-		- meta_only (bool): Whether to load data + metadata (if True), or just row/column metadata (if false)
+		- meta_only (bool): Whether to load data + metadata (if False), or just row/column metadata (if True) 
+			as a GCToo instance with no data_df
 		- make_multiindex (bool): whether to create a multi-index df combining
 			the 3 component dfs
 
