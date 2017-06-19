@@ -186,14 +186,14 @@ def read_version_and_dims(file_path):
 def parse_into_3_df(file_path, num_data_rows, num_data_cols, num_row_metadata, num_col_metadata, nan_values):
     # Read the gct file beginning with line 3
     full_df = pd.read_csv(file_path, sep="\t", header=None, skiprows=2,
-                      dtype=str, na_values=nan_values, keep_default_na=False)
+                          dtype=str, na_values=nan_values, keep_default_na=False)
 
     # Check that full_df is the size we expect
     assert full_df.shape == (num_col_metadata + num_data_rows + 1,
-                         num_row_metadata + num_data_cols + 1), (
-                         "The shape of full_df is not as expected:" + 
-                         " data is {} x {} but there are {} row meta fields" + 
-                         "and {} col fields".format(num_data_rows, num_data_cols, num_row_metadata, num_col_metadata))
+                             num_row_metadata + num_data_cols + 1), (
+        ("The shape of full_df is not as expected: data is {} x {} " +
+         "but there are {} row meta fields and {} col fields").format(
+            num_data_rows, num_data_cols, num_row_metadata, num_col_metadata))
 
     # Assemble metadata dataframes
     row_metadata = assemble_row_metadata(full_df, num_col_metadata, num_data_rows, num_row_metadata)
