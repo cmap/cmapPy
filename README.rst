@@ -79,7 +79,7 @@ A suite of unit tests is also included in the ``/tests`` directory. Sample files
 **Command line tools**
 
 * ``gct2gctx``: Command line tool to convert a .gct file to .gctx.
-* ``gct2gctx``: Command line tool to convert a .gctx file to a .gct
+* ``gct2gctx``: Command line tool to convert a .gct file to a .gctx
 * ``concat_gctoo``: Command line tool to stack .gct/x objects either vertically or horizontally 
 
 Tutorials and example use
