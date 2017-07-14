@@ -174,6 +174,8 @@ def hstack(gctoos, fields_to_remove=[], reset_ids=False):
         col_meta_dfs.append(g.col_metadata_df)
         data_dfs.append(g.data_df)
 
+    logger.debug("shapes of row_meta_dfs:  {}".format([x.shape for x in row_meta_dfs]))
+
     # Concatenate row metadata
     all_row_metadata_df = assemble_common_meta(row_meta_dfs, fields_to_remove)
 
@@ -184,8 +186,8 @@ def hstack(gctoos, fields_to_remove=[], reset_ids=False):
     all_data_df = assemble_data(data_dfs, "horiz")
 
     # Make sure df shapes are correct
-    assert all_data_df.shape[0] == all_row_metadata_df.shape[0], "Number of rows is incorrect."
-    assert all_data_df.shape[1] == all_col_metadata_df.shape[0], "Number of columns is incorrect."
+    assert all_data_df.shape[0] == all_row_metadata_df.shape[0], "Number of rows in metadata does not match number of rows in data - all_data_df.shape[0]:  {}  all_row_metadata_df.shape[0]:  {}".format(all_data_df.shape[0], all_row_metadata_df.shape[0])
+    assert all_data_df.shape[1] == all_col_metadata_df.shape[0], "Number of columns in data does not match number of columns metadata - all_data_df.shape[1]:  {}  all_col_metadata_df.shape[0]:  {}".format(all_data_df.shape[1], all_col_metadata_df.shape[0])
     
     # If requested, reset sample ids to be unique integers and move old sample
     # ids into column metadata
@@ -277,7 +279,9 @@ def assemble_common_meta(common_meta_dfs, fields_to_remove):
         all_meta_df = pd.DataFrame(index=all_meta_df_with_dups.index.unique())
 
     else:
+        all_meta_df_with_dups["concat_gctoo_column_for_index"] = all_meta_df_with_dups.index
         all_meta_df = all_meta_df_with_dups.drop_duplicates()
+	all_meta_df.drop("concat_gctoo_column_for_index", axis=1, inplace=True)
 
     logger.debug("all_meta_df_with_dups.shape: {}".format(all_meta_df_with_dups.shape))
     logger.debug("all_meta_df.shape: {}".format(all_meta_df.shape))

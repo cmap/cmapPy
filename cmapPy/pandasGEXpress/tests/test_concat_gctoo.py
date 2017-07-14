@@ -73,6 +73,7 @@ class TestConcatGctoo(unittest.TestCase):
         with self.assertRaises(AssertionError) as e:
             _ = cg.assemble_common_meta([meta1.copy(), meta2.copy()], [])
         self.assertIn("r3", str(e.exception))
+	logger.debug("rhd3 header needs to be removed - e.exception:  {}".format(e.exception))
 
         out_meta1 = cg.assemble_common_meta([meta1.copy(), meta2.copy()], ["rhd3"])
         logger.debug("out_meta1:\n{}".format(out_meta1))
@@ -129,6 +130,12 @@ class TestConcatGctoo(unittest.TestCase):
         logger.debug("empty_meta.empty: {}".format(empty_meta.empty))
         out_meta4 = cg.assemble_common_meta([empty_meta, empty_meta], [])
         pd.util.testing.assert_frame_equal(out_meta4, empty_meta)
+
+        #metadata has duplicates but index is unique
+        meta5 = pd.DataFrame({"rhd1":[0,0,1]}, index=range(3))
+        meta6 = pd.DataFrame({"rhd1":[0,0,1]}, index=range(3))
+        out_meta5 = cg.assemble_common_meta([meta5, meta6], [])
+        self.assertEqual((3,1), out_meta5.shape)
 
     def test_assemble_concatenated_meta(self):
         # Happy path
