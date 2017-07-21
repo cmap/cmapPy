@@ -19,7 +19,7 @@ __email__ = "oana@broadinstitute.org"
 logger = logging.getLogger(setup_logger.LOGGER_NAME)
 
 def parse(file_path, convert_neg_666=True, rid=None, cid=None, ridx=None, cidx=None,
-		  meta_only=False, make_multiindex=False):
+		  row_meta_only=False, col_meta_only=False, make_multiindex=False):
 	""" 
 	Identifies whether file_path corresponds to a .gct or .gctx file and calls the
 	correct corresponding parse method.
