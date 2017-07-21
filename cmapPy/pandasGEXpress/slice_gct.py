@@ -46,7 +46,11 @@ def build_parser():
     return parser
 
 
-def main(args):
+def main():
+    # get args
+    args = build_parser().parse_args(sys.argv[1:])
+    setup_logger.setup(verbose=args.verbose)
+
     # Read the input gct
     in_gct = pg.parse(args.in_gct_path)
 
@@ -186,7 +190,4 @@ def slice_gctoo(gctoo, row_bool=None, col_bool=None, rid=None, cid=None, exclude
 
 
 if __name__ == "__main__":
-    args = build_parser().parse_args(sys.argv[1:])
-    setup_logger.setup(verbose=args.verbose)
-
-    main(args)
+    main()
