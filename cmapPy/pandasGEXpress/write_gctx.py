@@ -16,6 +16,14 @@ col_meta_group_node = "/0/META/COL"
 version_attr = "version"
 version_number = "GCTX1.0"
 
+def write_gctx(gctoo_object, out_file_name, convert_back_to_neg_666 = True):
+	"""
+	Essentially the same as write() method; enables user to call write_gctx() from
+	cmapPy instead of write_gctx.write()
+
+	Included as a separate method for backwards compatibility.
+	"""
+	write(gctoo_object, out_file_name, convert_back_to_neg_666)
 
 def write(gctoo_object, out_file_name, convert_back_to_neg_666 = True):
 	"""

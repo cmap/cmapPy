@@ -110,7 +110,15 @@ class TestParseGctx(unittest.TestCase):
 
 		assert_frame_equal(mg7.data_df, mg10.data_df)
 		assert_frame_equal(mg7.row_metadata_df, mg10.row_metadata_df)
-		assert_frame_equal(mg7.col_metadata_df, mg10.col_metadata_df)			
+		assert_frame_equal(mg7.col_metadata_df, mg10.col_metadata_df)	
+
+		# test with row_meta_only 
+		mg11 = parse_gctx.parse("functional_tests/mini_gctoo_for_testing.gctx", row_meta_only=True)
+		assert_frame_equal(mg11, mg1.row_metadata_df)
+
+		# test with col_meta_only
+		mg12 = parse_gctx.parse("functional_tests/mini_gctoo_for_testing.gctx", col_meta_only=True)
+		assert_frame_equal(mg12, mg1.col_metadata_df)		
 
 	def test_parse_rid_as_entrez_id(self):
 		input_file = "functional_tests/test_parse_gctx_rid_entrez_id.gctx"

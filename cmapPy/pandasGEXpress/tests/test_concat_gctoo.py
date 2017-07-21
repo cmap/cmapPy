@@ -224,28 +224,6 @@ class TestConcatGctoo(unittest.TestCase):
         pd.util.testing.assert_frame_equal(meta_df, e_meta_df)
         pd.util.testing.assert_frame_equal(data_df, e_data_df)
 
-    def test_main(self):
-        args_list = ["-d", "vert", "-if", "my_fake_file"]
-	args = cg.build_parser().parse_args(args_list)
-	logger.debug("unhappy path - input file list only contains 1 entry - args:  {}".format(args))
-	cg.main(args)
-
-	args_list[2] = "--file_wildcard"
-	args_list[3] = "not_going_to_find_this_file_3874873784378389"
-        args = cg.build_parser().parse_args(args_list)
-	logger.debug("unhappy path - file_wildcard does not match any files - args:  {}".format(args))
-	with self.assertRaises(Exception) as context:
-            cg.main(args)
-        self.assertIsNotNone(context.exception)
-	logger.debug("context.exception:  {}".format(context.exception))
-	self.assertIn("No files were found", str(context.exception), "the expected exception was not thrown")
-
-        args_list[3] = "functional_tests/test_concat_gctoo_test_main_fake_empty_file.gct"
-        args = cg.build_parser().parse_args(args_list)
-	logger.debug("unhappy path - file_wildcard matches just 1 file - args:  {}".format(args))
-        cg.main(args)
-
-
 if __name__ == "__main__":
     setup_logger.setup(verbose=True)
 

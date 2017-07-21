@@ -21,7 +21,7 @@ row_meta_group_node = "/0/META/ROW"
 col_meta_group_node = "/0/META/COL"
 
 def parse(gctx_file_path, convert_neg_666=True, rid=None, cid=None, 
-		ridx=None, cidx=None, meta_only=False, make_multiindex=False):
+		ridx=None, cidx=None, row_meta_only=False, col_meta_only=False, make_multiindex=False):
 	"""
 	Primary method of script. Reads in path to a gctx file and parses into GCToo object.
 
@@ -54,10 +54,6 @@ def parse(gctx_file_path, convert_neg_666=True, rid=None, cid=None,
 	# open file 
 	gctx_file = h5py.File(full_path, "r")
 
-	# read in row metadata 
-	row_dset = gctx_file[row_meta_group_node]
-	row_meta = parse_metadata_df("row", row_dset, convert_neg_666)
-
 	# read in col metadata 
 	col_dset = gctx_file[col_meta_group_node]
 	col_meta = parse_metadata_df("col", col_dset, convert_neg_666)
@@ -65,28 +61,52 @@ def parse(gctx_file_path, convert_neg_666=True, rid=None, cid=None,
 	# validate optional input ids & get indexes to subset by
 	(sorted_ridx, sorted_cidx) = check_and_order_id_inputs(rid, ridx, cid, cidx, row_meta, col_meta)
 
-	if meta_only:
-		data_df = pd.DataFrame(index = row_meta.index[sorted_ridx], 
-			columns = col_meta.index[sorted_cidx])
+	if row_meta_only:
+		# read in row metadata 
+		row_dset = gctx_file[row_meta_group_node]
+		row_meta = parse_metadata_df("row", row_dset, convert_neg_666)
+		gctx_file.close()
+
+		# slice if specified, then return
+		row_meta = row_meta.iloc[sorted_ridx]
+		return row_meta 
+	elif col_meta_only:
+		# read in col metadata 
+		col_dset = gctx_file[col_meta_group_node]
+		col_meta = parse_metadata_df("col", col_dset, convert_neg_666)
+		gctx_file.close()
+
+		# slice if specified, then return
+		col_meta = col_meta.iloc[sorted_cidx]
+		return col_meta
 	else:
+		# read in row metadata 
+		row_dset = gctx_file[row_meta_group_node]
+		row_meta = parse_metadata_df("row", row_dset, convert_neg_666)
+
+		# read in col metadata 
+		col_dset = gctx_file[col_meta_group_node]
+		col_meta = parse_metadata_df("col", col_dset, convert_neg_666)
+
+		# (if slicing) slice metadata 
+		row_meta = row_meta.iloc[sorted_ridx]
+		col_meta = col_meta.iloc[sorted_cidx]
+
+
 		data_dset = gctx_file[data_node]
 		data_df = parse_data_df(data_dset, sorted_ridx, sorted_cidx, row_meta, col_meta)
 
-	# (if slicing) slice metadata 
-	row_meta = row_meta.iloc[sorted_ridx]
-	col_meta = col_meta.iloc[sorted_cidx]
+		# get version
+		my_version = gctx_file.attrs[version_node]
+		if type(my_version) == np.ndarray:
+			my_version = my_version[0]
 
-	# get version
-	my_version = gctx_file.attrs[version_node]
-	if type(my_version) == np.ndarray:
-		my_version = my_version[0]
+		gctx_file.close()
 
-	gctx_file.close()
-
-	# make GCToo instance 
-	my_gctoo = GCToo.GCToo(data_df=data_df, row_metadata_df=row_meta, col_metadata_df=col_meta,
-		src=full_path, version=my_version, make_multiindex=make_multiindex)
-	return my_gctoo
+		# make GCToo instance 
+		my_gctoo = GCToo.GCToo(data_df=data_df, row_metadata_df=row_meta, col_metadata_df=col_meta,
+			src=full_path, version=my_version, make_multiindex=make_multiindex)
+		return my_gctoo
 
 def check_and_order_id_inputs(rid, ridx, cid, cidx, row_meta_df, col_meta_df):
 	"""
