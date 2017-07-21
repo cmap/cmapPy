@@ -17,7 +17,7 @@ setup(
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='1.0.8',
+    version='1.1.0',
 
     description='Assorted tools for interacting with .gct, .gctx files and other Connectivity Map (Broad Institute) data/tools',
     long_description="cmapPy: Tools for interacting with .gctx and .gct files, and other Connectivity Map resources. See our documentation at http://cmappy.readthedocs.io/en/latest/, and for more information on the file formats and available resources, please see clue.io/gctx.",
@@ -38,7 +38,7 @@ setup(
         #   3 - Alpha
         #   4 - Beta
         #   5 - Production/Stable
-        'Development Status :: 4 - Beta',
+        'Development Status :: 3 - Alpha',
 
         # Indicate who your project is intended for
         'Intended Audience :: Science/Research',
@@ -87,7 +87,8 @@ setup(
     # To provide executable scripts, use entry points in preference to the
     # "scripts" keyword. Entry points provide cross-platform support and allow
     # pip to create the appropriate form of executable for the target platform.
-    entry_points={'console_scripts': ['gctx2gct=cmapPy.pandasGEXpress.gctx2gct:main', 'gct2gctx=cmapPy.pandasGEXpress.gct2gctx:main', 'concat_gctoo=cmapPy.pandasGEXpress.concat_gctoo:main']},
+    entry_points={'console_scripts': ['gctx2gct=cmapPy.pandasGEXpress.gctx2gct:main', 'gct2gctx=cmapPy.pandasGEXpress.gct2gctx:main', 
+        'concat_gctoo=cmapPy.pandasGEXpress.concat_gctoo:main', 'slice_gct=cmapPy.pandasGEXpress.slice_gct:main']},
 
     tests_require=['unittest']
 )
