@@ -65,7 +65,6 @@ import pandas as pd
 import numpy as np 
 import os.path
 import GCToo 
-import slice_gct
 
 __author__ = "Lev Litichevskiy, Oana Enache"
 __email__ = "lev@broadinstitute.org"
@@ -102,6 +101,15 @@ def parse(file_path, convert_neg_666=True, rid=None, cid=None, make_multiindex=F
         into numpy.nan values, the pandas default.
 
     """
+    # Throw error if user attempts to slice
+    if (rid is not None) or (cid is not None):
+        error_msg = "Slicing is not available through parse for .gct files; if you'd like to slice, " +
+            "please parse the entire file in (you have to do this anyway!) and then use methods from " + 
+            "the slice_gct module."
+        logger.error(error_msg)
+        raise(Exception(error_msg))
+
+
     nan_values = [
         "#N/A", "N/A", "NA", "#NA", "NULL", "NaN", "-NaN",
         "nan", "-nan", "#N/A!", "na", "NA", "None"]
@@ -129,10 +137,6 @@ def parse(file_path, convert_neg_666=True, rid=None, cid=None, make_multiindex=F
     # Create the gctoo object and assemble 3 component dataframes
     gctoo_obj = create_gctoo_obj(file_path, version,
         row_metadata, col_metadata, data, make_multiindex)
-   
-    # If requested, slice gctoo
-    if (rid is not None) or (cid is not None):
-        gctoo_obj = slice_gct.slice_gctoo(gctoo_obj, rid=rid, cid=cid)
 
     return gctoo_obj
 
