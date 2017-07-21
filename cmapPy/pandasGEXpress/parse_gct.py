@@ -103,9 +103,9 @@ def parse(file_path, convert_neg_666=True, rid=None, cid=None, make_multiindex=F
     """
     # Throw error if user attempts to slice
     if (rid is not None) or (cid is not None):
-        error_msg = "Slicing is not available through parse for .gct files; if you'd like to slice, " +
+        error_msg = ("Slicing is not available through parse for .gct files; if you'd like to slice, " +
             "please parse the entire file in (you have to do this anyway!) and then use methods from " + 
-            "the slice_gct module."
+            "the slice_gct module.")
         logger.error(error_msg)
         raise(Exception(error_msg))
 
