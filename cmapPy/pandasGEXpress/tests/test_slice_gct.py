@@ -59,29 +59,6 @@ class TestSliceGct(unittest.TestCase):
             out_gct = slice_gct.slice_gctoo(IN_GCT, cid=["e", "f", "g"], col_bool=[True, True, False])
         self.assertIn("cid and col_bool", str(e.exception))
 
-    def test_main(self):
-        in_gct_path = os.path.join(FUNCTIONAL_TESTS_DIR, "test_slice_in.gct")
-        rid_grp_path = os.path.join(FUNCTIONAL_TESTS_DIR, "test_slice_rid.grp")
-        out_name = os.path.join(FUNCTIONAL_TESTS_DIR, "test_slice_out.gct")
-        expected_out_path = os.path.join(FUNCTIONAL_TESTS_DIR, "test_slice_expected.gct")
-
-        args_string = "-i {} --rid {} -ec {} -o {}".format(
-            in_gct_path, rid_grp_path, "f", out_name)
-        args = slice_gct.build_parser().parse_args(args_string.split())
-
-        # Run main method
-        slice_gct.main(args)
-
-        # Compare output to expected
-        out_gct = pg.parse(out_name)
-        expected_gct = pg.parse(expected_out_path)
-
-        pd.util.testing.assert_frame_equal(out_gct.data_df, expected_gct.data_df)
-        pd.util.testing.assert_frame_equal(out_gct.row_metadata_df, expected_gct.row_metadata_df)
-        pd.util.testing.assert_frame_equal(out_gct.col_metadata_df, expected_gct.col_metadata_df)
-
-        # Clean up
-        os.remove(out_name)
 
 if __name__ == '__main__':
     unittest.main()

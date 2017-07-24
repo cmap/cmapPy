@@ -44,12 +44,14 @@ def make(convert_neg_666=True):
 	mini_meta_dict["distil_nsample"] = distil_nsample
 	mini_meta_dict["mfc_plate_id"] = mfc_plate_id
 	mini_row_metadata = pandas.DataFrame.from_dict(mini_meta_dict)
+
+	mini_row_metadata = mini_row_metadata.astype(str)	
+	mini_row_metadata = mini_row_metadata.apply(lambda x: pandas.to_numeric(x, errors="ignore"))
+
 	if convert_neg_666:
 		mini_row_metadata = mini_row_metadata.replace([-666, "-666", -666.0], [numpy.nan, numpy.nan, numpy.nan])
 	else:
 		mini_row_metadata = mini_row_metadata.replace([-666, -666.0], ["-666", "-666"]) 
-
-	mini_row_metadata = mini_row_metadata.astype(str)	mini_row_metadata = mini_row_metadata.apply(lambda x: pandas.to_numeric(x, errors="ignore"))
 
 	# for now (at least) col and row metadata are the same
 	mini_col_metadata = mini_row_metadata.copy()

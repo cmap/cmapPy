@@ -34,8 +34,10 @@ def parse(gctx_file_path, convert_neg_666=True, rid=None, cid=None,
 			(see Note below for more details on this). Default = False.
 		- rid (list of strings): only read the row ids in this list from the gctx. Default=None. 
 		- cid (list of strings): only read the column ids in this list from the gctx. Default=None. 
-		- meta_only (bool): Whether to load data + metadata (if False), or just row/column metadata (if True) 
-			as a GCToo instance with no data_df
+		- row_meta_only (bool): Whether to load data + metadata (if False), or just row metadata (if True) 
+			as pandas DataFrame
+		- col_meta_only (bool): Whether to load data + metadata (if False), or just col metadata (if True) 
+			as pandas DataFrame
 		- make_multiindex (bool): whether to create a multi-index df combining
 			the 3 component dfs
 
@@ -54,17 +56,14 @@ def parse(gctx_file_path, convert_neg_666=True, rid=None, cid=None,
 	# open file 
 	gctx_file = h5py.File(full_path, "r")
 
-	# read in col metadata 
-	col_dset = gctx_file[col_meta_group_node]
-	col_meta = parse_metadata_df("col", col_dset, convert_neg_666)
-
-	# validate optional input ids & get indexes to subset by
-	(sorted_ridx, sorted_cidx) = check_and_order_id_inputs(rid, ridx, cid, cidx, row_meta, col_meta)
-
 	if row_meta_only:
 		# read in row metadata 
 		row_dset = gctx_file[row_meta_group_node]
 		row_meta = parse_metadata_df("row", row_dset, convert_neg_666)
+
+		# validate optional input ids & get indexes to subset by
+		(sorted_ridx, sorted_cidx) = check_and_order_id_inputs(rid, ridx, cid, cidx, row_meta, None)
+
 		gctx_file.close()
 
 		# slice if specified, then return
@@ -74,6 +73,10 @@ def parse(gctx_file_path, convert_neg_666=True, rid=None, cid=None,
 		# read in col metadata 
 		col_dset = gctx_file[col_meta_group_node]
 		col_meta = parse_metadata_df("col", col_dset, convert_neg_666)
+
+		# validate optional input ids & get indexes to subset by
+		(sorted_ridx, sorted_cidx) = check_and_order_id_inputs(rid, ridx, cid, cidx, None, col_meta)
+
 		gctx_file.close()
 
 		# slice if specified, then return
@@ -88,13 +91,15 @@ def parse(gctx_file_path, convert_neg_666=True, rid=None, cid=None,
 		col_dset = gctx_file[col_meta_group_node]
 		col_meta = parse_metadata_df("col", col_dset, convert_neg_666)
 
-		# (if slicing) slice metadata 
-		row_meta = row_meta.iloc[sorted_ridx]
-		col_meta = col_meta.iloc[sorted_cidx]
-
+		# validate optional input ids & get indexes to subset by
+		(sorted_ridx, sorted_cidx) = check_and_order_id_inputs(rid, ridx, cid, cidx, row_meta, col_meta)
 
 		data_dset = gctx_file[data_node]
 		data_df = parse_data_df(data_dset, sorted_ridx, sorted_cidx, row_meta, col_meta)
+
+		# (if slicing) slice metadata 
+		row_meta = row_meta.iloc[sorted_ridx]
+		col_meta = col_meta.iloc[sorted_cidx]
 
 		# get version
 		my_version = gctx_file.attrs[version_node]
@@ -111,13 +116,11 @@ def parse(gctx_file_path, convert_neg_666=True, rid=None, cid=None,
 def check_and_order_id_inputs(rid, ridx, cid, cidx, row_meta_df, col_meta_df):
 	"""
 	Makes sure that (if entered) id inputs entered are of one type (string id or index)
-
 	Input:
 		- rid (list or None): if not None, a list of rids 
 		- ridx (list or None): if not None, a list of indexes 
 		- cid (list or None): if not None, a list of cids
 		- cidx (list or None): if not None, a list of indexes 
-
 	Output:
 		- a tuple of the ordered ridx and cidx 
 	"""
@@ -125,11 +128,10 @@ def check_and_order_id_inputs(rid, ridx, cid, cidx, row_meta_df, col_meta_df):
 	(col_type, col_ids) = check_id_idx_exclusivity(cid, cidx)
 
 	row_ids = check_and_convert_ids(row_type, row_ids, row_meta_df)
-	col_ids = check_and_convert_ids(col_type, col_ids, col_meta_df)
-
 	ordered_ridx = get_ordered_idx(row_type, row_ids, row_meta_df)
-	ordered_cidx = get_ordered_idx(col_type, col_ids, col_meta_df)
 
+	col_ids = check_and_convert_ids(col_type, col_ids, col_meta_df)
+	ordered_cidx = get_ordered_idx(col_type, col_ids, col_meta_df)
 	return (ordered_ridx, ordered_cidx)
 
 def check_id_idx_exclusivity(id, idx):
@@ -156,13 +158,15 @@ def check_id_idx_exclusivity(id, idx):
 		return (None, [])
 
 def check_and_convert_ids(id_type, id_list, meta_df):
-	if id_type == "id":
-		id_list = convert_ids_to_meta_type(id_list, meta_df)
-		check_id_validity(id_list, meta_df)
-	else:
-		check_idx_validity(id_list, meta_df)
-	
-	return id_list
+	if meta_df is not None:
+		if id_type == "id":
+			id_list = convert_ids_to_meta_type(id_list, meta_df)
+			check_id_validity(id_list, meta_df)
+		else:
+			check_idx_validity(id_list, meta_df)	
+		return id_list
+	else: 
+		return None
 
 def check_id_validity(id_list, meta_df):
 	id_set = set(id_list)
@@ -193,31 +197,29 @@ def convert_ids_to_meta_type(id_list, meta_df):
 def get_ordered_idx(id_type, id_list, meta_df):
 	"""
 	Gets index values corresponding to ids to subset and orders them.
-
 	Input:
 		- id_type (str): either "id", "idx" or None
 		- id_list (list): either a list of indexes or id names 
-
 	Output:
 		- a sorted list of indexes to subset a dimension by
 	"""
-	if id_type is None:
-		id_list = range(0, len(list(meta_df.index)))
-	elif id_type == "id":
-		id_list = [list(meta_df.index).index(i) for i in id_list]
-
-	return sorted(id_list)
+	if meta_df is not None: 
+		if id_type is None:
+			id_list = range(0, len(list(meta_df.index)))
+		elif id_type == "id":
+			id_list = [list(meta_df.index).index(i) for i in id_list]
+		return sorted(id_list)
+	else:
+		return None 
 	
 def parse_metadata_df(dim, meta_group, convert_neg_666):
 	"""
 	Reads in all metadata from .gctx file to pandas DataFrame 
 	with proper GCToo specifications. 
-
 	Input:
 		- dim (str): Dimension of metadata; either "row" or "column"
 		- meta_group (HDF5 group): Group from which to read metadata values 
 		- convert_neg_666 (bool): whether to convert "-666" values to np.nan or not 
-
 	Output:
 		- meta_df (pandas DataFrame): data frame corresponding to metadata fields 
 			of dimension specified.
@@ -233,47 +235,39 @@ def parse_metadata_df(dim, meta_group, convert_neg_666):
 		array_index = array_index + 1
 	# need to temporarily make dtype of all values str so that to_numeric
 	# works consistently with gct vs gctx parser. 
-	meta_df = pd.DataFrame.from_dict(header_values).astype(str)
+	meta_df = pd.DataFrame.from_dict(header_values).astype(str)	
 	# Convert metadata to numeric if possible, after converting everything to string first 
 	# Note: This conversion first to string is to ensure consistent behavior between
 	#	the gctx and gct parser (which by default reads the entire text file into a string)
 	meta_df = meta_df.apply(lambda x: pd.to_numeric(x, errors="ignore"))
 	meta_df.set_index("id", inplace = True)
-	# set index and columns appropriately 
-	set_metadata_index_and_column_names(dim, meta_df)
-
 	# Replace -666 and -666.0 with NaN; also replace "-666" if convert_neg_666 is True
 	meta_df = replace_666(meta_df, convert_neg_666)
-
+	# set index and columns appropriately 
+	set_metadata_index_and_column_names(dim, meta_df)
 	return meta_df
 
 def replace_666(meta_df, convert_neg_666):
 	""" Replace -666, -666.0, and optionally "-666".
-
 	Args:
 	    meta_df (pandas df):
 	    convert_neg_666 (bool):
-
 	Returns:
 	    out_df (pandas df): updated meta_df
-
 	"""
 	if convert_neg_666:
 		out_df = meta_df.replace([-666, "-666", -666.0], np.nan)
 	else:
 		out_df = meta_df.replace([-666, -666.0], "-666")
-
 	return out_df
 
 def set_metadata_index_and_column_names(dim, meta_df):	
 	"""
 	Sets index and column names to GCTX convention.
-
 	Input:
 		- dim (str): Dimension of metadata to read. Must be either "row" or "col"
 		- meta_df (pandas.DataFrame): data frame corresponding to metadata fields 
 			of dimension specified.
-
 	Output:
 		None 
 	"""
