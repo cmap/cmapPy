@@ -94,10 +94,13 @@ A suite of unit tests is also included in the ``/tests`` directory. Sample files
 * ``gct2gctx``: Command line tool to convert a .gct file to .gctx.
 * ``gct2gctx``: Command line tool to convert a .gct file to a .gctx
 * ``concat_gctoo``: Command line tool to stack .gct/x objects either vertically or horizontally 
+* ``slice_gct``: Slice a .gct/x file to a specified set of rids and/or cids 
 
 Tutorials and example use
 """""""""""""""""""""""""
-We recommend referencing our Tutorial section on `clue.io/code <https://clue.io/code>`_ to see further demonstrations on how one might use a combination of cmapPy and pandas methods for common data analysis and manipulation tasks. 
+* Tutorial: Accessing and processing GEO data `can be found here.`_
+
+.. _can be found here.: https://github.com/cmap/cmapPy/blob/master/tutorials/cmapPy_pandasGEXpress_tutorial.ipynb
 
 ***************
 2) cmap_api_client
@@ -116,10 +119,7 @@ Contents Overview
 
 Tutorials and example use
 """""""""""""""""""""""""
-
-* Tutorial: Accessing and processing GEO data `can be found here.`_
-
-.. _can be found here.: https://github.com/cmap/cmapPy/blob/master/tutorials/cmapPy_pandasGEXpress_tutorial.ipynb
+Coming soon!
 
 Contributing
 ====================
