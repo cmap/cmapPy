@@ -48,7 +48,9 @@ We recommend the use of cmapPy with a virtual environment (here we demonstrate h
 	* On the command line, type ``conda info`` to verify that conda has been properly instaled on your system. You should see some information about the "current conda install"; if not, your installation didn't work. 
 * Set up your conda channels: 
 	``conda config --add channels defaults``
+	
 	``conda config --add channels conda-forge``
+	
 	``conda config --add channels bioconda``
 
 * Create your cmapPy environment: ``conda create --name my_cmapPy_env python=2.7.11 numpy=1.11.2 pandas=0.18 h5py=2.6.0 requests==2.13.0 cmappy``
