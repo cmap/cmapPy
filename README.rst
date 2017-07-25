@@ -1,6 +1,11 @@
+|install with bioconda|
+
+.. |install with bioconda| image:: https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat-square
+   :target: http://bioconda.github.io/recipes/cmappy/README.html
+   
 .. image:: https://badge.fury.io/py/cmapPy.svg
     :target: https://badge.fury.io/py/cmapPy
-
+    
 .. image:: https://readthedocs.org/projects/cmappy/badge/?version=latest
     :target: http://cmappy.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
@@ -41,9 +46,15 @@ We recommend the use of cmapPy with a virtual environment (here we demonstrate h
 * (If you haven't already) install ``miniconda``
 	* Download/follow instructions provided `here <https://conda.io/miniconda.html>`_. Unless you have personal preferences/reasons to do so, we recommend installing Miniconda over Anaconda because it's more lightweight.
 	* On the command line, type ``conda info`` to verify that conda has been properly instaled on your system. You should see some information about the "current conda install"; if not, your installation didn't work. 
-* Create your cmapPy environment: ``conda create --name my_cmapPy_env python=2.7.11 numpy=1.11.2 pandas=0.18 h5py=2.6.0 requests==2.13.0``
+* Set up your conda channels: 
+	``conda config --add channels defaults``
+	``conda config --add channels conda-forge``
+	``conda config --add channels bioconda``
+
+* Create your cmapPy environment: ``conda create --name my_cmapPy_env python=2.7.11 numpy=1.11.2 pandas=0.18 h5py=2.6.0 requests==2.13.0 cmappy``
 * Activate your cmapPy environment: ``source activate my_cmapPy_env``
-* **In your activated conda environment**, pip install cmapPy: ``pip install cmapPy``
+
+To update cmapPy in your conda environment (from activate environment): ``conda update cmappy``
 
 **Option 2: Install cmapPy from PyPI**
 
@@ -104,7 +115,9 @@ Contents Overview
 Tutorials and example use
 """""""""""""""""""""""""
 
-Coming soon!
+* Tutorial: Accessing and processing GEO data `can be found here.`_
+
+.. _can be found here.: https://github.com/cmap/cmapPy/blob/master/tutorials/cmapPy_pandasGEXpress_tutorial.ipynb
 
 Contributing
 ====================
@@ -114,3 +127,9 @@ We welcome contributors! For your pull requests, please include the following:
 * Sample code/file that reproducibly causes the bug/issue
 * Documented code providing fix
 * Unit tests evaluating added/modified methods. 
+
+
+Citation
+====================
+
+If you use cmapPy for your research, please cite us. Citation forthcoming; email oana@broadinstitute.org if you need one sooner.  
