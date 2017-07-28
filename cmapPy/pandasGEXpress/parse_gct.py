@@ -79,15 +79,13 @@ column_header_name = "chd"
 DATA_TYPE = np.float32
 
 
-def parse(file_path, convert_neg_666=True, rid=None, cid=None, make_multiindex=False):
+def parse(file_path, convert_neg_666=True, make_multiindex=False):
     """ The main method.
 
     Args:
         - file_path (string): full path to gct(x) file you want to parse
         - convert_neg_666 (bool): whether to convert -666 values to numpy.nan
             (see Note below for more details). Default = True.
-        - rid (list of strings): list of row ids to specifically keep  None keeps all rids
-        - cid (list of strings): list of col ids to specifically keep, None keeps all cids
         - make_multiindex (bool): whether to create a multi-index df combining
             the 3 component dfs
 
@@ -101,18 +99,9 @@ def parse(file_path, convert_neg_666=True, rid=None, cid=None, make_multiindex=F
         into numpy.nan values, the pandas default.
 
     """
-    # Throw error if user attempts to slice
-    if (rid is not None) or (cid is not None):
-        error_msg = ("Slicing is not available through parse for .gct files; if you'd like to slice, " +
-            "please parse the entire file in (you have to do this anyway!) and then use methods from " + 
-            "the slice_gct module.")
-        logger.error(error_msg)
-        raise(Exception(error_msg))
-
-
     nan_values = [
         "#N/A", "N/A", "NA", "#NA", "NULL", "NaN", "-NaN",
-        "nan", "-nan", "#N/A!", "na", "NA", "None"]
+        "nan", "-nan", "#N/A!", "na", "NA", "None", "#VALUE!"]
 
     # Add "-666" to the list of NaN values
     if convert_neg_666:
