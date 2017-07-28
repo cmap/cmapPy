@@ -280,8 +280,8 @@ def assemble_common_meta(common_meta_dfs, fields_to_remove):
 
     else:
         all_meta_df_with_dups["concat_gctoo_column_for_index"] = all_meta_df_with_dups.index
-        all_meta_df = all_meta_df_with_dups.drop_duplicates()
-	all_meta_df.drop("concat_gctoo_column_for_index", axis=1, inplace=True)
+        all_meta_df = all_meta_df_with_dups.copy(deep=True).drop_duplicates()
+        all_meta_df.drop("concat_gctoo_column_for_index", axis=1, inplace=True)
 
     logger.debug("all_meta_df_with_dups.shape: {}".format(all_meta_df_with_dups.shape))
     logger.debug("all_meta_df.shape: {}".format(all_meta_df.shape))
