@@ -50,7 +50,12 @@ def parse(file_path, convert_neg_666=True, rid=None, cid=None, ridx=None, cidx=N
 		into numpy.NaN values, the pandas default. 
 	""" 
 	if file_path.endswith(".gct"):
-		curr = parse_gct.parse(file_path, convert_neg_666, rid, cid, make_multiindex)
+		# Ignoring arguments that won't be passed to parse_gct
+		for unused_arg in ["rid", "cid", "cidx", "row_meta_only", "col_meta_only"]:
+			if eval(unused_arg) is not None:
+				msg = "parse_gct does not use the argument {}. Ignoring it...".format(unused_arg)
+				logger.info(msg)
+		curr = parse_gct.parse(file_path, convert_neg_666, make_multiindex)
 	elif file_path.endswith(".gctx"):
 		curr = parse_gctx.parse(file_path, convert_neg_666, rid, cid, ridx, cidx, row_meta_only, col_meta_only, make_multiindex)
 	else:
