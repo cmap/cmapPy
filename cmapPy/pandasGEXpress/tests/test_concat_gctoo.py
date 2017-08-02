@@ -71,11 +71,11 @@ class TestConcatGctoo(unittest.TestCase):
         logger.debug("e_meta:\n{}".format(e_meta1))
 
         with self.assertRaises(AssertionError) as e:
-            _ = cg.assemble_common_meta([meta1.copy(), meta2.copy()], [])
+            _ = cg.assemble_common_meta([meta1, meta2], [])
         self.assertIn("r3", str(e.exception))
-	logger.debug("rhd3 header needs to be removed - e.exception:  {}".format(e.exception))
+        logger.debug("rhd3 header needs to be removed - e.exception:  {}".format(e.exception))
 
-        out_meta1 = cg.assemble_common_meta([meta1.copy(), meta2.copy()], ["rhd3"])
+        out_meta1 = cg.assemble_common_meta([meta1, meta2], ["rhd3"])
         logger.debug("out_meta1:\n{}".format(out_meta1))
         pd.util.testing.assert_frame_equal(out_meta1, e_meta1)
 
@@ -95,7 +95,7 @@ class TestConcatGctoo(unittest.TestCase):
 
         logger.debug("meta3:\n{}".format(meta3))
         logger.debug("e_meta2:\n{}".format(e_meta2))
-        out_meta2 = cg.assemble_common_meta([meta1.copy(), meta3.copy()], [])
+        out_meta2 = cg.assemble_common_meta([meta1, meta3], [])
         pd.util.testing.assert_frame_equal(out_meta2, e_meta2)
 
         # Some ids not present in both dfs
@@ -118,10 +118,12 @@ class TestConcatGctoo(unittest.TestCase):
         logger.debug("e_meta3:\n{}".format(e_meta3))
 
         with self.assertRaises(AssertionError) as e:
-            _ = cg.assemble_common_meta([meta1.copy(), meta4.copy()], [])
+            _ = cg.assemble_common_meta([meta1, meta4], [])
         self.assertIn("r1", str(e.exception))
 
-        out_meta3 = cg.assemble_common_meta([meta1.copy(), meta4.copy()], ["rhd2"])
+        # rhd5 not in meta4, so it should be dropped even without being
+        # explicitly provided
+        out_meta3 = cg.assemble_common_meta([meta1, meta4], ["rhd2", "rhd5"])
         logger.debug("out_meta3:\n{}".format(out_meta3))
         pd.util.testing.assert_frame_equal(out_meta3, e_meta3)
 

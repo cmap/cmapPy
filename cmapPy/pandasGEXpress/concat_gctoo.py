@@ -251,6 +251,7 @@ def vstack(gctoos, fields_to_remove=[], reset_ids=False):
 
 def assemble_common_meta(common_meta_dfs, fields_to_remove):
     """ Assemble the common metadata dfs together. Both indices are sorted.
+    Fields that are not in all the dfs are dropped.
 
     Args:
         common_meta_dfs (list of pandas dfs)
@@ -261,16 +262,16 @@ def assemble_common_meta(common_meta_dfs, fields_to_remove):
         all_meta_df_sorted (pandas df)
 
     """
-    # Remove any column headers that will prevent dfs from being identical
-    for df in common_meta_dfs:
-        df.drop(fields_to_remove, axis=1, inplace=True)
-
     # Remove any column headers that are not present in all dfs (and sort)
     shared_column_headers = sorted(set.intersection(*[set(df.columns) for df in common_meta_dfs]))
-    common_meta_dfs = [df[shared_column_headers] for df in common_meta_dfs]
+    trimmed_common_meta_dfs = [df[shared_column_headers] for df in common_meta_dfs]
+
+    # Remove any column headers that will prevent dfs from being identical
+    even_more_trimmed_common_meta_dfs = (
+        [df.drop(fields_to_remove, axis=1, errors="ignore") for df in trimmed_common_meta_dfs])
 
     # Concatenate all dfs and then remove duplicate rows
-    all_meta_df_with_dups = pd.concat(common_meta_dfs, axis=0)
+    all_meta_df_with_dups = pd.concat(even_more_trimmed_common_meta_dfs, axis=0)
 
     # If all metadata dfs were empty, df will be empty
     if all_meta_df_with_dups.empty:
