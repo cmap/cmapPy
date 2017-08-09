@@ -267,11 +267,11 @@ def assemble_common_meta(common_meta_dfs, fields_to_remove):
     trimmed_common_meta_dfs = [df[shared_column_headers] for df in common_meta_dfs]
 
     # Remove any column headers that will prevent dfs from being identical
-    even_more_trimmed_common_meta_dfs = (
-        [df.drop(fields_to_remove, axis=1, errors="ignore") for df in trimmed_common_meta_dfs])
+    for df in trimmed_common_meta_dfs:
+        df.drop(fields_to_remove, axis=1, errors="ignore", inplace=True)
 
     # Concatenate all dfs and then remove duplicate rows
-    all_meta_df_with_dups = pd.concat(even_more_trimmed_common_meta_dfs, axis=0)
+    all_meta_df_with_dups = pd.concat(trimmed_common_meta_dfs, axis=0)
 
     # If all metadata dfs were empty, df will be empty
     if all_meta_df_with_dups.empty:
