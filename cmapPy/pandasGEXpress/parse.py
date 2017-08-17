@@ -52,7 +52,7 @@ def parse(file_path, convert_neg_666=True, rid=None, cid=None, ridx=None, cidx=N
 	if file_path.endswith(".gct"):
 		# Ignoring arguments that won't be passed to parse_gct
 		for unused_arg in ["rid", "cid", "cidx", "row_meta_only", "col_meta_only"]:
-			if eval(unused_arg) is not None:
+			if eval(unused_arg):
 				msg = "parse_gct does not use the argument {}. Ignoring it...".format(unused_arg)
 				logger.info(msg)
 		curr = parse_gct.parse(file_path, convert_neg_666, make_multiindex)
