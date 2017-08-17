@@ -53,8 +53,19 @@ We recommend the use of cmapPy with a virtual environment (here we demonstrate h
 	
 	``conda config --add channels bioconda``
 
-* Create your cmapPy environment: ``conda create --name my_cmapPy_env python=2.7.11 numpy=1.11.2 pandas=0.18 h5py=2.6.0 requests==2.13.0 cmappy``
-* Activate your cmapPy environment: ``source activate my_cmapPy_env``
+* (Mac) Create & activate your cmapPy environment:
+	``conda create --name my_cmapPy_env python=2.7.11 numpy=1.11.2 pandas=0.18 h5py=2.6.0 requests==2.13.0 cmappy``
+	
+	``source activate my_cmapPy_env``
+	
+* (Windows) Create & activate your cmapPy environment: 
+	``conda create --name my_cmapPy_env python=2.7.11 numpy=1.11.2 pandas=0.18 h5py=2.6.0 requests==2.13.0``
+	
+	``pip install cmapPy``
+	
+	``source activate my_cmapPy_environment``
+
+...and then cmapPy (including command line tools) should be available for use. 
 
 To update cmapPy in your conda environment (from activate environment): ``conda update cmappy``
 
