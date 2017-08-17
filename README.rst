@@ -46,7 +46,7 @@ We recommend the use of cmapPy with a virtual environment (here we demonstrate h
 * (If you haven't already) install ``miniconda``
 	* Download/follow instructions provided `here <https://conda.io/miniconda.html>`_. Unless you have personal preferences/reasons to do so, we recommend installing Miniconda over Anaconda because it's more lightweight.
 	* On the command line, type ``conda info`` to verify that conda has been properly instaled on your system. You should see some information about the "current conda install"; if not, your installation didn't work. 
-* Set up your conda channels: 
+* (Mac only) Set up your conda channels: 
 	``conda config --add channels defaults``
 	
 	``conda config --add channels conda-forge``
