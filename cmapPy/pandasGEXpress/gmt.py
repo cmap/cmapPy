@@ -38,7 +38,7 @@ def read(file_path):
         # Separate along tabs
         fields = line.split('\t')
 
-        assert len(fields) > 3, (
+        assert len(fields) > 2, (
             "Each line must have at least 3 tab-delimited items. " +
             "line_num: {}, fields: {}").format(line_num, fields)
         
