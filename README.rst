@@ -82,7 +82,7 @@ Subpackages included
 
 * **cmap_api_client**: A Python API client for accessing and retrieving information from the `Connectivity Map API <https://clue.io/api>`_
 
-* **set_io**: Parserts and writers for .grp and .gmt files.
+* **set_io**: Parsers and writers for .grp and .gmt files.
 
 ***************
 1) pandasGEXpress
@@ -129,6 +129,10 @@ Contents Overview
 * ``mock_clue_api_client.py``: Mock API for testing.
 * ``pert_queries.py``: Methods for perturbagen-related queries.
 
+Tutorials and example use
+"""""""""""""""""""""""""
+Coming soon!
+
 ***************
 3) set_io
 ***************
@@ -137,12 +141,8 @@ set_io contains simple scripts for parsing two other common file types used by t
 
 Contents Overview
 """""""""""""""""
- * ``grp.py``: Read and write .grp files to a list.
- * ``gmt.py``: Read and write .gmt files to a list of dictionaries.
-
-Tutorials and example use
-"""""""""""""""""""""""""
-Coming soon!
+* ``grp.py``: Read and write .grp files to a list.
+* ``gmt.py``: Read and write .gmt files to a list of dictionaries.
 
 Contributing
 ====================
