@@ -82,6 +82,8 @@ Subpackages included
 
 * **cmap_api_client**: A Python API client for accessing and retrieving information from the `Connectivity Map API <https://clue.io/api>`_
 
+* **set_io**: Parserts and writers for .grp and .gmt files.
+
 ***************
 1) pandasGEXpress
 ***************
@@ -93,7 +95,6 @@ pandasGEXpress represents .gctx and .gct files as instances of a GCToo object; i
 * ``GCToo.py``: main class for storing contents of .gctx, .gct files.
 * ``concat_gctoo.py``: Concatenate (horizontally or vertically) two or more GCToo instances in a  Python session or two {.gct, .gctx} files from the command line. 
 * ``parse.py``: Parse in .gct, .gctx files to a new GCToo instance
-* ``plate_grp.py``: Read and write .grp files to a list.
 * ``random_slice.py``: Slices a random subset of a GCToo file to a specified size. 
 * ``slice_gct.py``: Slice a GCToo instance by including/excluding a list of row ids, column ids, row indexes, column indexes, or a combination thereof.
 * ``write_gct.py``: Write a .gct file from a GCToo instance. 
@@ -126,7 +127,18 @@ Contents Overview
 * ``gene_queries.py``: Methods for gene-related queries. 
 * ``macchiato_queries.py``: Methods for brew_prefix related queries. 
 * ``mock_clue_api_client.py``: Mock API for testing.
-* ``pert_queries.py``: Methods for perturbagen-related queries. 
+* ``pert_queries.py``: Methods for perturbagen-related queries.
+
+***************
+3) set_io
+***************
+
+set_io contains simple scripts for parsing two other common file types used by the Connectivity Map: `GRP and GMT files. <https://clue.io/connectopedia/grp_gmt_gmx_format>`_ The GRP file is used for storing a single set of things (e.g. a single gene set), while the GMT file is used for storing multiple sets of things (e.g. several gene sets).
+
+Contents Overview
+"""""""""""""""""
+ * ``grp.py``: Read and write .grp files to a list.
+ * ``gmt.py``: Read and write .gmt files to a list of dictionaries.
 
 Tutorials and example use
 """""""""""""""""""""""""
