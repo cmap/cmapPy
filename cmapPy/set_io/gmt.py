@@ -22,8 +22,15 @@ SET_MEMBERS_FIELD = "entry"
 
 
 def read(file_path):
-    """
-    Read a gmt file at the path specified by file_path.    
+    """ Read a gmt file at the path specified by file_path.
+
+    Args:
+        file_path (string): path to gmt file
+
+    Returns:
+        gmt (GMT object): list of dicts, where each dict corresponds to one
+            line of the GMT file
+
     """
     # Read in file
     actual_file_path = os.path.expanduser(file_path)
@@ -67,6 +74,15 @@ def read(file_path):
 
 
 def verify_gmt_integrity(gmt):
+    """ Make sure that set ids are unique.
+
+    Args:
+        gmt (GMT object): list of dicts
+
+    Returns:
+        None
+
+    """
 
     # Verify that set ids are unique
     set_ids = [d[SET_IDENTIFIER_FIELD] for d in gmt]
@@ -75,10 +91,16 @@ def verify_gmt_integrity(gmt):
 
 
 def write(gmt, out_path):
-    """
-    Write a GMT to a text file.
-    """
+    """ Write a GMT to a text file.
 
+    Args:
+        gmt (GMT object): list of dicts
+        out_path (string): output path
+
+    Returns:
+        None
+
+    """
     with open(out_path, 'w') as f:
         for _, each_dict in enumerate(gmt):
             f.write(each_dict[SET_IDENTIFIER_FIELD] + '\t')

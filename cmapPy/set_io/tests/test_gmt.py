@@ -2,13 +2,13 @@ import logging
 import os
 import unittest
 from cmapPy.pandasGEXpress import setup_GCToo_logger as setup_logger
-import cmapPy.pandasGEXpress.gmt as gmt
+import cmapPy.set_io.gmt as gmt
 
 logger = logging.getLogger(setup_logger.LOGGER_NAME)
 FUNCTIONAL_TESTS_DIR = "functional_tests"
 
 
-class GMT(unittest.TestCase):
+class TestGMT(unittest.TestCase):
 
 	@classmethod
 	def setUpClass(cls):
