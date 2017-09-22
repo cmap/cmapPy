@@ -183,6 +183,14 @@
 <span class="n">version_attr</span> <span class="o">=</span> <span class="s2">&quot;version&quot;</span>
 <span class="n">version_number</span> <span class="o">=</span> <span class="s2">&quot;GCTX1.0&quot;</span>
 
+<span class="k">def</span> <span class="nf">write_gctx</span><span class="p">(</span><span class="n">gctoo_object</span><span class="p">,</span> <span class="n">out_file_name</span><span class="p">,</span> <span class="n">convert_back_to_neg_666</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Essentially the same as write() method; enables user to call write_gctx() from</span>
+<span class="sd">	cmapPy instead of write_gctx.write()</span>
+
+<span class="sd">	Included as a separate method for backwards compatibility.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">write</span><span class="p">(</span><span class="n">gctoo_object</span><span class="p">,</span> <span class="n">out_file_name</span><span class="p">,</span> <span class="n">convert_back_to_neg_666</span><span class="p">)</span>
 
 <div class="viewcode-block" id="write"><a class="viewcode-back" href="../../../pandasGEXpress.html#cmapPy.pandasGEXpress.write_gctx.write">[docs]</a><span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="n">gctoo_object</span><span class="p">,</span> <span class="n">out_file_name</span><span class="p">,</span> <span class="n">convert_back_to_neg_666</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>

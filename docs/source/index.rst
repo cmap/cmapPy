@@ -34,6 +34,7 @@ High-level API reference
 
     clue_api_client
     pandasGEXpress
+    set_io
 
 
 Meta-info about cmapPy

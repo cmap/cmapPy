@@ -179,6 +179,16 @@
 <span class="c1"># Only writes GCT1.3</span>
 <span class="n">VERSION</span> <span class="o">=</span> <span class="s2">&quot;1.3&quot;</span>
 
+<span class="k">def</span> <span class="nf">write_gct</span><span class="p">(</span><span class="n">gctoo</span><span class="p">,</span> <span class="n">out_fname</span><span class="p">,</span> <span class="n">data_null</span><span class="o">=</span><span class="s2">&quot;NaN&quot;</span><span class="p">,</span> <span class="n">metadata_null</span><span class="o">=</span><span class="s2">&quot;-666&quot;</span><span class="p">,</span> 
+    <span class="n">filler_null</span><span class="o">=</span><span class="s2">&quot;-666&quot;</span><span class="p">,</span> <span class="n">data_float_format</span><span class="o">=</span><span class="s2">&quot;:.4f&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Essentially the same as write() method; enables user to call write_gct() from</span>
+<span class="sd">    cmapPy instead of write_gct.write()</span>
+
+<span class="sd">    Included as a separate method for backwards compatibility.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">write</span><span class="p">(</span><span class="n">gctoo</span><span class="p">,</span> <span class="n">out_fname</span><span class="p">,</span> <span class="n">data_null</span><span class="o">=</span><span class="s2">&quot;NaN&quot;</span><span class="p">,</span> <span class="n">metadata_null</span><span class="o">=</span><span class="s2">&quot;-666&quot;</span><span class="p">,</span> 
+    <span class="n">filler_null</span><span class="o">=</span><span class="s2">&quot;-666&quot;</span><span class="p">,</span> <span class="n">data_float_format</span><span class="o">=</span><span class="s2">&quot;:.4f&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="write"><a class="viewcode-back" href="../../../pandasGEXpress.html#cmapPy.pandasGEXpress.write_gct.write">[docs]</a><span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="n">gctoo</span><span class="p">,</span> <span class="n">out_fname</span><span class="p">,</span> <span class="n">data_null</span><span class="o">=</span><span class="s2">&quot;NaN&quot;</span><span class="p">,</span> <span class="n">metadata_null</span><span class="o">=</span><span class="s2">&quot;-666&quot;</span><span class="p">,</span> <span class="n">filler_null</span><span class="o">=</span><span class="s2">&quot;-666&quot;</span><span class="p">,</span> <span class="n">data_float_format</span><span class="o">=</span><span class="s2">&quot;:.4f&quot;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Write a gctoo object to a gct file.</span>
