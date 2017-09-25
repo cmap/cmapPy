@@ -1,0 +1,336 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>set_io &mdash; cmapPy 2.0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="cmapPy 2.0.1 documentation" href="index.html"/>
+        <link rel="next" title="Contribution guidelines" href="contributing.html"/>
+        <link rel="prev" title="pandasGEXpress" href="pandasGEXpress.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> cmapPy
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="build.html">Installation</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="clue_api_client.html">Clue API Client</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pandasGEXpress.html">pandasGEXpress</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">set_io</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#reading-grp-files">Reading GRP files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#writing-grp-files">Writing GRP files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#reading-gmt-files">Reading GMT files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#verifying-gmt-integrity">Verifying GMT integrity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#writing-gmt-files">Writing GMT files</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contribution guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="licenses.html">BSD 3-Clause License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="citing.html">Citation Information</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">cmapPy</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>set_io</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/set_io.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="set-io">
+<span id="id1"></span><h1>set_io<a class="headerlink" href="#set-io" title="Permalink to this headline">¶</a></h1>
+<p>set_io contains simple scripts for parsing two other common file types used by the Connectivity Map: GRP and GMT files.
+The GRP file is used for storing a single set of things (e.g. a single gene set), while the GMT file is used for storing multiple sets of things (e.g. several gene sets).</p>
+<p>Further details on GRP and GMT files can be found <a class="reference external" href="https://clue.io/connectopedia/grp_gmt_gmx_format">here</a>.</p>
+<div class="section" id="reading-grp-files">
+<h2>Reading GRP files<a class="headerlink" href="#reading-grp-files" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="cmapPy.set_io.grp.read">
+<code class="descclassname">cmapPy.set_io.grp.</code><code class="descname">read</code><span class="sig-paren">(</span><em>in_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cmapPy/set_io/grp.html#read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cmapPy.set_io.grp.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a grp file at the path specified by in_path.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>in_path (string): path to GRP file</dd>
+<dt>Returns:</dt>
+<dd>grp (list)</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="writing-grp-files">
+<h2>Writing GRP files<a class="headerlink" href="#writing-grp-files" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="cmapPy.set_io.grp.write">
+<code class="descclassname">cmapPy.set_io.grp.</code><code class="descname">write</code><span class="sig-paren">(</span><em>grp</em>, <em>out_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cmapPy/set_io/grp.html#write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cmapPy.set_io.grp.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write a GRP to a text file.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>grp (list): GRP object to write to new-line delimited text file
+out_path (string): output path</dd>
+<dt>Returns:</dt>
+<dd>None</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="reading-gmt-files">
+<h2>Reading GMT files<a class="headerlink" href="#reading-gmt-files" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="cmapPy.set_io.gmt.read">
+<code class="descclassname">cmapPy.set_io.gmt.</code><code class="descname">read</code><span class="sig-paren">(</span><em>file_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cmapPy/set_io/gmt.html#read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cmapPy.set_io.gmt.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a gmt file at the path specified by file_path.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>file_path (string): path to gmt file</dd>
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>gmt (GMT object): list of dicts, where each dict corresponds to one</dt>
+<dd>line of the GMT file</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="verifying-gmt-integrity">
+<h2>Verifying GMT integrity<a class="headerlink" href="#verifying-gmt-integrity" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="cmapPy.set_io.gmt.verify_gmt_integrity">
+<code class="descclassname">cmapPy.set_io.gmt.</code><code class="descname">verify_gmt_integrity</code><span class="sig-paren">(</span><em>gmt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cmapPy/set_io/gmt.html#verify_gmt_integrity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cmapPy.set_io.gmt.verify_gmt_integrity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make sure that set ids are unique.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>gmt (GMT object): list of dicts</dd>
+<dt>Returns:</dt>
+<dd>None</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="writing-gmt-files">
+<h2>Writing GMT files<a class="headerlink" href="#writing-gmt-files" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="cmapPy.set_io.gmt.write">
+<code class="descclassname">cmapPy.set_io.gmt.</code><code class="descname">write</code><span class="sig-paren">(</span><em>gmt</em>, <em>out_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cmapPy/set_io/gmt.html#write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cmapPy.set_io.gmt.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write a GMT to a text file.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>gmt (GMT object): list of dicts
+out_path (string): output path</dd>
+<dt>Returns:</dt>
+<dd>None</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="contributing.html" class="btn btn-neutral float-right" title="Contribution guidelines" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="pandasGEXpress.html" class="btn btn-neutral" title="pandasGEXpress" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Connectivity Map at Broad Institute of MIT and Harvard, Inc..
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'2.0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

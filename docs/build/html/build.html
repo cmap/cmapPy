@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Installation &mdash; cmapPy 1.0.2 documentation</title>
+  <title>Installation &mdash; cmapPy 2.0.1 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="cmapPy 1.0.2 documentation" href="index.html"/>
+    <link rel="top" title="cmapPy 2.0.1 documentation" href="index.html"/>
         <link rel="next" title="Clue API Client" href="clue_api_client.html"/>
         <link rel="prev" title="cmapPy: Python utilities for Connectivity Map Resources" href="index.html"/> 
 
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                1.0
+                2.0
               </div>
             
           
@@ -96,6 +96,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="clue_api_client.html">Clue API Client</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pandasGEXpress.html">pandasGEXpress</a></li>
+<li class="toctree-l1"><a class="reference internal" href="set_io.html">set_io</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contribution guidelines</a></li>
@@ -169,20 +170,42 @@
 <span id="install"></span><h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
 <p>We  highly recommend the using a prebuilt distribution of cmapPy along with a virtual environment (here we demonstrate how to use it with conda).</p>
 <p><strong>Option 1 (recommended): Setup pandasGEXpress in a new conda environment</strong></p>
-<ul class="simple">
+<ul>
 <li><dl class="first docutils">
-<dt>(If you haven&#8217;t already) install <code class="docutils literal"><span class="pre">miniconda</span></code></dt>
-<dd><ul class="first last">
+<dt>(Mac and Windows; If you haven&#8217;t already) install <code class="docutils literal"><span class="pre">miniconda</span></code></dt>
+<dd><ul class="first last simple">
 <li>Download/follow instructions provided <a class="reference external" href="https://conda.io/miniconda.html">here</a>. Unless you have personal preferences/reasons to do so, we recommend installing Miniconda over Anaconda because it&#8217;s more lightweight.</li>
 <li>On the command line, type <code class="docutils literal"><span class="pre">conda</span> <span class="pre">info</span></code> to verify that conda has been properly instaled on your system. You should see some information about the &#8220;current conda install&#8221;; if not, your installation didn&#8217;t work.</li>
 </ul>
 </dd>
 </dl>
 </li>
-<li>Create your cmapPy environment: <code class="docutils literal"><span class="pre">conda</span> <span class="pre">create</span> <span class="pre">--name</span> <span class="pre">my_cmapPy_env</span> <span class="pre">python=2.7.11</span> <span class="pre">numpy=1.11.2</span> <span class="pre">pandas=0.18</span> <span class="pre">h5py=2.6.0</span> <span class="pre">requests==2.13.0</span></code></li>
-<li>Activate your cmapPy environment: <code class="docutils literal"><span class="pre">source</span> <span class="pre">activate</span> <span class="pre">my_cmapPy_env</span></code></li>
-<li><strong>In your activated conda environment</strong>, pip install cmapPy: <code class="docutils literal"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">cmapPy</span></code></li>
+<li><dl class="first docutils">
+<dt>(Mac only) Set up your conda channels:</dt>
+<dd><p class="first"><code class="docutils literal"><span class="pre">conda</span> <span class="pre">config</span> <span class="pre">--add</span> <span class="pre">channels</span> <span class="pre">defaults</span></code></p>
+<p><code class="docutils literal"><span class="pre">conda</span> <span class="pre">config</span> <span class="pre">--add</span> <span class="pre">channels</span> <span class="pre">conda-forge</span></code></p>
+<p class="last"><code class="docutils literal"><span class="pre">conda</span> <span class="pre">config</span> <span class="pre">--add</span> <span class="pre">channels</span> <span class="pre">bioconda</span></code></p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>(Mac) Create &amp; activate your cmapPy environment:</dt>
+<dd><p class="first"><code class="docutils literal"><span class="pre">conda</span> <span class="pre">create</span> <span class="pre">--name</span> <span class="pre">my_cmapPy_env</span> <span class="pre">python=2.7.11</span> <span class="pre">numpy=1.11.2</span> <span class="pre">pandas=0.18</span> <span class="pre">h5py=2.6.0</span> <span class="pre">requests==2.13.0</span> <span class="pre">cmappy</span></code></p>
+<p class="last"><code class="docutils literal"><span class="pre">source</span> <span class="pre">activate</span> <span class="pre">my_cmapPy_env</span></code></p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>(Windows) Create &amp; activate your cmapPy environment:</dt>
+<dd><p class="first"><code class="docutils literal"><span class="pre">conda</span> <span class="pre">create</span> <span class="pre">--name</span> <span class="pre">my_cmapPy_env</span> <span class="pre">python=2.7.11</span> <span class="pre">numpy=1.11.2</span> <span class="pre">pandas=0.18</span> <span class="pre">h5py=2.6.0</span> <span class="pre">requests==2.13.0</span></code></p>
+<p><code class="docutils literal"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">cmapPy</span></code></p>
+<p class="last"><code class="docutils literal"><span class="pre">source</span> <span class="pre">activate</span> <span class="pre">my_cmapPy_environment</span></code></p>
+</dd>
+</dl>
+</li>
 </ul>
+<p>...and then cmapPy (including command line tools) should be available for use.</p>
+<p>To update cmapPy in your conda environment (from activate environment): <code class="docutils literal"><span class="pre">conda</span> <span class="pre">update</span> <span class="pre">cmappy</span></code></p>
 <p><strong>Option 2: Install cmapPy from PyPI</strong></p>
 <ul class="simple">
 <li><code class="docutils literal"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">cmapPy</span></code></li>
@@ -234,7 +257,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'1.0.2',
+            VERSION:'2.0.1',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
