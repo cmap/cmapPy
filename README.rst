@@ -23,6 +23,8 @@ Maintainer
 
 oana@broadinstitute.org
 
+For questions/problems, please add an issue (that includes code/files that reproduce your problem) to the repository. 
+
 Requirements
 ======================
 
