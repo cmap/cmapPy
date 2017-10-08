@@ -13,7 +13,7 @@ logger = logging.getLogger(setup_logger.LOGGER_NAME)
 
 class TestParseGct(unittest.TestCase):
     def test_read_version_and_dims(self):
-        ### v1.3 case 
+        ### v1.3 case
         version1 = "1.3"
         version1_as_string = "GCT1.3"
         dims1 = ["10", "15", "3", "4"]
@@ -32,7 +32,7 @@ class TestParseGct(unittest.TestCase):
         # Remove the file created
         os.remove(fname1)
 
-        ### v1.2 case 
+        ### v1.2 case
         version2 = "1.2"
         version2_as_string = "GCT1.2"
         dims2 = ["10", "15"]
@@ -111,6 +111,7 @@ class TestParseGct(unittest.TestCase):
                          " not {}").format(data.index.values[e_dims[0] - 1]))
 
     def test_assemble_row_metadata(self):
+        #simple happy path
         full_df = pd.DataFrame(
             [["id", "rhd1", "id", "cid1", "cid2"],
              ["chd1", "", "", "a", "b"],
@@ -126,10 +127,21 @@ class TestParseGct(unittest.TestCase):
                                 columns = col_index)
         row_df = pg.assemble_row_metadata(full_df, full_df_dims[3],
                                           full_df_dims[0], full_df_dims[2])
+        logger.debug("simple happy path - row_df:  {}".format(row_df))
+
         self.assertTrue(row_df.equals(e_row_df), (
             "\nrow_df:\n{}\ne_row_df:\n{}").format(row_df, e_row_df))
 
+        #test that RID's are strings - using number within str
+        full_df.iloc[4,0] = "13"
+        full_df.iloc[5,0] = "17"
+        row_df = pg.assemble_row_metadata(full_df, full_df_dims[3],
+                                          full_df_dims[0], full_df_dims[2])
+        logger.debug("test that RID's are strings - row_df:  {}".format(row_df))
+        self.assertEqual({"13", "17"}, set(row_df.index))
+
     def test_assemble_col_metadata(self):
+        #simple happy path
         full_df = pd.DataFrame(
             [["id", "rhd1", "rhd2", "cid1", "cid2"],
              ["chd1", "", "", "a", "b"],
@@ -143,7 +155,17 @@ class TestParseGct(unittest.TestCase):
                                 columns=["chd1", "chd2", "chd3"])
         col_df = pg.assemble_col_metadata(full_df, full_df_dims[3],
                                           full_df_dims[2], full_df_dims[1])
+        logger.debug("simple happy path - col_df:  {}".format(col_df))
+
         self.assertTrue(col_df.equals(e_col_df))
+
+        #test that CID's are strings - using number within str
+        full_df.iloc[0,3] = "13"
+        full_df.iloc[0,4] = "17"
+        col_df = pg.assemble_col_metadata(full_df, full_df_dims[3],
+                                          full_df_dims[2], full_df_dims[1])
+        logger.debug("test that CID's are strings - col_df:  {}".format(col_df))
+        self.assertEqual({"13", "17"}, set(col_df.index))
 
     def test_assemble_data(self):
         full_df = pd.DataFrame(
@@ -205,6 +227,14 @@ class TestParseGct(unittest.TestCase):
         # Make sure col_metadata_df is empty
         self.assertEqual(gct_v1point2.col_metadata_df.size, 0,
                          "col_metadata_df should be empty.")
+
+    def test_parse_gct_int_ids(self):
+        path = os.path.join(FUNCTIONAL_TESTS_PATH, "test_parse_gct_int_ids.gct")
+        r = pg.parse(path)
+        logger.debug("r:  {}".format(r))
+        logger.debug("r.data_df:  {}".format(r.data_df))
+        self.assertEqual({"1", "2"}, set(r.data_df.columns))
+        self.assertEqual({"3", "11", "-3"}, set(r.data_df.index))
 
 
 if __name__ == "__main__":
