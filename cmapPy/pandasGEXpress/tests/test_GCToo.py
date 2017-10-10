@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import logging
 from cmapPy.pandasGEXpress import setup_GCToo_logger as setup_GCToo_logger
-from cmapPy.pandasGEXpress import GCToo as GCToo 
+from cmapPy.pandasGEXpress import GCToo as GCToo
 from random import shuffle
 
 logger = logging.getLogger(setup_GCToo_logger.LOGGER_NAME)
@@ -19,22 +19,28 @@ class TestGctoo(unittest.TestCase):
         col_metadata_df = pd.DataFrame(["chd_a", "chd_b", "chd_c"],
                                        index=["a", "b", "c"], columns=["chd1"])
 
-        # happy path, no multi-index 
+        # happy path, no multi-index
         my_gctoo1 = GCToo.GCToo(data_df=data_df, row_metadata_df=row_metadata_df,
                     col_metadata_df=col_metadata_df)
 
-        self.assertTrue(my_gctoo1.multi_index_df == None, 
+        self.assertTrue(my_gctoo1.multi_index_df == None,
             'Expected no multi-index DataFrame but found {}'.format(my_gctoo1.multi_index_df))
 
-        # happy path, with multi-index 
+        # happy path, with multi-index
         my_gctoo2 = GCToo.GCToo(data_df=data_df, row_metadata_df=row_metadata_df,
                     col_metadata_df=col_metadata_df, make_multiindex = True)
 
-        self.assertTrue(isinstance(my_gctoo2.multi_index_df.index, pd.core.index.MultiIndex), 
+        self.assertTrue(isinstance(my_gctoo2.multi_index_df.index, pd.core.index.MultiIndex),
             "Expected a multi_index DataFrame but instead found {}". format(my_gctoo2.multi_index_df))
 
+        #happy path, no metadata provided
+        my_gctoo3 = GCToo.GCToo(data_df)
+        self.assertIsNotNone(my_gctoo3.row_metadata_df)
+        self.assertIsNotNone(my_gctoo3.col_metadata_df)
+
+
     def test__setattr__(self):
-        # case 1: not init yet, should just run __init__ 
+        # case 1: not init yet, should just run __init__
         # Create test data
         data_df = pd.DataFrame([[1, 2, 3], [4, 5, 6]],
                                index=["A", "B"], columns=["a", "b", "c"])
@@ -43,27 +49,27 @@ class TestGctoo(unittest.TestCase):
         col_metadata_df = pd.DataFrame(["chd_a", "chd_b", "chd_c"],
                                        index=["a", "b", "c"], columns=["chd1"])
 
-        ## happy path, no multi-index 
+        ## happy path, no multi-index
         my_gctoo1 = GCToo.GCToo(data_df=data_df, row_metadata_df=row_metadata_df,
                     col_metadata_df=col_metadata_df)
-                    
+
         ## reset row_metadata_df: happy case
         new_row_meta1 = my_gctoo1.row_metadata_df.copy()
 
         new_rid_order = ["B", "A"]
-   
+
         new_row_meta1.index = new_rid_order
-        # shouldn't have any problems re-setting row_meta 
+        # shouldn't have any problems re-setting row_meta
         my_gctoo1.row_metadata_df = new_row_meta1
 
-        ## reset row_metadata_df: to not a DF 
+        ## reset row_metadata_df: to not a DF
         new_row_meta2 = "this is my new row metadata"
 
         with self.assertRaises(Exception) as context:
-            my_gctoo1.row_metadata_df = new_row_meta2 
-        self.assertTrue("expected Pandas DataFrame, got something else" in str(context.exception))     
+            my_gctoo1.row_metadata_df = new_row_meta2
+        self.assertTrue("expected Pandas DataFrame, got something else" in str(context.exception))
 
-        ## reset row_metadata_df: non-matching index values 
+        ## reset row_metadata_df: non-matching index values
         new_row_meta3 = my_gctoo1.row_metadata_df.copy()
         new_row_meta3.index = ["thing1", "thing2"]
 
@@ -71,7 +77,7 @@ class TestGctoo(unittest.TestCase):
             my_gctoo1.row_metadata_df = new_row_meta3
         self.assertTrue("The rids are inconsistent between data_df and row_metadata_df" in str(context.exception))
 
-        ## reset row_metadata_df: not unique index values 
+        ## reset row_metadata_df: not unique index values
         new_row_meta4 = my_gctoo1.row_metadata_df.copy()
         new_row_meta4.index = ["A", "A"]
 
@@ -90,15 +96,15 @@ class TestGctoo(unittest.TestCase):
 
         # shouldn't have any problems
         my_gctoo2.col_metadata_df = new_col_meta1
-        
-        ## reset col_metadata_df: to not a DF 
+
+        ## reset col_metadata_df: to not a DF
         new_col_meta2 = "this is my new col metadata"
 
         with self.assertRaises(Exception) as context:
-            my_gctoo2.col_metadata_df = new_col_meta2 
-        self.assertTrue("expected Pandas DataFrame, got something else" in str(context.exception))     
-       
-        ## reset col_metadata_df: non-matching index values 
+            my_gctoo2.col_metadata_df = new_col_meta2
+        self.assertTrue("expected Pandas DataFrame, got something else" in str(context.exception))
+
+        ## reset col_metadata_df: non-matching index values
         new_col_meta3 = my_gctoo2.col_metadata_df.copy()
         new_col_meta3.index = ["thing1", "thing2", "thing3"]
 
@@ -106,7 +112,7 @@ class TestGctoo(unittest.TestCase):
             my_gctoo2.col_metadata_df = new_col_meta3
         self.assertTrue("The cids are inconsistent between data_df and col_metadata_df" in str(context.exception))
 
-        ## reset col_metadata_df: not unique index values 
+        ## reset col_metadata_df: not unique index values
         new_col_meta4 = my_gctoo2.col_metadata_df.copy()
         new_col_meta4.index = ["a", "b", "a"]
 
@@ -118,11 +124,11 @@ class TestGctoo(unittest.TestCase):
                     col_metadata_df=col_metadata_df)
 
         ## reset data_df: happy case
-        new_data_df1 = my_gctoo3.data_df.copy() 
+        new_data_df1 = my_gctoo3.data_df.copy()
         new_data_df1.index = ["B","A"]
         new_data_df1.columns = ["c", "b", "a"]
 
-        # shouldn't have problems 
+        # shouldn't have problems
         my_gctoo3.data_df = new_data_df1
 
         ## reset data_df: row_meta doesn't match
@@ -133,7 +139,7 @@ class TestGctoo(unittest.TestCase):
             my_gctoo3.data_df = new_data_df2
         self.assertTrue("The rids are inconsistent between data_df and row_metadata_df" in str(context.exception))
 
-        ## reset data_df: col_meta doesn't match 
+        ## reset data_df: col_meta doesn't match
         new_data_df3 = my_gctoo3.data_df.copy()
         new_data_df3.columns = ["x", "y", "z"]
 
@@ -151,18 +157,18 @@ class TestGctoo(unittest.TestCase):
             my_gctoo1.multi_index_df = new_multi_index
         self.assertTrue("Cannot reassign value of multi_index_df attribute;" in str(context.exception))
 
-        ## reset src 
+        ## reset src
         my_gctoo1.src = "other_src"
-        self.assertTrue(my_gctoo1.src == "other_src", 
+        self.assertTrue(my_gctoo1.src == "other_src",
             ("src should just be re-set with object's set_attr method but doesn't appear to be") +
             (" expected {} but found {}").format("other_src", my_gctoo1.src))
 
         ## reset version
         my_gctoo1.version = "other_version"
-        self.assertTrue(my_gctoo1.version == "other_version", 
+        self.assertTrue(my_gctoo1.version == "other_version",
             ("version should just be re-set with object's set_attr method but doesn't appear to be") +
             ("expected {} but found {}").format("other_version", my_gctoo1.version))
-      
+
 
 
     def test_check_df(self):
@@ -179,7 +185,7 @@ class TestGctoo(unittest.TestCase):
         """
         # cids in data_df are not unique
         with self.assertRaises(Exception) as context:
-            GCToo.GCToo(data_df=not_unique_data_df, 
+            GCToo.GCToo(data_df=not_unique_data_df,
                 row_metadata_df=pd.DataFrame(index=["A","B"]),
                 col_metadata_df=pd.DataFrame(index=["a","b","c"]))
             print(str(not_unique_data_df.columns))
@@ -195,7 +201,7 @@ class TestGctoo(unittest.TestCase):
     def test_assemble_multi_index_df(self):
 
         # TODO: Add test of only row ids present as metadata
-        # TODO: Add test of only col ids present as metadata 
+        # TODO: Add test of only col ids present as metadata
 
         g = GCToo.GCToo(data_df = pd.DataFrame({10:range(13,16), 11:range(16,19), 12:range(19,22)}, index=range(4,7)),
             row_metadata_df=pd.DataFrame({"a":range(3)}, index=range(4,7)),
@@ -265,4 +271,3 @@ if __name__ == "__main__":
     setup_GCToo_logger.setup(verbose=True)
 
     unittest.main()
-

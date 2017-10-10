@@ -37,7 +37,7 @@ N.B. The df is transposed from how it looks in a gct file.
 
 N.B. rids, cids, rhds, and chds must be:
 - unique
-- matching in both content & order everywhere they're found 
+- matching in both content & order everywhere they're found
 """
 import numpy as np
 import pandas as pd
@@ -53,15 +53,24 @@ class GCToo(object):
     and data_df) as well as an assembly of these 3 into a multi index df
     that provides an alternate way of selecting data.
     """
-    def __init__(self, data_df, row_metadata_df, col_metadata_df,
+    def __init__(self, data_df, row_metadata_df=None, col_metadata_df=None,
                  src=None, version=None, make_multiindex=False, logger_name=setup_logger.LOGGER_NAME):
 
         self.logger = logging.getLogger(logger_name)
 
         self.src = src
         self.version = version
-        self.row_metadata_df = row_metadata_df
-        self.col_metadata_df = col_metadata_df
+
+        if row_metadata_df is None:
+            self.row_metadata_df = pd.DataFrame(index=data_df.index)
+        else:
+            self.row_metadata_df = row_metadata_df
+
+        if col_metadata_df is None:
+            self.col_metadata_df = pd.DataFrame(index=data_df.columns)
+        else:
+            self.col_metadata_df = col_metadata_df
+
         self.data_df = data_df
         self.multi_index_df = None
 
