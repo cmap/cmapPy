@@ -3,10 +3,10 @@ import unittest
 import logging
 import numpy as np
 import pandas as pd
+import cmapPy.pandasGEXpress.setup_GCToo_logger as setup_logger
+import cmapPy.pandasGEXpress.concat_gctoo as cg
+import cmapPy.pandasGEXpress.parse_gct as pg
 
-from cmapPy.pandasGEXpress import setup_GCToo_logger as setup_logger
-from cmapPy.pandasGEXpress import concat_gctoo as cg
-from cmapPy.pandasGEXpress import parse_gct as pg
 
 logger = logging.getLogger(setup_logger.LOGGER_NAME)
 FUNCTIONAL_TESTS_DIR = "functional_tests"
@@ -225,6 +225,7 @@ class TestConcatGctoo(unittest.TestCase):
         cg.do_reset_ids(meta_df, data_df, "horiz")
         pd.util.testing.assert_frame_equal(meta_df, e_meta_df)
         pd.util.testing.assert_frame_equal(data_df, e_data_df)
+
 
 if __name__ == "__main__":
     setup_logger.setup(verbose=True)

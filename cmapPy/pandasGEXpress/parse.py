@@ -18,9 +18,10 @@ __email__ = "oana@broadinstitute.org"
 # instantiate logger
 logger = logging.getLogger(setup_logger.LOGGER_NAME)
 
+
 def parse(file_path, convert_neg_666=True, rid=None, cid=None, ridx=None, cidx=None,
-		  row_meta_only=False, col_meta_only=False, make_multiindex=False):
-	""" 
+          row_meta_only=False, col_meta_only=False, make_multiindex=False):
+    """
 	Identifies whether file_path corresponds to a .gct or .gctx file and calls the
 	correct corresponding parse method.
 
@@ -48,21 +49,19 @@ def parse(file_path, convert_neg_666=True, rid=None, cid=None, ridx=None, cidx=N
 		for metadata. However (so that users can take full advantage of pandas' methods, 
 		including those for filtering nan's etc) we provide the option of converting these 
 		into numpy.NaN values, the pandas default. 
-	""" 
-	if file_path.endswith(".gct"):
-		# Ignoring arguments that won't be passed to parse_gct
-		for unused_arg in ["rid", "cid", "cidx", "row_meta_only", "col_meta_only"]:
-			if eval(unused_arg):
-				msg = "parse_gct does not use the argument {}. Ignoring it...".format(unused_arg)
-				logger.info(msg)
-		curr = parse_gct.parse(file_path, convert_neg_666, make_multiindex)
-	elif file_path.endswith(".gctx"):
-		curr = parse_gctx.parse(file_path, convert_neg_666, rid, cid, ridx, cidx, row_meta_only, col_meta_only, make_multiindex)
-	else:
-		err_msg = "File to parse must be .gct or .gctx!"
-		logger.error(err_msg)
-		raise Exception(err_msg)
-	return curr 
-
-
-
+	"""
+    if file_path.endswith(".gct"):
+        # Ignoring arguments that won't be passed to parse_gct
+        for unused_arg in ["rid", "cid", "cidx", "row_meta_only", "col_meta_only"]:
+            if eval(unused_arg):
+                msg = "parse_gct does not use the argument {}. Ignoring it...".format(unused_arg)
+                logger.info(msg)
+        curr = parse_gct.parse(file_path, convert_neg_666, make_multiindex)
+    elif file_path.endswith(".gctx"):
+        curr = parse_gctx.parse(file_path, convert_neg_666, rid, cid, ridx, cidx, row_meta_only, col_meta_only,
+                                make_multiindex)
+    else:
+        err_msg = "File to parse must be .gct or .gctx!"
+        logger.error(err_msg)
+        raise Exception(err_msg)
+    return curr

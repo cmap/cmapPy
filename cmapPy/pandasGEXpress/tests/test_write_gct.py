@@ -4,16 +4,16 @@ from cmapPy.pandasGEXpress import setup_GCToo_logger as setup_logger
 import os
 import numpy as np
 import pandas as pd
-from cmapPy.pandasGEXpress import GCToo as GCToo
-from cmapPy.pandasGEXpress import parse_gct as pg
-from cmapPy.pandasGEXpress import write_gct as wg
+import cmapPy.pandasGEXpress.GCToo as GCToo
+import cmapPy.pandasGEXpress.parse_gct as pg
+import cmapPy.pandasGEXpress.write_gct as wg
+
 
 FUNCTIONAL_TESTS_PATH = "functional_tests"
 logger = logging.getLogger(setup_logger.LOGGER_NAME)
 
 
 class TestWriteGct(unittest.TestCase):
-    
     @classmethod
     def setUpClass(cls):
         # Create dfs to be used by tests

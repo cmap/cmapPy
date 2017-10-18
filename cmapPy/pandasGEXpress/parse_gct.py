@@ -60,7 +60,7 @@ assemble_multi_index_df method in GCToo.py assembles them.
 """
 
 import logging
-from cmapPy.pandasGEXpress import setup_GCToo_logger as setup_logger
+import setup_GCToo_logger as setup_logger
 import pandas as pd
 import numpy as np 
 import os.path
