@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 import cmapPy.pandasGEXpress.setup_GCToo_logger as setup_logger
 import cmapPy.pandasGEXpress.parse_gct as pg
+import cmapPy.pandasGEXpress.GCToo as GCToo
 
 
 FUNCTIONAL_TESTS_PATH = "functional_tests"
@@ -188,6 +189,8 @@ class TestParseGct(unittest.TestCase):
         # L1000 gct
         l1000_file_path = os.path.join(FUNCTIONAL_TESTS_PATH, "test_l1000.gct")
         l1000_gct = pg.parse(l1000_file_path)
+        logger.debug("parse L1000 gct - l1000_gct:  {}".format(l1000_gct))
+        self.assertEqual(GCToo.GCToo, type(l1000_gct))
 
         # Check a few values
         self.assertAlmostEqual(l1000_gct.data_df.iloc[0, 0], 11.3819, places=4,
@@ -203,6 +206,8 @@ class TestParseGct(unittest.TestCase):
         # P100 gct
         p100_file_path = os.path.join(FUNCTIONAL_TESTS_PATH, "test_p100.gct")
         p100_gct = pg.parse(p100_file_path)
+        logger.debug("parse P100 gct - p100_gct:  {}".format(p100_gct))
+        self.assertEqual(GCToo.GCToo, type(p100_gct))
 
         # Check a few values
         self.assertAlmostEqual(p100_gct.data_df.iloc[0, 0], 0.9182, places=4,
@@ -218,6 +223,8 @@ class TestParseGct(unittest.TestCase):
         # GCT1.2
         gct_v1point2_path = os.path.join(FUNCTIONAL_TESTS_PATH, "test_v1point2_n5x10.gct")
         gct_v1point2 = pg.parse(gct_v1point2_path)
+        logger.debug("parse GC1.2 - gct_v1point2:  {}".format(gct_v1point2))
+        self.assertEqual(GCToo.GCToo, type(gct_v1point2))
 
         # Check a few values
         self.assertAlmostEqual(
@@ -228,6 +235,18 @@ class TestParseGct(unittest.TestCase):
         # Make sure col_metadata_df is empty
         self.assertEqual(gct_v1point2.col_metadata_df.size, 0,
                          "col_metadata_df should be empty.")
+
+        #row_meta_only=True
+        row_metadata_df = pg.parse(l1000_file_path, row_meta_only=True)
+        logger.debug("row_meta_only=True - row_metadata_df.shape:  {}".format(row_metadata_df.shape))
+        self.assertEqual(pd.DataFrame, type(row_metadata_df))
+        self.assertEqual((978, 11), row_metadata_df.shape)
+
+        #col_meta_only=True
+        col_metadata_df = pg.parse(l1000_file_path, col_meta_only=True)
+        logger.debug("col_meta_only=True - col_metadata_df.shape:  {}".format(col_metadata_df.shape))
+        self.assertEqual(pd.DataFrame, type(col_metadata_df))
+        self.assertEqual((377, 35), col_metadata_df.shape)
 
     def test_parse_gct_int_ids(self):
         path = os.path.join(FUNCTIONAL_TESTS_PATH, "test_parse_gct_int_ids.gct")

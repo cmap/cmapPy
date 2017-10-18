@@ -23,35 +23,35 @@ col_meta_group_node = "/0/META/COL"
 def parse(gctx_file_path, convert_neg_666=True, rid=None, cid=None,
           ridx=None, cidx=None, row_meta_only=False, col_meta_only=False, make_multiindex=False):
     """
-	Primary method of script. Reads in path to a gctx file and parses into GCToo object.
+    Primary method of script. Reads in path to a gctx file and parses into GCToo object.
 
-	Input:
-		Mandatory:
-		- gctx_file_path (str): full path to gctx file you want to parse.
+    Input:
+        Mandatory:
+        - gctx_file_path (str): full path to gctx file you want to parse.
 
-		Optional:
-		- convert_neg_666 (bool): whether to convert -666 values to numpy.nan or not
-			(see Note below for more details on this). Default = False.
-		- rid (list of strings): only read the row ids in this list from the gctx. Default=None.
-		- cid (list of strings): only read the column ids in this list from the gctx. Default=None.
-		- row_meta_only (bool): Whether to load data + metadata (if False), or just row metadata (if True)
-			as pandas DataFrame
-		- col_meta_only (bool): Whether to load data + metadata (if False), or just col metadata (if True)
-			as pandas DataFrame
-		- make_multiindex (bool): whether to create a multi-index df combining
-			the 3 component dfs
+        Optional:
+        - convert_neg_666 (bool): whether to convert -666 values to numpy.nan or not
+            (see Note below for more details on this). Default = False.
+        - rid (list of strings): only read the row ids in this list from the gctx. Default=None.
+        - cid (list of strings): only read the column ids in this list from the gctx. Default=None.
+        - row_meta_only (bool): Whether to load data + metadata (if False), or just row metadata (if True)
+            as pandas DataFrame
+        - col_meta_only (bool): Whether to load data + metadata (if False), or just col metadata (if True)
+            as pandas DataFrame
+        - make_multiindex (bool): whether to create a multi-index df combining
+            the 3 component dfs
 
-	Output:
-		- myGCToo (GCToo): A GCToo instance containing content of parsed gctx file. Note: if meta_only = True,
-			this will be a GCToo instance where the data_df is empty, i.e. data_df = pd.DataFrame(index=rids,
-			columns = cids)
+    Output:
+        - myGCToo (GCToo): A GCToo instance containing content of parsed gctx file. Note: if meta_only = True,
+            this will be a GCToo instance where the data_df is empty, i.e. data_df = pd.DataFrame(index=rids,
+            columns = cids)
 
-	Note: why does convert_neg_666 exist?
-		- In CMap--for somewhat obscure historical reasons--we use "-666" as our null value
-		for metadata. However (so that users can take full advantage of pandas' methods,
-		including those for filtering nan's etc) we provide the option of converting these
-		into numpy.NaN values, the pandas default.
-	"""
+    Note: why does convert_neg_666 exist?
+        - In CMap--for somewhat obscure historical reasons--we use "-666" as our null value
+        for metadata. However (so that users can take full advantage of pandas' methods,
+        including those for filtering nan's etc) we provide the option of converting these
+        into numpy.NaN values, the pandas default.
+    """
     full_path = os.path.expanduser(gctx_file_path)
 
     # Verify that the  path exists
@@ -124,15 +124,15 @@ def parse(gctx_file_path, convert_neg_666=True, rid=None, cid=None,
 
 def check_and_order_id_inputs(rid, ridx, cid, cidx, row_meta_df, col_meta_df):
     """
-	Makes sure that (if entered) id inputs entered are of one type (string id or index)
-	Input:
-		- rid (list or None): if not None, a list of rids
-		- ridx (list or None): if not None, a list of indexes
-		- cid (list or None): if not None, a list of cids
-		- cidx (list or None): if not None, a list of indexes
-	Output:
-		- a tuple of the ordered ridx and cidx
-	"""
+    Makes sure that (if entered) id inputs entered are of one type (string id or index)
+    Input:
+        - rid (list or None): if not None, a list of rids
+        - ridx (list or None): if not None, a list of indexes
+        - cid (list or None): if not None, a list of cids
+        - cidx (list or None): if not None, a list of indexes
+    Output:
+        - a tuple of the ordered ridx and cidx
+    """
     (row_type, row_ids) = check_id_idx_exclusivity(rid, ridx)
     (col_type, col_ids) = check_id_idx_exclusivity(cid, cidx)
 
@@ -146,15 +146,15 @@ def check_and_order_id_inputs(rid, ridx, cid, cidx, row_meta_df, col_meta_df):
 
 def check_id_idx_exclusivity(id, idx):
     """
-	Makes sure user didn't provide both ids and idx values to slice by.
+    Makes sure user didn't provide both ids and idx values to slice by.
 
-	Input:
-		- id (list or None): if not None, a list of string id names
-		- idx (list or None): if not None, a list of integer id indexes
+    Input:
+        - id (list or None): if not None, a list of string id names
+        - idx (list or None): if not None, a list of integer id indexes
 
-	Output:
-		- a tuple: first element is subset type, second is subset content
-	"""
+    Output:
+        - a tuple: first element is subset type, second is subset content
+    """
     if (id is not None and idx is not None):
         msg = ("'id' and 'idx' fields can't both not be None," +
                " please specify slice in only one of these fields")
@@ -214,13 +214,13 @@ def convert_ids_to_meta_type(id_list, meta_df):
 
 def get_ordered_idx(id_type, id_list, meta_df):
     """
-	Gets index values corresponding to ids to subset and orders them.
-	Input:
-		- id_type (str): either "id", "idx" or None
-		- id_list (list): either a list of indexes or id names
-	Output:
-		- a sorted list of indexes to subset a dimension by
-	"""
+    Gets index values corresponding to ids to subset and orders them.
+    Input:
+        - id_type (str): either "id", "idx" or None
+        - id_list (list): either a list of indexes or id names
+    Output:
+        - a sorted list of indexes to subset a dimension by
+    """
     if meta_df is not None:
         if id_type is None:
             id_list = range(0, len(list(meta_df.index)))
@@ -233,16 +233,16 @@ def get_ordered_idx(id_type, id_list, meta_df):
 
 def parse_metadata_df(dim, meta_group, convert_neg_666):
     """
-	Reads in all metadata from .gctx file to pandas DataFrame
-	with proper GCToo specifications.
-	Input:
-		- dim (str): Dimension of metadata; either "row" or "column"
-		- meta_group (HDF5 group): Group from which to read metadata values
-		- convert_neg_666 (bool): whether to convert "-666" values to np.nan or not
-	Output:
-		- meta_df (pandas DataFrame): data frame corresponding to metadata fields
-			of dimension specified.
-	"""
+    Reads in all metadata from .gctx file to pandas DataFrame
+    with proper GCToo specifications.
+    Input:
+        - dim (str): Dimension of metadata; either "row" or "column"
+        - meta_group (HDF5 group): Group from which to read metadata values
+        - convert_neg_666 (bool): whether to convert "-666" values to np.nan or not
+    Output:
+        - meta_df (pandas DataFrame): data frame corresponding to metadata fields
+            of dimension specified.
+    """
     # read values from hdf5 & make a DataFrame
     header_values = {}
     array_index = 0
@@ -264,7 +264,7 @@ def parse_metadata_df(dim, meta_group, convert_neg_666):
 
     # Convert metadata to numeric if possible, after converting everything to string first
     # Note: This conversion first to string is to ensure consistent behavior between
-    #	the gctx and gct parser (which by default reads the entire text file into a string)
+    #    the gctx and gct parser (which by default reads the entire text file into a string)
     meta_df = meta_df.apply(lambda x: pd.to_numeric(x, errors="ignore"))
 
     meta_df.set_index(pd.Index(ids, dtype=str), inplace=True)
@@ -279,12 +279,12 @@ def parse_metadata_df(dim, meta_group, convert_neg_666):
 
 def replace_666(meta_df, convert_neg_666):
     """ Replace -666, -666.0, and optionally "-666".
-	Args:
-	    meta_df (pandas df):
-	    convert_neg_666 (bool):
-	Returns:
-	    out_df (pandas df): updated meta_df
-	"""
+    Args:
+        meta_df (pandas df):
+        convert_neg_666 (bool):
+    Returns:
+        out_df (pandas df): updated meta_df
+    """
     if convert_neg_666:
         out_df = meta_df.replace([-666, "-666", -666.0], np.nan)
     else:
@@ -294,14 +294,14 @@ def replace_666(meta_df, convert_neg_666):
 
 def set_metadata_index_and_column_names(dim, meta_df):
     """
-	Sets index and column names to GCTX convention.
-	Input:
-		- dim (str): Dimension of metadata to read. Must be either "row" or "col"
-		- meta_df (pandas.DataFrame): data frame corresponding to metadata fields
-			of dimension specified.
-	Output:
-		None
-	"""
+    Sets index and column names to GCTX convention.
+    Input:
+        - dim (str): Dimension of metadata to read. Must be either "row" or "col"
+        - meta_df (pandas.DataFrame): data frame corresponding to metadata fields
+            of dimension specified.
+    Output:
+        None
+    """
     if dim == "row":
         meta_df.index.name = "rid"
         meta_df.columns.name = "rhd"
@@ -312,17 +312,17 @@ def set_metadata_index_and_column_names(dim, meta_df):
 
 def parse_data_df(data_dset, ridx, cidx, row_meta, col_meta):
     """
-	Parses in data_df from hdf5, slicing if specified.
+    Parses in data_df from hdf5, slicing if specified.
 
-	Input:
-		-data_dset (h5py dset): HDF5 dataset from which to read data_df
-		-ridx (list): list of indexes to slice from data_df
-			(may be all of them if no slicing)
-		-cidx (list): list of indexes to slice from data_df
-			(may be all of them if no slicing)
-		-row_meta (pandas DataFrame): the parsed in row metadata
-		-col_meta (pandas DataFrame): the parsed in col metadata
-	"""
+    Input:
+        -data_dset (h5py dset): HDF5 dataset from which to read data_df
+        -ridx (list): list of indexes to slice from data_df
+            (may be all of them if no slicing)
+        -cidx (list): list of indexes to slice from data_df
+            (may be all of them if no slicing)
+        -row_meta (pandas DataFrame): the parsed in row metadata
+        -col_meta (pandas DataFrame): the parsed in col metadata
+    """
     if len(ridx) == len(row_meta.index) and len(cidx) == len(col_meta.index):  # no slice
         data_array = np.empty(data_dset.shape, dtype=np.float32)
         data_dset.read_direct(data_array)
@@ -340,18 +340,18 @@ def parse_data_df(data_dset, ridx, cidx, row_meta, col_meta):
 
 def get_column_metadata(gctx_file_path, convert_neg_666=True):
     """
-	Opens .gctx file and returns only column metadata
+    Opens .gctx file and returns only column metadata
 
-	Input:
-		Mandatory:
-		- gctx_file_path (str): full path to gctx file you want to parse.
+    Input:
+        Mandatory:
+        - gctx_file_path (str): full path to gctx file you want to parse.
 
-		Optional:
-		- convert_neg_666 (bool): whether to convert -666 values to num
+        Optional:
+        - convert_neg_666 (bool): whether to convert -666 values to num
 
-	Output:
-		- col_meta (pandas DataFrame): a DataFrame of all column metadata values.
-	"""
+    Output:
+        - col_meta (pandas DataFrame): a DataFrame of all column metadata values.
+    """
     full_path = os.path.expanduser(gctx_file_path)
     # open file
     gctx_file = h5py.File(full_path, "r")
@@ -363,18 +363,18 @@ def get_column_metadata(gctx_file_path, convert_neg_666=True):
 
 def get_row_metadata(gctx_file_path, convert_neg_666=True):
     """
-	Opens .gctx file and returns only row metadata
+    Opens .gctx file and returns only row metadata
 
-	Input:
-		Mandatory:
-		- gctx_file_path (str): full path to gctx file you want to parse.
+    Input:
+        Mandatory:
+        - gctx_file_path (str): full path to gctx file you want to parse.
 
-		Optional:
-		- convert_neg_666 (bool): whether to convert -666 values to num
+        Optional:
+        - convert_neg_666 (bool): whether to convert -666 values to num
 
-	Output:
-		- row_meta (pandas DataFrame): a DataFrame of all row metadata values.
-	"""
+    Output:
+        - row_meta (pandas DataFrame): a DataFrame of all row metadata values.
+    """
     full_path = os.path.expanduser(gctx_file_path)
     # open file
     gctx_file = h5py.File(full_path, "r")
