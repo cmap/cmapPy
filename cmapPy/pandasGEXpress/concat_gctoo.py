@@ -87,7 +87,7 @@ def build_parser():
     parser.add_argument("-verbose", "-v", action="store_true", default=False,
         help="whether to print a bunch of output")
 
-    parser.add_argument("--error_report_output_file", "-erof", type=str, default="concat_gctoo_errors.txt",
+    parser.add_argument("--error_report_output_file", "-erof", type=str, default=None,
                         help="""destination file for writing out error report - currently information about inconsistent
                         metadata fields in the common dimension of the concat operation""")
 
