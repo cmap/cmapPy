@@ -98,6 +98,7 @@ def main():
     # get args
     args = build_parser().parse_args(sys.argv[1:])
     setup_logger.setup(verbose=args.verbose)
+    logger.debug("args:  {}".format(args))
 
     # Get files directly
     if args.input_filepaths is not None:
@@ -127,10 +128,12 @@ def main():
 
         # Create concatenated gctoo object
         if args.concat_direction == "horiz":
-            out_gctoo = hstack(gctoos, args.fields_to_remove, args.reset_ids)
+            out_gctoo = hstack(gctoos, args.remove_all_metadata_fields, args.error_report_output_file,
+                               args.fields_to_remove, args.reset_ids)
 
         elif args.concat_direction == "vert":
-            out_gctoo = vstack(gctoos, args.fields_to_remove, args.reset_ids)
+            out_gctoo = vstack(gctoos, args.remove_all_metadata_fields, args.error_report_output_file,
+                               args.fields_to_remove, args.reset_ids)
 
     # Write out_gctoo to file
     logger.info("Writing to output file args.out_name:  {}".format(args.out_name))
