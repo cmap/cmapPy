@@ -13,7 +13,7 @@ env:
   - TEST_DIR = cmapPy/pandasGEXpress/tests
   - TEST_DIR = cmapPy/set_io/tests
 
-# which tests to run 
+# run all tests in each test dir 
 script: cd $TEST_DIR && python -m unittest discover -p "test_*.py"
 
 # what branches of github to use
