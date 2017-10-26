@@ -5,7 +5,10 @@
    
 .. image:: https://badge.fury.io/py/cmapPy.svg
     :target: https://badge.fury.io/py/cmapPy
-    
+
+.. image:: https://travis-ci.org/cmap/cmapPy.svg?branch=master
+    :target: https://travis-ci.org/cmap/cmapPy
+
 .. image:: https://readthedocs.org/projects/cmappy/badge/?version=latest
     :target: http://cmappy.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
