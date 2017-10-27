@@ -276,7 +276,7 @@ def assemble_common_meta(common_meta_dfs, fields_to_remove, sources, remove_all_
         all_meta_df_sorted (pandas df)
 
     """
-    all_meta_df, all_meta_df_with_dups = build_common_all_meta_dfs(common_meta_dfs, fields_to_remove, remove_all_metadata_fields)
+    all_meta_df, all_meta_df_with_dups = build_common_all_meta_df(common_meta_dfs, fields_to_remove, remove_all_metadata_fields)
 
     if not all_meta_df.index.is_unique:
         all_report_df = build_mismatched_common_meta_report([x.shape for x in common_meta_dfs],
@@ -299,8 +299,25 @@ all_report_df:
     return all_meta_df_sorted
 
 
-def build_common_all_meta_dfs(common_meta_dfs, fields_to_remove, remove_all_metadata_fields):
-    # Remove any column headers that are not present in all dfs (and sort)
+def build_common_all_meta_df(common_meta_dfs, fields_to_remove, remove_all_metadata_fields):
+    """
+    concatenate the entries in common_meta_dfs, removing columns selectively (fields_to_remove) or entirely (
+        remove_all_metadata_fields=True; in this case, effectively just merges all the indexes in common_meta_dfs).
+
+        Returns 2 dataframes (in a tuple):  the first has duplicates removed, the second does not.
+
+    Args:
+        common_meta_dfs: collection of pandas DataFrames containing the metadata in the "common" direction of the
+            concatenation operation
+        fields_to_remove: columns to be removed (if present) from the common_meta_dfs
+        remove_all_metadata_fields: boolean indicating that all metadata fields should be removed from the
+            common_meta_dfs; overrides fields_to_remove if present
+
+    Returns:
+        tuple containing
+            all_meta_df:  pandas dataframe that is the concatenation of the dataframes in common_meta_dfs,
+            all_meta_df_with_dups:
+    """
 
     if remove_all_metadata_fields:
         trimmed_common_meta_dfs = [pd.DataFrame(index=df.index) for df in common_meta_dfs]
@@ -338,6 +355,19 @@ def build_common_all_meta_dfs(common_meta_dfs, fields_to_remove, remove_all_meta
 
 
 def build_mismatched_common_meta_report(common_meta_df_shapes, sources, all_meta_df, all_meta_df_with_dups):
+    """
+    Generate a report (dataframe) that indicates for the common metadata that does not match across the common metadata
+        which source file had which of the different mismatch values
+
+    Args:
+        common_meta_df_shapes:  list of tuples that are the shapes of the common meta dataframes
+        sources: list of the source files that the dataframes were loaded from
+        all_meta_df: produced from build_common_all_meta_df
+        all_meta_df_with_dups: produced from build_common_all_meta_df
+
+    Returns:
+        all_report_df:  dataframe indicating the mismatched row metadata values and the corresponding source file
+    """
     expanded_sources = []
     for (i, shape) in enumerate(common_meta_df_shapes):
         src = sources[i]

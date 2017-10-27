@@ -219,7 +219,7 @@ class TestConcatGctoo(unittest.TestCase):
         pd.util.testing.assert_frame_equal(meta_df, e_meta_df)
         pd.util.testing.assert_frame_equal(data_df, e_data_df)
 
-    def test_build_common_all_meta_dfs(self):
+    def test_build_common_all_meta_df(self):
         # rhd3 header needs to be removed
         meta1 = pd.DataFrame(
             [["r1_1", "r1_2", "r1_3"],
@@ -240,7 +240,7 @@ class TestConcatGctoo(unittest.TestCase):
             index=["r1", "r2", "r3"],
             columns=["rhd1", "rhd2"])
 
-        r_all, r_all_w_dups = cg.build_common_all_meta_dfs([meta1, meta2], ["rhd3"], False)
+        r_all, r_all_w_dups = cg.build_common_all_meta_df([meta1, meta2], ["rhd3"], False)
         logger.debug("rhd3 header needs to be removed - r_all:\n{}".format(r_all))
         logger.debug("r_all_w_dups:\n{}".format(r_all_w_dups))
         self.assertEqual((3,2), r_all.shape)
@@ -248,7 +248,7 @@ class TestConcatGctoo(unittest.TestCase):
         pd.util.testing.assert_frame_equal(e_meta1, r_all)
 
         #remove all metadata fields
-        r_all, r_all_w_dups = cg.build_common_all_meta_dfs([meta1, meta2], [], True)
+        r_all, r_all_w_dups = cg.build_common_all_meta_df([meta1, meta2], [], True)
         logger.debug("remove all metadata fields - r_all\n{}".format(r_all))
         logger.debug("r_all_w_dups:\n{}".format(r_all_w_dups))
         self.assertEqual((3,0), r_all.shape)
@@ -273,7 +273,7 @@ class TestConcatGctoo(unittest.TestCase):
 
         # rhd5 not in meta4, so it should be dropped even without being
         # explicitly provided
-        out_meta3, _ = cg.build_common_all_meta_dfs([meta1, meta4], ["rhd2"], False)
+        out_meta3, _ = cg.build_common_all_meta_df([meta1, meta4], ["rhd2"], False)
         logger.debug("""rhd5 not in meta4 so it should be automatically dropped without being
         explictly listed in fields_to_remove - out_meta3:
         {}""".format(out_meta3))
@@ -282,14 +282,14 @@ class TestConcatGctoo(unittest.TestCase):
         # Empty metadata
         empty_meta = pd.DataFrame([], index=["a", "b", "c"])
         logger.debug("empty metadata provided - empty_meta.empty: {}".format(empty_meta.empty))
-        out_meta4, _ = cg.build_common_all_meta_dfs([empty_meta, empty_meta], [], False)
+        out_meta4, _ = cg.build_common_all_meta_df([empty_meta, empty_meta], [], False)
         logger.debug("empty metadata provided - out_meta4:\n{}".format(out_meta4))
         pd.util.testing.assert_frame_equal(out_meta4, empty_meta)
 
         #metadata has duplicates but index is unique
         meta5 = pd.DataFrame({"rhd1":[0,0,1]}, index=range(3))
         meta6 = pd.DataFrame({"rhd1":[0,0,1]}, index=range(3))
-        out_meta5, _ = cg.build_common_all_meta_dfs([meta5, meta6], [], False)
+        out_meta5, _ = cg.build_common_all_meta_df([meta5, meta6], [], False)
         logger.debug("metadata has duplicates but index is unique - out_meta5:\n{}".format(out_meta5))
         self.assertEqual((3,1), out_meta5.shape, "metadata contains duplicates but index is unique - should have been kept")
 
@@ -319,7 +319,7 @@ class TestConcatGctoo(unittest.TestCase):
         logger.debug("meta3:\n{}".format(meta3))
 
         common_meta_dfs = [meta1, meta2, meta3]
-        all_meta_df, all_meta_df_with_dups = cg.build_common_all_meta_dfs(common_meta_dfs, [], False)
+        all_meta_df, all_meta_df_with_dups = cg.build_common_all_meta_df(common_meta_dfs, [], False)
         common_meta_df_shapes = [x.shape for x in common_meta_dfs]
         sources = ["my_src1", "my_src2", "my_src3"]
         self.assertFalse(all_meta_df.index.is_unique, "during setup expected the index to not be unique")
