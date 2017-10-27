@@ -38,6 +38,7 @@ import glob
 import logging
 import setup_GCToo_logger as setup_logger
 import pandas as pd
+import numpy
 
 import GCToo
 import parse 
@@ -72,6 +73,8 @@ def build_parser():
         help="what to name the output file")
     parser.add_argument("--fields_to_remove", "-ftr", nargs="+", default=[],
         help="fields to remove from the common metadata")
+    parser.add_argument("--remove_all_metadata_fields", "-ramf", action="store_true", default=False,
+                        help="remove all metadata fields during operation")
     parser.add_argument("--reset_ids", "-rsi", action="store_true", default=False,
         help="whether to reset ids (use this flag if ids are not unique)")
 
@@ -84,6 +87,10 @@ def build_parser():
     parser.add_argument("-verbose", "-v", action="store_true", default=False,
         help="whether to print a bunch of output")
 
+    parser.add_argument("--error_report_output_file", "-erof", type=str, default=None,
+                        help="""destination file for writing out error report - currently information about inconsistent
+                        metadata fields in the common dimension of the concat operation""")
+
     return parser
 
 
@@ -91,6 +98,7 @@ def main():
     # get args
     args = build_parser().parse_args(sys.argv[1:])
     setup_logger.setup(verbose=args.verbose)
+    logger.debug("args:  {}".format(args))
 
     # Get files directly
     if args.input_filepaths is not None:
@@ -120,10 +128,12 @@ def main():
 
         # Create concatenated gctoo object
         if args.concat_direction == "horiz":
-            out_gctoo = hstack(gctoos, args.fields_to_remove, args.reset_ids)
+            out_gctoo = hstack(gctoos, args.remove_all_metadata_fields, args.error_report_output_file,
+                               args.fields_to_remove, args.reset_ids)
 
         elif args.concat_direction == "vert":
-            out_gctoo = vstack(gctoos, args.fields_to_remove, args.reset_ids)
+            out_gctoo = vstack(gctoos, args.remove_all_metadata_fields, args.error_report_output_file,
+                               args.fields_to_remove, args.reset_ids)
 
     # Write out_gctoo to file
     logger.info("Writing to output file args.out_name:  {}".format(args.out_name))
@@ -153,7 +163,7 @@ def get_file_list(wildcard):
     return files
 
 
-def hstack(gctoos, fields_to_remove=[], reset_ids=False):
+def hstack(gctoos, remove_all_metadata_fields, error_report_file, fields_to_remove=[], reset_ids=False):
     """ Horizontally concatenate gctoos.
 
     Args:
@@ -169,18 +179,20 @@ def hstack(gctoos, fields_to_remove=[], reset_ids=False):
     row_meta_dfs = []
     col_meta_dfs = []
     data_dfs = []
+    srcs = []
     for g in gctoos:
         row_meta_dfs.append(g.row_metadata_df)
         col_meta_dfs.append(g.col_metadata_df)
         data_dfs.append(g.data_df)
+        srcs.append(g.src)
 
     logger.debug("shapes of row_meta_dfs:  {}".format([x.shape for x in row_meta_dfs]))
 
     # Concatenate row metadata
-    all_row_metadata_df = assemble_common_meta(row_meta_dfs, fields_to_remove)
+    all_row_metadata_df = assemble_common_meta(row_meta_dfs, fields_to_remove, srcs, remove_all_metadata_fields, error_report_file)
 
     # Concatenate col metadata
-    all_col_metadata_df = assemble_concatenated_meta(col_meta_dfs)
+    all_col_metadata_df = assemble_concatenated_meta(col_meta_dfs, remove_all_metadata_fields)
 
     # Concatenate the data_dfs
     all_data_df = assemble_data(data_dfs, "horiz")
@@ -202,7 +214,7 @@ def hstack(gctoos, fields_to_remove=[], reset_ids=False):
     return concated
 
 
-def vstack(gctoos, fields_to_remove=[], reset_ids=False):
+def vstack(gctoos, remove_all_metadata_fields, error_report_file, fields_to_remove=[], reset_ids=False):
     """ Vertically concatenate gctoos.
 
     Args:
@@ -218,16 +230,18 @@ def vstack(gctoos, fields_to_remove=[], reset_ids=False):
     row_meta_dfs = []
     col_meta_dfs = []
     data_dfs = []
+    srcs = []
     for g in gctoos:
         row_meta_dfs.append(g.row_metadata_df)
         col_meta_dfs.append(g.col_metadata_df)
         data_dfs.append(g.data_df)
+        srcs.append(g.src)
 
     # Concatenate col metadata
-    all_col_metadata_df = assemble_common_meta(col_meta_dfs, fields_to_remove)
+    all_col_metadata_df = assemble_common_meta(col_meta_dfs, fields_to_remove, srcs, remove_all_metadata_fields, error_report_file)
 
     # Concatenate col metadata
-    all_row_metadata_df = assemble_concatenated_meta(row_meta_dfs)
+    all_row_metadata_df = assemble_concatenated_meta(row_meta_dfs, remove_all_metadata_fields)
 
     # Concatenate the data_dfs
     all_data_df = assemble_data(data_dfs, "vert")
@@ -249,7 +263,7 @@ def vstack(gctoos, fields_to_remove=[], reset_ids=False):
     return concated
 
 
-def assemble_common_meta(common_meta_dfs, fields_to_remove):
+def assemble_common_meta(common_meta_dfs, fields_to_remove, sources, remove_all_metadata_fields, error_report_file):
     """ Assemble the common metadata dfs together. Both indices are sorted.
     Fields that are not in all the dfs are dropped.
 
@@ -262,42 +276,22 @@ def assemble_common_meta(common_meta_dfs, fields_to_remove):
         all_meta_df_sorted (pandas df)
 
     """
-    # Remove any column headers that are not present in all dfs (and sort)
-    shared_column_headers = sorted(set.intersection(*[set(df.columns) for df in common_meta_dfs]))
-    trimmed_common_meta_dfs = [df[shared_column_headers] for df in common_meta_dfs]
+    all_meta_df, all_meta_df_with_dups = build_common_all_meta_df(common_meta_dfs, fields_to_remove, remove_all_metadata_fields)
 
-    # Remove any column headers that will prevent dfs from being identical
-    for df in trimmed_common_meta_dfs:
-        df.drop(fields_to_remove, axis=1, errors="ignore", inplace=True)
+    if not all_meta_df.index.is_unique:
+        all_report_df = build_mismatched_common_meta_report([x.shape for x in common_meta_dfs],
+            sources, all_meta_df, all_meta_df_with_dups)
 
-    # Concatenate all dfs and then remove duplicate rows
-    all_meta_df_with_dups = pd.concat(trimmed_common_meta_dfs, axis=0)
+        unique_duplicate_ids = all_report_df.index.unique()
 
-    # If all metadata dfs were empty, df will be empty
-    if all_meta_df_with_dups.empty:
+        if error_report_file is not None:
+            all_report_df.to_csv(error_report_file, sep="\t")
 
-        # Simply return unique ids
-        all_meta_df = pd.DataFrame(index=all_meta_df_with_dups.index.unique())
-
-    else:
-        all_meta_df_with_dups["concat_gctoo_column_for_index"] = all_meta_df_with_dups.index
-        all_meta_df = all_meta_df_with_dups.copy(deep=True).drop_duplicates()
-        all_meta_df.drop("concat_gctoo_column_for_index", axis=1, inplace=True)
-
-    logger.debug("all_meta_df_with_dups.shape: {}".format(all_meta_df_with_dups.shape))
-    logger.debug("all_meta_df.shape: {}".format(all_meta_df.shape))
-
-    # If there are still duplicate ids, then their metadata didn't align
-    # in different gcts
-    duplicate_ids = all_meta_df.index[all_meta_df.index.duplicated(keep=False)]
-
-    assert all_meta_df.index.is_unique, (
-        ("There are inconsistencies in common_metadata_df between " +
-         "different files.\nTry excluding metadata fields " +
-         "using the fields_to_remove argument.\n"
-         "duplicate_ids[0]: {id}\n" +
-         "all_meta_df.loc[{id}, :]:\n{df}").format(id=duplicate_ids[0],
-            df=all_meta_df.loc[duplicate_ids[0], :]))
+        msg = """There are inconsistencies in common_metadata_df between different files.  Try excluding metadata fields
+using the fields_to_remove argument.  unique_duplicate_ids: {}
+all_report_df:
+{}""".format(unique_duplicate_ids, all_report_df)
+        raise MismatchCommonMetadataConcatGctooException(msg)
 
     # Finally, sort the index
     all_meta_df_sorted = all_meta_df.sort_index(axis=0)
@@ -305,7 +299,115 @@ def assemble_common_meta(common_meta_dfs, fields_to_remove):
     return all_meta_df_sorted
 
 
-def assemble_concatenated_meta(concated_meta_dfs):
+def build_common_all_meta_df(common_meta_dfs, fields_to_remove, remove_all_metadata_fields):
+    """
+    concatenate the entries in common_meta_dfs, removing columns selectively (fields_to_remove) or entirely (
+        remove_all_metadata_fields=True; in this case, effectively just merges all the indexes in common_meta_dfs).
+
+        Returns 2 dataframes (in a tuple):  the first has duplicates removed, the second does not.
+
+    Args:
+        common_meta_dfs: collection of pandas DataFrames containing the metadata in the "common" direction of the
+            concatenation operation
+        fields_to_remove: columns to be removed (if present) from the common_meta_dfs
+        remove_all_metadata_fields: boolean indicating that all metadata fields should be removed from the
+            common_meta_dfs; overrides fields_to_remove if present
+
+    Returns:
+        tuple containing
+            all_meta_df:  pandas dataframe that is the concatenation of the dataframes in common_meta_dfs,
+            all_meta_df_with_dups:
+    """
+
+    if remove_all_metadata_fields:
+        trimmed_common_meta_dfs = [pd.DataFrame(index=df.index) for df in common_meta_dfs]
+    else:
+        shared_column_headers = sorted(set.intersection(*[set(df.columns) for df in common_meta_dfs]))
+        logger.debug("shared_column_headers:  {}".format(shared_column_headers))
+
+        trimmed_common_meta_dfs = [df[shared_column_headers] for df in common_meta_dfs]
+
+        # Remove any column headers that will prevent dfs from being identical
+        for df in trimmed_common_meta_dfs:
+            df.drop(fields_to_remove, axis=1, errors="ignore", inplace=True)
+
+    # Concatenate all dfs and then remove duplicate rows
+    all_meta_df_with_dups = pd.concat(trimmed_common_meta_dfs, axis=0)
+    logger.debug("all_meta_df_with_dups.shape:  {}".format(all_meta_df_with_dups.shape))
+    logger.debug("all_meta_df_with_dups.columns:  {}".format(all_meta_df_with_dups.columns))
+    logger.debug("all_meta_df_with_dups.index:  {}".format(all_meta_df_with_dups.index))
+
+    # If all metadata dfs were empty, df will be empty
+    if all_meta_df_with_dups.empty:
+        # Simply return unique ids
+        all_meta_df = pd.DataFrame(index=all_meta_df_with_dups.index.unique())
+
+    else:
+        all_meta_df_with_dups["concat_gctoo_column_for_index"] = all_meta_df_with_dups.index
+        all_meta_df = all_meta_df_with_dups.copy(deep=True).drop_duplicates()
+        all_meta_df.drop("concat_gctoo_column_for_index", axis=1, inplace=True)
+        all_meta_df_with_dups.drop("concat_gctoo_column_for_index", axis=1, inplace=True)
+
+    logger.debug("all_meta_df_with_dups.shape: {}".format(all_meta_df_with_dups.shape))
+    logger.debug("all_meta_df.shape: {}".format(all_meta_df.shape))
+
+    return (all_meta_df, all_meta_df_with_dups)
+
+
+def build_mismatched_common_meta_report(common_meta_df_shapes, sources, all_meta_df, all_meta_df_with_dups):
+    """
+    Generate a report (dataframe) that indicates for the common metadata that does not match across the common metadata
+        which source file had which of the different mismatch values
+
+    Args:
+        common_meta_df_shapes:  list of tuples that are the shapes of the common meta dataframes
+        sources: list of the source files that the dataframes were loaded from
+        all_meta_df: produced from build_common_all_meta_df
+        all_meta_df_with_dups: produced from build_common_all_meta_df
+
+    Returns:
+        all_report_df:  dataframe indicating the mismatched row metadata values and the corresponding source file
+    """
+    expanded_sources = []
+    for (i, shape) in enumerate(common_meta_df_shapes):
+        src = sources[i]
+        expanded_sources.extend([src for i in xrange(shape[0])])
+    expanded_sources = numpy.array(expanded_sources)
+    logger.debug("len(expanded_sources):  {}".format(len(expanded_sources)))
+
+    duplicate_ids = all_meta_df.index[all_meta_df.index.duplicated(keep=False)]
+
+    unique_duplicate_ids = duplicate_ids.unique()
+    logger.debug("unique_duplicate_ids:  {}".format(unique_duplicate_ids))
+
+    duplicate_ids_meta_df = all_meta_df.loc[unique_duplicate_ids]
+
+    report_df_list = []
+    for unique_dup_id in unique_duplicate_ids:
+        rows = duplicate_ids_meta_df.loc[unique_dup_id]
+
+        matching_row_locs = numpy.array([False for i in xrange(all_meta_df_with_dups.shape[0])])
+        for i in xrange(rows.shape[0]):
+            r = rows.iloc[i]
+            row_comparison = r == all_meta_df_with_dups
+            matching_row_locs = matching_row_locs | row_comparison.all(axis=1).values
+
+        report_df = all_meta_df_with_dups.loc[matching_row_locs].copy()
+        report_df["source_file"] = expanded_sources[matching_row_locs]
+        logger.debug("report_df.shape:  {}".format(report_df.shape))
+        report_df_list.append(report_df)
+
+    all_report_df = pd.concat(report_df_list, axis=0)
+    all_report_df["orig_rid"] = all_report_df.index
+    all_report_df.index = pd.Index(xrange(all_report_df.shape[0]), name="index")
+    logger.debug("all_report_df.shape:  {}".format(all_report_df.shape))
+    logger.debug("all_report_df.index:  {}".format(all_report_df.index))
+    logger.debug("all_report_df.columns:  {}".format(all_report_df.columns))
+
+    return all_report_df
+
+
+def assemble_concatenated_meta(concated_meta_dfs, remove_all_metadata_fields):
     """ Assemble the concatenated metadata dfs together. For example,
     if horizontally concatenating, the concatenated metadata dfs are the
     column metadata dfs. Both indices are sorted.
@@ -318,6 +420,10 @@ def assemble_concatenated_meta(concated_meta_dfs):
 
     """
     # Concatenate the concated_meta_dfs
+    if remove_all_metadata_fields:
+        for df in concated_meta_dfs:
+            df.drop(df.columns, axis=1, inplace=True)
+
     all_concated_meta_df = pd.concat(concated_meta_dfs, axis=0)
 
     # Sanity check: the number of rows in all_concated_meta_df should correspond
@@ -429,6 +535,9 @@ def reset_ids_in_meta_df(meta_df):
     # Change the index name back to what it was
     meta_df.index.name = original_index_name
 
+
+class MismatchCommonMetadataConcatGctooException(Exception):
+    pass
 
 if __name__ == "__main__":
     main()

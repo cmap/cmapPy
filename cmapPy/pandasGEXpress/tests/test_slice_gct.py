@@ -2,11 +2,10 @@ import unittest
 import logging
 import os
 import pandas as pd
+import cmapPy.pandasGEXpress.setup_GCToo_logger as setup_logger
+import cmapPy.pandasGEXpress.GCToo as GCToo
+import cmapPy.pandasGEXpress.slice_gct as slice_gct
 
-from cmapPy.pandasGEXpress import setup_GCToo_logger as setup_logger
-from cmapPy.pandasGEXpress import GCToo as GCToo 
-from cmapPy.pandasGEXpress import slice_gct as slice_gct
-from cmapPy.pandasGEXpress import parse_gct as pg
 
 logger = logging.getLogger(setup_logger.LOGGER_NAME)
 

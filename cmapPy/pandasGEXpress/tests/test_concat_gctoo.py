@@ -3,10 +3,11 @@ import unittest
 import logging
 import numpy as np
 import pandas as pd
+import cmapPy.pandasGEXpress.setup_GCToo_logger as setup_logger
+import cmapPy.pandasGEXpress.concat_gctoo as cg
+import cmapPy.pandasGEXpress.parse_gct as pg
+import tempfile
 
-from cmapPy.pandasGEXpress import setup_GCToo_logger as setup_logger
-from cmapPy.pandasGEXpress import concat_gctoo as cg
-from cmapPy.pandasGEXpress import parse_gct as pg
 
 logger = logging.getLogger(setup_logger.LOGGER_NAME)
 FUNCTIONAL_TESTS_DIR = "functional_tests"
@@ -23,7 +24,7 @@ class TestConcatGctoo(unittest.TestCase):
         expected_gct = pg.parse(expected_gct_path)
 
         # Merge left and right
-        concated_gct = cg.hstack([left_gct, right_gct], [], False)
+        concated_gct = cg.hstack([left_gct, right_gct], False, None, [], False)
 
         pd.util.testing.assert_frame_equal(expected_gct.data_df, concated_gct.data_df, check_names=False)
         pd.util.testing.assert_frame_equal(expected_gct.row_metadata_df, concated_gct.row_metadata_df, check_names=False)
@@ -39,7 +40,7 @@ class TestConcatGctoo(unittest.TestCase):
         expected_gct = pg.parse(expected_gct_path)
 
         # Merge top and bottom
-        concated_gct = cg.vstack([top_gct, bottom_gct], [], False)
+        concated_gct = cg.vstack([top_gct, bottom_gct], False, None, [], False)
 
         pd.util.testing.assert_frame_equal(expected_gct.data_df, concated_gct.data_df, check_names=False)
         pd.util.testing.assert_frame_equal(expected_gct.row_metadata_df, concated_gct.row_metadata_df, check_names=False)
@@ -70,12 +71,23 @@ class TestConcatGctoo(unittest.TestCase):
         logger.debug("meta2:\n{}".format(meta2))
         logger.debug("e_meta:\n{}".format(e_meta1))
 
-        with self.assertRaises(AssertionError) as e:
-            _ = cg.assemble_common_meta([meta1, meta2], [])
+        error_report_file = tempfile.NamedTemporaryFile().name
+        logger.debug("rhd3 header needs to be removed - error_report_file:  {}".format(error_report_file))
+        with self.assertRaises(cg.MismatchCommonMetadataConcatGctooException) as e:
+            cg.assemble_common_meta([meta1, meta2], [], ["my_src1", "my_src2"], False, error_report_file)
         self.assertIn("r3", str(e.exception))
         logger.debug("rhd3 header needs to be removed - e.exception:  {}".format(e.exception))
+        report_df = pd.read_csv(error_report_file, sep="\t")
+        self.assertGreater(report_df.shape[0], 0)
+        self.assertGreater(report_df.shape[1], 0)
+        self.assertIn("source_file", report_df.columns)
+        self.assertIn("orig_rid", report_df.columns)
+        self.assertTrue(set(meta1.columns) < set(report_df.columns))
 
-        out_meta1 = cg.assemble_common_meta([meta1, meta2], ["rhd3"])
+        os.remove(error_report_file)
+
+
+        out_meta1 = cg.assemble_common_meta([meta1, meta2], ["rhd3"], None, False, None)
         logger.debug("out_meta1:\n{}".format(out_meta1))
         pd.util.testing.assert_frame_equal(out_meta1, e_meta1)
 
@@ -95,7 +107,7 @@ class TestConcatGctoo(unittest.TestCase):
 
         logger.debug("meta3:\n{}".format(meta3))
         logger.debug("e_meta2:\n{}".format(e_meta2))
-        out_meta2 = cg.assemble_common_meta([meta1, meta3], [])
+        out_meta2 = cg.assemble_common_meta([meta1, meta3], [], None, False, None)
         pd.util.testing.assert_frame_equal(out_meta2, e_meta2)
 
         # Some ids not present in both dfs
@@ -105,39 +117,12 @@ class TestConcatGctoo(unittest.TestCase):
              ["r3_1", "r3_22", "r3_5"]],
             index=["r1", "r4", "r3"],
             columns=["rhd1", "rhd2", "rhd5"])
-        e_meta3 = pd.DataFrame(
-            [["r1_1"],
-             ["r2_1"],
-             ["r3_1"],
-             ["r4_1"]],
-            index=["r1", "r2", "r3", "r4"],
-            columns=["rhd1"])
-
         logger.debug("meta1:\n{}".format(meta1))
         logger.debug("meta4:\n{}".format(meta4))
-        logger.debug("e_meta3:\n{}".format(e_meta3))
 
-        with self.assertRaises(AssertionError) as e:
-            _ = cg.assemble_common_meta([meta1, meta4], [])
+        with self.assertRaises(cg.MismatchCommonMetadataConcatGctooException) as e:
+            cg.assemble_common_meta([meta1, meta4], [], ["my_src1", "my_src4"], False, None)
         self.assertIn("r1", str(e.exception))
-
-        # rhd5 not in meta4, so it should be dropped even without being
-        # explicitly provided
-        out_meta3 = cg.assemble_common_meta([meta1, meta4], ["rhd2", "rhd5"])
-        logger.debug("out_meta3:\n{}".format(out_meta3))
-        pd.util.testing.assert_frame_equal(out_meta3, e_meta3)
-
-        # Empty metadata
-        empty_meta = pd.DataFrame([], index=["a", "b", "c"])
-        logger.debug("empty_meta.empty: {}".format(empty_meta.empty))
-        out_meta4 = cg.assemble_common_meta([empty_meta, empty_meta], [])
-        pd.util.testing.assert_frame_equal(out_meta4, empty_meta)
-
-        #metadata has duplicates but index is unique
-        meta5 = pd.DataFrame({"rhd1":[0,0,1]}, index=range(3))
-        meta6 = pd.DataFrame({"rhd1":[0,0,1]}, index=range(3))
-        out_meta5 = cg.assemble_common_meta([meta5, meta6], [])
-        self.assertEqual((3,1), out_meta5.shape)
 
     def test_assemble_concatenated_meta(self):
         # Happy path
@@ -159,8 +144,16 @@ class TestConcatGctoo(unittest.TestCase):
         logger.debug("meta2:\n{}".format(meta2))
         logger.debug("e_concated:\n{}".format(e_concated))
 
-        concated = cg.assemble_concatenated_meta([meta2, meta1])
+        concated = cg.assemble_concatenated_meta([meta2, meta1], False)
+        logger.debug("happy path - concated:\n{}".format(concated))
         pd.util.testing.assert_frame_equal(e_concated, concated)
+
+        #remove all metadata
+        r = cg.assemble_concatenated_meta([meta2, meta1], True)
+        logger.debug("remove all metadata - r:\n{}".format(r))
+        self.assertEqual((4,0), r.shape)
+        self.assertTrue((e_concated.index == r.index).all())
+
 
     def test_assemble_data(self):
         # Horizontal concat
@@ -225,6 +218,188 @@ class TestConcatGctoo(unittest.TestCase):
         cg.do_reset_ids(meta_df, data_df, "horiz")
         pd.util.testing.assert_frame_equal(meta_df, e_meta_df)
         pd.util.testing.assert_frame_equal(data_df, e_data_df)
+
+    def test_build_common_all_meta_df(self):
+        # rhd3 header needs to be removed
+        meta1 = pd.DataFrame(
+            [["r1_1", "r1_2", "r1_3"],
+             ["r2_1", "r2_2", "r2_3"],
+             ["r3_1", "r3_2", "r3_3"]],
+            index=["r1", "r2", "r3"],
+            columns=["rhd1", "rhd2", "rhd3"])
+        meta2 = pd.DataFrame(
+            [["r1_1", "r1_2", "r1_3"],
+             ["r2_1", "r2_2", "r2_3"],
+             ["r3_1", "r3_2", "r3_33"]],
+            index=["r1", "r2", "r3"],
+            columns=["rhd1", "rhd2", "rhd3"])
+        e_meta1 = pd.DataFrame(
+            [["r1_1", "r1_2"],
+             ["r2_1", "r2_2"],
+             ["r3_1", "r3_2"]],
+            index=["r1", "r2", "r3"],
+            columns=["rhd1", "rhd2"])
+
+        r_all, r_all_w_dups = cg.build_common_all_meta_df([meta1, meta2], ["rhd3"], False)
+        logger.debug("rhd3 header needs to be removed - r_all:\n{}".format(r_all))
+        logger.debug("r_all_w_dups:\n{}".format(r_all_w_dups))
+        self.assertEqual((3,2), r_all.shape)
+        self.assertEqual((6,2), r_all_w_dups.shape)
+        pd.util.testing.assert_frame_equal(e_meta1, r_all)
+
+        #remove all metadata fields
+        r_all, r_all_w_dups = cg.build_common_all_meta_df([meta1, meta2], [], True)
+        logger.debug("remove all metadata fields - r_all\n{}".format(r_all))
+        logger.debug("r_all_w_dups:\n{}".format(r_all_w_dups))
+        self.assertEqual((3,0), r_all.shape)
+        self.assertTrue((e_meta1.index == r_all.index).all())
+
+
+        meta4 = pd.DataFrame(
+            [["r1_1", "r1_22", "r1_5"],
+             ["r4_1", "r4_22", "r4_5"],
+             ["r3_1", "r3_22", "r3_5"]],
+            index=["r1", "r4", "r3"],
+            columns=["rhd1", "rhd2", "rhd5"])
+        e_meta3 = pd.DataFrame(
+            [["r1_1"],
+             ["r2_1"],
+             ["r3_1"],
+             ["r4_1"]],
+            index=["r1", "r2", "r3", "r4"],
+            columns=["rhd1"])
+        logger.debug("meta4:\n{}".format(meta4))
+        logger.debug("e_meta3:\n{}".format(e_meta3))
+
+        # rhd5 not in meta4, so it should be dropped even without being
+        # explicitly provided
+        out_meta3, _ = cg.build_common_all_meta_df([meta1, meta4], ["rhd2"], False)
+        logger.debug("""rhd5 not in meta4 so it should be automatically dropped without being
+        explictly listed in fields_to_remove - out_meta3:
+        {}""".format(out_meta3))
+        pd.util.testing.assert_frame_equal(out_meta3, e_meta3)
+
+        # Empty metadata
+        empty_meta = pd.DataFrame([], index=["a", "b", "c"])
+        logger.debug("empty metadata provided - empty_meta.empty: {}".format(empty_meta.empty))
+        out_meta4, _ = cg.build_common_all_meta_df([empty_meta, empty_meta], [], False)
+        logger.debug("empty metadata provided - out_meta4:\n{}".format(out_meta4))
+        pd.util.testing.assert_frame_equal(out_meta4, empty_meta)
+
+        #metadata has duplicates but index is unique
+        meta5 = pd.DataFrame({"rhd1":[0,0,1]}, index=range(3))
+        meta6 = pd.DataFrame({"rhd1":[0,0,1]}, index=range(3))
+        out_meta5, _ = cg.build_common_all_meta_df([meta5, meta6], [], False)
+        logger.debug("metadata has duplicates but index is unique - out_meta5:\n{}".format(out_meta5))
+        self.assertEqual((3,1), out_meta5.shape, "metadata contains duplicates but index is unique - should have been kept")
+
+    def test_build_mismatched_common_meta_report(self):
+        # rhd3 header needs to be removed
+        meta1 = pd.DataFrame(
+            [["r1_1", "r1_2", "r1_3"],
+             ["r2_1", "r2_2", "r2_3"],
+             ["r3_1", "r3_2", "r3_3"]],
+            index=["r1", "r2", "r3"],
+            columns=["rhd1", "rhd2", "rhd3"])
+        meta2 = pd.DataFrame(
+            [["r1_1", "r1_2", "r1_3"],
+             ["r2_1", "r2_2", "r2_3"],
+             ["r3_1", "r3_2", "r3_33"]],
+            index=["r1", "r2", "r3"],
+            columns=["rhd1", "rhd2", "rhd3"])
+        meta3 = pd.DataFrame(
+            [["r3_1", "r3_3", "r3_2"],
+             ["r1_1", "r1_3", "r1_2"],
+             ["r2_1", "r2_3", "r2_2"]],
+            index=["r3", "r1", "r2"],
+            columns=["rhd1", "rhd3", "rhd2"])
+
+        logger.debug("meta1:\n{}".format(meta1))
+        logger.debug("meta2:\n{}".format(meta2))
+        logger.debug("meta3:\n{}".format(meta3))
+
+        common_meta_dfs = [meta1, meta2, meta3]
+        all_meta_df, all_meta_df_with_dups = cg.build_common_all_meta_df(common_meta_dfs, [], False)
+        common_meta_df_shapes = [x.shape for x in common_meta_dfs]
+        sources = ["my_src1", "my_src2", "my_src3"]
+        self.assertFalse(all_meta_df.index.is_unique, "during setup expected the index to not be unique")
+
+        r = cg.build_mismatched_common_meta_report(common_meta_df_shapes, sources, all_meta_df, all_meta_df_with_dups)
+        logger.debug("r:\n{}".format(r))
+        self.assertEqual((3, 5), r.shape)
+        self.assertIn("source_file", r.columns)
+        self.assertIn("orig_rid", r.columns)
+        self.assertTrue(set(meta1.columns) < set(r.columns))
+        self.assertEqual({"r3"}, set(r.orig_rid))
+
+    def test_main(self):
+        test_dir = "functional_tests/test_concat_gctoo/test_main"
+
+        g_a = pg.parse(os.path.join(test_dir, "a.gct"))
+        logger.debug("g_a:  {}".format(g_a))
+        g_b = pg.parse(os.path.join(test_dir, "b.gct"))
+        logger.debug("g_b:  {}".format(g_b))
+
+        save_build_parser = cg.build_parser
+
+        class MockParser:
+            def __init__(self, args):
+                self.args = args
+            def parse_args(self, unused):
+                return self.args
+
+        #unhappy path - write out error report file
+        expected_output_file = tempfile.mkstemp()[1]
+        logger.debug("unhappy path - write out error report file - expected_output_file:  {}".format(expected_output_file))
+
+        args = save_build_parser().parse_args(["-d", "horiz", "-if", g_a.src, g_b.src, "-o", "should_not_be_used",
+                                             "-ot", "gct", "-erof", expected_output_file])
+        logger.debug("args:  {}".format(args))
+
+        my_mock_parser = MockParser(args)
+        cg.build_parser = lambda: my_mock_parser
+
+        with self.assertRaises(cg.MismatchCommonMetadataConcatGctooException) as context:
+            cg.main()
+
+        self.assertTrue(os.path.exists(expected_output_file))
+        report_df = pd.read_csv(expected_output_file, sep="\t")
+        logger.debug("report_df:\n{}".format(report_df))
+        self.assertEqual(2, report_df.shape[0])
+
+        os.remove(expected_output_file)
+
+        print
+        print
+        print
+
+        #happy path
+        args.remove_all_metadata_fields = True
+        args.error_report_output_file = None
+
+        expected_output_file = tempfile.mkstemp(suffix=".gct")[1]
+        logger.debug("happy path - expected_output_file:  {}".format(expected_output_file))
+        args.out_name = expected_output_file
+
+        my_mock_parser = MockParser(args)
+        cg.buid_parser = lambda: my_mock_parser
+
+        cg.main()
+        self.assertTrue(os.path.exists(expected_output_file))
+
+        r = pg.parse(expected_output_file)
+        logger.debug("happy path -r:\n{}".format(r))
+        logger.debug("r.data_df:\n{}".format(r.data_df))
+
+        self.assertEqual((2,4), r.data_df.shape)
+        self.assertEqual({"a", "b", "g", "f"}, set(r.data_df.columns))
+        self.assertEqual({"rid1", "rid2"}, set(r.data_df.index))
+
+        #cleanup
+        os.remove(expected_output_file)
+
+        cg.build_parser = save_build_parser
+
 
 if __name__ == "__main__":
     setup_logger.setup(verbose=True)

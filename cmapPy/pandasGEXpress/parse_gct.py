@@ -60,7 +60,7 @@ assemble_multi_index_df method in GCToo.py assembles them.
 """
 
 import logging
-from cmapPy.pandasGEXpress import setup_GCToo_logger as setup_logger
+import setup_GCToo_logger as setup_logger
 import pandas as pd
 import numpy as np 
 import os.path
@@ -79,13 +79,17 @@ column_header_name = "chd"
 DATA_TYPE = np.float32
 
 
-def parse(file_path, convert_neg_666=True, make_multiindex=False):
+def parse(file_path, convert_neg_666=True, row_meta_only=False, col_meta_only=False, make_multiindex=False):
     """ The main method.
 
     Args:
         - file_path (string): full path to gct(x) file you want to parse
         - convert_neg_666 (bool): whether to convert -666 values to numpy.nan
             (see Note below for more details). Default = True.
+        - row_meta_only (bool): Whether to load data + metadata (if False), or just row metadata (if True)
+            as pandas DataFrame
+        - col_meta_only (bool): Whether to load data + metadata (if False), or just col metadata (if True)
+            as pandas DataFrame
         - make_multiindex (bool): whether to create a multi-index df combining
             the 3 component dfs
 
@@ -123,11 +127,16 @@ def parse(file_path, convert_neg_666=True, make_multiindex=False):
         file_path, num_data_rows, num_data_cols,
         num_row_metadata, num_col_metadata, nan_values)
 
-    # Create the gctoo object and assemble 3 component dataframes
-    gctoo_obj = create_gctoo_obj(file_path, version,
-        row_metadata, col_metadata, data, make_multiindex)
+    if row_meta_only:
+        return row_metadata
+    elif col_meta_only:
+        return col_metadata
+    else:
+        # Create the gctoo object and assemble 3 component dataframes
+        gctoo_obj = create_gctoo_obj(file_path, version,
+            row_metadata, col_metadata, data, make_multiindex)
 
-    return gctoo_obj
+        return gctoo_obj
 
 
 def read_version_and_dims(file_path):

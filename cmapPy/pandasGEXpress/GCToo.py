@@ -42,10 +42,12 @@ N.B. rids, cids, rhds, and chds must be:
 import numpy as np
 import pandas as pd
 import logging
-from cmapPy.pandasGEXpress import setup_GCToo_logger as setup_logger
+import setup_GCToo_logger as setup_logger
+
 
 __authors__ = 'Oana Enache, Lev Litichevskiy, Dave Lahr'
 __email__ = 'dlahr@broadinstitute.org'
+
 
 class GCToo(object):
     """Class representing parsed gct(x) objects as pandas dataframes.
