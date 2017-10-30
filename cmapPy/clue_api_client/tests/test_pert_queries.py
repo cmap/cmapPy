@@ -18,9 +18,9 @@ class TestPertQueries(unittest.TestCase):
         r = pq._build_map_from_clue_api_result([{"a": "b", "c": "d"}], "a", "c")
         self.assertIsNotNone(r)
         logger.debug("r:  {}".format(r))
-        self.assertEquals(1, len(r))
+        self.assertEqual(1, len(r))
         self.assertIn("b", r)
-        self.assertEquals("d", r["b"])
+        self.assertEqual("d", r["b"])
 
     def test_retrieve_pert_id_pert_iname_map(self):
         r = pq.retrieve_pert_id_pert_iname_map(["BRD-K21680192", "BRD-K88378636", "not a valid BRD"], cao)
