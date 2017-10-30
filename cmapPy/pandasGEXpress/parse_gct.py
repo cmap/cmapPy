@@ -115,7 +115,7 @@ def parse(file_path, convert_neg_666=True, row_meta_only=False, col_meta_only=Fa
     if not os.path.exists(file_path):
         err_msg = "The given path to the gct file cannot be found. gct_path: {}"
         logger.error(err_msg.format(file_path))
-        raise(Exception(err_msg.format(file_path)))
+        raise Exception(err_msg.format(file_path))
     logger.info("Reading GCT: {}".format(file_path))
 
     # Read version and dimensions
@@ -150,7 +150,7 @@ def read_version_and_dims(file_path):
         err_msg = ("Only GCT1.2 and 1.3 are supported. The first row of the GCT " +
                    "file must simply be (without quotes) '#1.3' or '#1.2'")
         logger.error(err_msg.format(version))
-        raise(Exception(err_msg.format(version)))
+        raise Exception(err_msg.format(version))
 
     # Convert version to a string
     version_as_string = "GCT" + str(version)
@@ -165,11 +165,11 @@ def read_version_and_dims(file_path):
     if version == "1.2" and len(dims) != 2:
         error_msg = "GCT1.2 should have 2 dimension-related entries in row 2. dims: {}"
         logger.error(error_msg.format(dims))
-        raise(Exception(error_msg.format(dims)))
-    elif version == "1.3" and len(dims) != 4: 
+        raise Exception(error_msg.format(dims))
+    elif version == "1.3" and len(dims) != 4:
         error_msg = "GCT1.3 should have 4 dimension-related entries in row 2. dims: {}"
         logger.error(error_msg.format(dims))
-        raise(Exception(error_msg.format(dims)))
+        raise Exception(error_msg.format(dims))
 
     # Explicitly define each dimension
     num_data_rows = int(dims[0])
@@ -286,7 +286,7 @@ def assemble_data(full_df, num_col_metadata, num_data_rows, num_row_metadata, nu
                                    "data.loc['{}', '{}'] = '{}'\nAdd to nan_values if you wish " +
                                    "for this value to be considered NaN.").format(bad_row_label, col, val)
                         logger.error(err_msg)
-                        raise(Exception(err_msg))
+                        raise Exception(err_msg)
 
     # Rename the index name and columns name
     data.index.name = row_index_name

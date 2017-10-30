@@ -58,7 +58,7 @@ def parse(gctx_file_path, convert_neg_666=True, rid=None, cid=None,
     if not os.path.exists(full_path):
         err_msg = "The given path to the gctx file cannot be found. full_path: {}"
         logger.error(err_msg.format(full_path))
-        raise (Exception(err_msg.format(full_path)))
+        raise Exception(err_msg.format(full_path))
     logger.info("Reading GCTX: {}".format(full_path))
 
     # open file
