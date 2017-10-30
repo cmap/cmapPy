@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import os
 import unittest
 import logging
@@ -369,9 +371,9 @@ class TestConcatGctoo(unittest.TestCase):
 
         os.remove(expected_output_file)
 
-        print
-        print
-        print
+        print()
+        print()
+        print()
 
         #happy path
         args.remove_all_metadata_fields = True
