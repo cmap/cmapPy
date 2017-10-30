@@ -8,9 +8,9 @@ Note: Supports GCT1.2, GCT1.3, and GCTX1.0 files.
 """
 
 import logging
-import setup_GCToo_logger as setup_logger
-import parse_gct
-import parse_gctx
+from . import setup_GCToo_logger as setup_logger
+from . import parse_gct
+from . import parse_gctx
 
 __author__ = "Oana Enache"
 __email__ = "oana@broadinstitute.org"

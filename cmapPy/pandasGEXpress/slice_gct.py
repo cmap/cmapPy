@@ -14,10 +14,10 @@ import argparse
 import pandas as pd
 import re
 
-import setup_GCToo_logger as setup_logger
-import GCToo 
-import parse_gct as pg
-import write_gct as wg
+from . import setup_GCToo_logger as setup_logger
+from . import GCToo
+from . import parse_gct as pg
+from . import write_gct as wg
 
 __author__ = "Lev Litichevskiy"
 __email__ = "lev@broadinstitute.org"

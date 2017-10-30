@@ -9,11 +9,11 @@ Note: Only supports v1.0 .gctx files.
 """
 
 import logging
-import setup_GCToo_logger as setup_logger
+from . import setup_GCToo_logger as setup_logger
 import argparse
 import sys
-import parse_gctx
-import write_gct
+from . import parse_gctx
+from . import write_gct
 import os.path
 
 __author__ = "Oana Enache"

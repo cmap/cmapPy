@@ -1,5 +1,5 @@
 import logging
-import setup_logger
+from . import setup_logger
 
 __authors__ = "David L. Lahr"
 __email__ = "dlahr@broadinstitute.org"

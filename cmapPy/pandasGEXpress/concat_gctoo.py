@@ -36,14 +36,14 @@ import os
 import sys
 import glob
 import logging
-import setup_GCToo_logger as setup_logger
+from . import setup_GCToo_logger as setup_logger
 import pandas as pd
 import numpy
 
-import GCToo
-import parse 
-import write_gct
-import write_gctx 
+from . import GCToo
+from . import parse
+from . import write_gct
+from . import write_gctx
 
 __author__ = "Lev Litichevskiy"
 __email__ = "lev@broadinstitute.org"

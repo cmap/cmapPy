@@ -1,6 +1,6 @@
 import logging
-import setup_logger
-import clue_api_client
+from . import setup_logger
+from . import clue_api_client
 
 __authors__ = "David L. Lahr"
 __email__ = "dlahr@broadinstitute.org"

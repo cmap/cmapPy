@@ -1,6 +1,6 @@
 import requests
 import logging
-import setup_logger
+from . import setup_logger
 import json
 import copy
 
