@@ -121,7 +121,7 @@ def write_metadata(hdf5_out, dim, metadata_df, convert_back_to_neg_666):
         logger.error("'dim' argument must be either 'row' or 'col'!")
 
     # write id field to expected node
-    hdf5_out.create_dataset(metadata_node_name + "/id", data=list(metadata_df.index.copy()))
+    hdf5_out.create_dataset(metadata_node_name + "/id", data=[str(x) for x in metadata_df.index])
 
     metadata_fields = list(metadata_df.columns.copy())
 
