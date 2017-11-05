@@ -18,12 +18,20 @@ We  highly recommend the using a prebuilt distribution of cmapPy along with a vi
 	``conda config --add channels bioconda``
 
 * (Mac) Create & activate your cmapPy environment:
-	``conda create --name my_cmapPy_env python=2.7.11 numpy=1.11.2 pandas=0.20.3 h5py=2.6.0 requests==2.13.0 cmappy``
+
+	Note. We currently use Python 2.7.11 for our production code (hence its specification); however, other versions of Python should be stable as well. Depending on whether you use Python 2 or Python 3:  
+
+	Python 2: ``conda create --name my_cmapPy_env python=2.7.11 numpy=1.11.2 pandas=0.20.3 h5py=2.6.0 requests==2.13.0 six cmappy``
+	
+	Python 3 (3.4-3.6 currently supported): ``conda create --name my_cmapPy_env python=2.7.11 numpy=1.11.2 pandas=0.20.3 h5py=2.6.0 requests==2.13.0 six cmappy``
 
 	``source activate my_cmapPy_env``
 
 * (Windows) Create & activate your cmapPy environment:
-	``conda create --name my_cmapPy_env python=2.7.11 numpy=1.11.2 pandas=0.20.3 h5py=2.6.0 requests==2.13.0``
+
+	Python 2: ``conda create --name my_cmapPy_env python=2.7.11 numpy=1.11.2 pandas=0.20.3 h5py=2.6.0 requests==2.13.0 six``
+
+	Python 3 (3.4-3.6 currently supported): ``conda create --name my_cmapPy_env python=2.7.11 numpy=1.11.2 pandas=0.20.3 h5py=2.6.0 requests==2.13.0 six``
 
 	``pip install cmapPy``
 
