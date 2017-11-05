@@ -1,3 +1,0 @@
-[bdist_wheel]
-# Only Python 2 is supported; development for Python 3 support is ongoing 
-universal=1
