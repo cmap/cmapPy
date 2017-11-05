@@ -42,7 +42,7 @@ N.B. rids, cids, rhds, and chds must be:
 import numpy as np
 import pandas as pd
 import logging
-import setup_GCToo_logger as setup_logger
+from . import setup_GCToo_logger as setup_logger
 
 
 __authors__ = 'Oana Enache, Lev Litichevskiy, Dave Lahr'

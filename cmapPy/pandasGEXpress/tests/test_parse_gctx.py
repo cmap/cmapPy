@@ -11,6 +11,7 @@ import cmapPy.pandasGEXpress.mini_gctoo_for_testing as mini_gctoo_for_testing
 import cmapPy.pandasGEXpress.slice_gct as slice_gct
 import cmapPy.pandasGEXpress.write_gctx as write_gctx
 import pandas.util.testing as pandas_testing
+from six.moves import range
 
 
 __author__ = "Oana Enache"
@@ -35,7 +36,7 @@ class MockHdf5Dset(object):
         self.dtype = dtype
 
     def read_direct(self, dest):
-        for i in xrange(len(dest)):
+        for i in range(len(dest)):
             dest[i] = self.data_list[i]
 
 
@@ -62,8 +63,8 @@ class TestParseGctx(unittest.TestCase):
         # first, make & write out temp version of mini_gctoo with int rids/cids
         new_mg = mini_gctoo_for_testing.make(convert_neg_666=False)
         int_indexed_data_df = new_mg.data_df.copy()
-        int_indexed_data_df.index = [str(i) for i in xrange(0, 6)]
-        int_indexed_data_df.columns = [str(i) for i in xrange(10, 16)]
+        int_indexed_data_df.index = [str(i) for i in range(0, 6)]
+        int_indexed_data_df.columns = [str(i) for i in range(10, 16)]
 
         int_indexed_row_meta = new_mg.row_metadata_df.copy()
         int_indexed_row_meta.index = int_indexed_data_df.index
@@ -270,20 +271,20 @@ class TestParseGctx(unittest.TestCase):
 
         # case 1: id_type == None
         case1 = parse_gctx.get_ordered_idx(None, [], mg.row_metadata_df)
-        self.assertEqual(case1, range(0, 6),
-                         "Expected oredered idx to be {} but got {}".format(range(0, 6), case1))
+        self.assertEqual(case1, list(range(0, 6)),
+                         "Expected ordered idx to be {} but got {}".format(list(range(0, 6)), case1))
 
         # case 2: id_type == "id"
         case2 = parse_gctx.get_ordered_idx("id",
                                            ['LJP007_MCF7_24H:CTL_VEHICLE:DMSO:-666'], mg.col_metadata_df)
         self.assertEqual(case2, [4],
-                         "Expected oredered idx to be {} but got {}".format([4], case2))
+                         "Expected ordered idx to be {} but got {}".format([4], case2))
 
         # case 3: id_type == ridx
         case3 = parse_gctx.get_ordered_idx("idx",
                                            [5, 1, 3], mg.col_metadata_df)
         self.assertEqual(case3, [1, 3, 5],
-                         "Expected oredered idx to be {} but got {}".format([1, 3, 5], case3))
+                         "Expected ordered idx to be {} but got {}".format([1, 3, 5], case3))
 
     def test_parse_data_df(self):
         mini_data_df = pd.DataFrame([[-0.283359, 0.011270], [0.304119, 1.921061], [0.398655, -0.144652]],
@@ -333,7 +334,7 @@ class TestParseGctx(unittest.TestCase):
         logger.debug("conversion from regular int to numpy int64 - type(r[0]):  {}".format(type(r[0])))
         self.assertEqual(np.int64, type(r[0]))
 
-        id_list = [str(i) for i in xrange(3)]
+        id_list = [str(i) for i in range(3)]
         r = parse_gctx.convert_ids_to_meta_type(id_list, df)
         logger.debug("conversion from str to numpy int64 - type(r[0]):  {}".format(type(r[0])))
         self.assertEqual(np.int64, type(r[0]))

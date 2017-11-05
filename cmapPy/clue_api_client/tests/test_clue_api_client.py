@@ -3,8 +3,9 @@ from cmapPy.clue_api_client import setup_logger as setup_logger
 import logging
 from cmapPy.clue_api_client import clue_api_client as clue_api_client
 import os.path
-import ConfigParser
 import collections
+
+from six.moves import configparser
 
 __authors__ = "David L. Lahr"
 __email__ = "dlahr@broadinstitute.org"
@@ -120,7 +121,7 @@ class TestClueApiClient(unittest.TestCase):
 
 
 def build_clue_api_client_from_default_test_config():
-    cfg = ConfigParser.RawConfigParser()
+    cfg = configparser.RawConfigParser()
     cfg.read(config_filepath)
     cao = clue_api_client.ClueApiClient(base_url=cfg.get(config_section, "clue_api_url"),
                                   user_key=cfg.get(config_section, "clue_api_user_key"))

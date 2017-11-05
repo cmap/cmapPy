@@ -7,10 +7,10 @@ ex:
 """
 
 import logging
-import setup_GCToo_logger as setup_logger
+from . import setup_GCToo_logger as setup_logger
 import pandas
 import numpy
-import GCToo
+from . import GCToo
 
 __author__ = 'Oana Enache'
 __email__ = 'oana@broadinstitute.org'

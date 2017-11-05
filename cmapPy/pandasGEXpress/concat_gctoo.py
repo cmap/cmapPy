@@ -36,14 +36,16 @@ import os
 import sys
 import glob
 import logging
-import setup_GCToo_logger as setup_logger
-import pandas as pd
-import numpy
 
-import GCToo
-import parse 
-import write_gct
-import write_gctx 
+import numpy
+import pandas as pd
+from six.moves import range
+
+from . import GCToo
+from . import parse
+from . import setup_GCToo_logger as setup_logger
+from . import write_gct
+from . import write_gctx
 
 __author__ = "Lev Litichevskiy"
 __email__ = "lev@broadinstitute.org"
@@ -371,7 +373,7 @@ def build_mismatched_common_meta_report(common_meta_df_shapes, sources, all_meta
     expanded_sources = []
     for (i, shape) in enumerate(common_meta_df_shapes):
         src = sources[i]
-        expanded_sources.extend([src for i in xrange(shape[0])])
+        expanded_sources.extend([src for i in range(shape[0])])
     expanded_sources = numpy.array(expanded_sources)
     logger.debug("len(expanded_sources):  {}".format(len(expanded_sources)))
 
@@ -386,8 +388,8 @@ def build_mismatched_common_meta_report(common_meta_df_shapes, sources, all_meta
     for unique_dup_id in unique_duplicate_ids:
         rows = duplicate_ids_meta_df.loc[unique_dup_id]
 
-        matching_row_locs = numpy.array([False for i in xrange(all_meta_df_with_dups.shape[0])])
-        for i in xrange(rows.shape[0]):
+        matching_row_locs = numpy.array([False for i in range(all_meta_df_with_dups.shape[0])])
+        for i in range(rows.shape[0]):
             r = rows.iloc[i]
             row_comparison = r == all_meta_df_with_dups
             matching_row_locs = matching_row_locs | row_comparison.all(axis=1).values
@@ -399,7 +401,7 @@ def build_mismatched_common_meta_report(common_meta_df_shapes, sources, all_meta
 
     all_report_df = pd.concat(report_df_list, axis=0)
     all_report_df["orig_rid"] = all_report_df.index
-    all_report_df.index = pd.Index(xrange(all_report_df.shape[0]), name="index")
+    all_report_df.index = pd.Index(range(all_report_df.shape[0]), name="index")
     logger.debug("all_report_df.shape:  {}".format(all_report_df.shape))
     logger.debug("all_report_df.index:  {}".format(all_report_df.index))
     logger.debug("all_report_df.columns:  {}".format(all_report_df.columns))

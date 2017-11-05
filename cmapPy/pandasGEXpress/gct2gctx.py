@@ -9,11 +9,11 @@ Note: Only supports v1.3 .gct files.
 """
 
 import logging
-import setup_GCToo_logger as setup_logger
+from . import setup_GCToo_logger as setup_logger
 import argparse
 import sys
-import parse_gct
-import write_gctx
+from . import parse_gct
+from . import write_gctx
 
 __author__ = "Oana Enache"
 __email__ = "oana@broadinstitute.org"

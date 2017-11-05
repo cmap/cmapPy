@@ -1,10 +1,10 @@
 import logging
-import setup_GCToo_logger as setup_logger
+from . import setup_GCToo_logger as setup_logger
 import os
 import numpy as np
 import pandas as pd
 import h5py
-import GCToo
+from . import GCToo
 
 __author__ = "Oana Enache"
 __email__ = "oana@broadinstitute.org"
@@ -58,7 +58,7 @@ def parse(gctx_file_path, convert_neg_666=True, rid=None, cid=None,
     if not os.path.exists(full_path):
         err_msg = "The given path to the gctx file cannot be found. full_path: {}"
         logger.error(err_msg.format(full_path))
-        raise (Exception(err_msg.format(full_path)))
+        raise Exception(err_msg.format(full_path))
     logger.info("Reading GCTX: {}".format(full_path))
 
     # open file
