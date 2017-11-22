@@ -1,7 +1,7 @@
 .. _set_io:
 
-set_io 
-======
+GRP, GMT (set_io) 
+=================
 
 set_io contains simple scripts for parsing two other common file types used by the Connectivity Map: GRP and GMT files. 
 The GRP file is used for storing a single set of things (e.g. a single gene set), while the GMT file is used for storing multiple sets of things (e.g. several gene sets).
