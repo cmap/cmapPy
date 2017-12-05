@@ -23,9 +23,9 @@ We  highly recommend the using a prebuilt distribution of cmapPy along with a vi
 
 	**Step 1** 
 
-	Python 2: ``conda create --name my_cmapPy_env python=2.7.11 numpy=1.11.2 pandas=0.20.3 h5py=2.6.0 requests==2.13.0 six cmappy``
+	Python 2: ``conda create --name my_cmapPy_env python=2.7.11 numpy=1.11.2 pandas=0.20.3 h5py=2.7.0 requests==2.13.0 six cmappy``
 
-	Python 3 (3.4-3.6 currently supported): ``conda create --name my_cmapPy_env python=2.7.11 numpy=1.11.2 pandas=0.20.3 h5py=2.6.0 requests==2.13.0 six cmappy``
+	Python 3 (3.4-3.6 currently supported): ``conda create --name my_cmapPy_env python=2.7.11 numpy=1.11.2 pandas=0.20.3 h5py=2.7.0 requests==2.13.0 six cmappy``
 
 	**Step 2**
 
