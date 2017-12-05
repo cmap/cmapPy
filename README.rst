@@ -33,4 +33,4 @@ We welcome contributors! For your pull requests, please include the following:
 Citation
 ====================
 
-If you use cmapPy for your research, please cite us. Citation forthcoming; email oana@broadinstitute.org if you need one sooner.  
+If you use cmapPy for your research, please cite us: https://www.biorxiv.org/content/early/2017/11/30/227041
