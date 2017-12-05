@@ -35,9 +35,9 @@ We  highly recommend the using a prebuilt distribution of cmapPy along with a vi
 
 	**Step 1**
 
-	Python 2: ``conda create --name my_cmapPy_env python=2.7.11 numpy=1.11.2 pandas=0.20.3 h5py=2.6.0 requests==2.13.0 six``
+	Python 2: ``conda create --name my_cmapPy_env python=2.7.11 numpy=1.11.2 pandas=0.20.3 h5py=2.7.0 requests==2.13.0 six``
 
-	Python 3 (3.4-3.6 currently supported): ``conda create --name my_cmapPy_env python=2.7.11 numpy=1.11.2 pandas=0.20.3 h5py=2.6.0 requests==2.13.0 six``
+	Python 3 (3.4-3.6 currently supported): ``conda create --name my_cmapPy_env python=2.7.11 numpy=1.11.2 pandas=0.20.3 h5py=2.7.0 requests==2.13.0 six``
 
 	**Step 2**
 
@@ -59,7 +59,7 @@ To update cmapPy in your conda environment (from activate environment): ``conda 
 A development environment will allow you to use the cmapPy code as it is in a clone of the repository, allowing you to try out changes and modifications you may wish to make.
 
 Follow the instructions for Option 1 or Option 2 above but change the name of the environment to e.g. ``my_cmapPy_dev_env`` and do not include ``cmappy`` in the list of packages to install (or do not install it with pip), then activate this environment, i.e.:
-	``conda create --name my_cmapPy_dev_env python=2.7.11 numpy=1.11.2 pandas=0.20.3 h5py=2.6.0 requests==2.13.0``
+	``conda create --name my_cmapPy_dev_env python=2.7.11 numpy=1.11.2 pandas=0.20.3 h5py=2.7.0 requests==2.13.0``
 
 	``source activate my_cmapPy_dev_env``
 
