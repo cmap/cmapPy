@@ -13,8 +13,8 @@ install:
 
 # environments to use for tests (below)
 env: 
-  - TEST_DIR = cmapPy/pandasGEXpress/tests
-  - TEST_DIR = cmapPy/set_io/tests
+  - TEST_DIR= cmapPy/pandasGEXpress/tests
+  - TEST_DIR= cmapPy/set_io/tests
 
 # run all tests in each test dir 
 script: cd $TEST_DIR && python -m unittest discover -p "test_*.py"
