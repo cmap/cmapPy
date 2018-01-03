@@ -5,12 +5,12 @@ ex:
     import mini_gctoo_for testing
     my_mini_gctoo = mini_gctoo_for_testing.make()
 """
-
+import sys
+sys.path.insert(0, "../..")
 import logging
-from . import setup_GCToo_logger as setup_logger
 import pandas
 import numpy
-from . import GCToo
+from cmapPy.pandasGEXpress import GCToo, setup_GCToo_logger as setup_logger
 
 __author__ = 'Oana Enache'
 __email__ = 'oana@broadinstitute.org'

@@ -1,6 +1,8 @@
+import sys
+sys.path.insert(0, "../..")
 import requests
 import logging
-from . import setup_logger
+from cmapPy.clue_api_client import setup_logger
 import json
 import copy
 

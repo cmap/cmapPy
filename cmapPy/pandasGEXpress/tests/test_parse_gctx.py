@@ -1,15 +1,17 @@
+import sys
+sys.path.insert(0, "../../..")
 import logging
-import cmapPy.pandasGEXpress.setup_GCToo_logger as setup_logger
+from cmapPy.pandasGEXpress import setup_GCToo_logger as setup_logger
 import unittest
 import os
 import pandas as pd
 import numpy as np
-import cmapPy.pandasGEXpress.GCToo as GCToo
 import h5py
-import cmapPy.pandasGEXpress.parse_gctx as parse_gctx
-import cmapPy.pandasGEXpress.mini_gctoo_for_testing as mini_gctoo_for_testing
-import cmapPy.pandasGEXpress.slice_gct as slice_gct
-import cmapPy.pandasGEXpress.write_gctx as write_gctx
+from cmapPy.pandasGEXpress import GCToo as GCToo 
+from cmapPy.pandasGEXpress import parse_gctx as parse_gctx
+from cmapPy.pandasGEXpress import mini_gctoo_for_testing as mini_gctoo_for_testing
+from cmapPy.pandasGEXpress import slice_gct as slice_gct
+from cmapPy.pandasGEXpress import write_gctx as write_gctx
 import pandas.util.testing as pandas_testing
 from six.moves import range
 
@@ -327,7 +329,7 @@ class TestParseGctx(unittest.TestCase):
 
     def test_convert_ids_to_meta_type(self):
         # happy path
-        id_list = range(3)
+        id_list = [0, 1, 2]
         self.assertEqual(int, type(id_list[0]))
         df = pd.DataFrame({}, index=pd.Series(range(1, 4)).astype(np.int64))
         r = parse_gctx.convert_ids_to_meta_type(id_list, df)
@@ -349,7 +351,7 @@ class TestParseGctx(unittest.TestCase):
             str(context.exception))
 
     def test_check_idx_validity(self):
-        id_list = range(3)
+        id_list = [0,1,2]
         df = pd.DataFrame({}, index=range(5))
         logger.debug("df.shape:  {}".format(df.shape))
         parse_gctx.check_idx_validity(id_list, df)

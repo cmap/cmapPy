@@ -7,13 +7,13 @@ Main method takes in a .gct file path (and, optionally, an
 
 Note: Only supports v1.3 .gct files. 
 """
-
-import logging
-from . import setup_GCToo_logger as setup_logger
-import argparse
 import sys
-from . import parse_gct
-from . import write_gctx
+sys.path.insert(0, "../..")
+import logging
+import argparse
+from cmapPy.pandasGEXpress import setup_GCToo_logger as setup_logger
+from cmapPy.pandasGEXpress import parse_gct
+from cmapPy.pandasGEXpress import write_gctx
 
 __author__ = "Oana Enache"
 __email__ = "oana@broadinstitute.org"
