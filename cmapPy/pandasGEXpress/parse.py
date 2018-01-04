@@ -13,9 +13,6 @@ from cmapPy.pandasGEXpress import setup_GCToo_logger as setup_logger
 from cmapPy.pandasGEXpress import parse_gct as parse_gct
 from cmapPy.pandasGEXpress import parse_gctx as parse_gctx
 
-import parse_gct as parse_gct
-import parse_gctx as parse_gctx 
-
 __author__ = "Oana Enache"
 __email__ = "oana@broadinstitute.org"
 
