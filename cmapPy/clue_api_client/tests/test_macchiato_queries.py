@@ -1,3 +1,5 @@
+import sys
+sys.path.insert(0, "../../../")
 import unittest
 from cmapPy.clue_api_client import setup_logger
 import logging
