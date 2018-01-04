@@ -58,8 +58,9 @@ def parse(file_path, convert_neg_666=True, rid=None, cid=None, ridx=None, cidx=N
         # Ignoring arguments that won't be passed to parse_gct
         for unused_arg in ["rid", "cid", "ridx", "cidx"]:
             if eval(unused_arg):
-                msg = "parse_gct does not use the argument {}. Ignoring it...".format(unused_arg)
-                logger.warning(msg)
+                err_msg = "parse_gct does not use the argument {}. Ignoring it...".format(unused_arg)
+                logger.error(err_msg)
+                raise Exception(err_msg)
         curr = parse_gct.parse(file_path, convert_neg_666, row_meta_only, col_meta_only, make_multiindex)
     elif file_path.endswith(".gctx"):
         curr = parse_gctx.parse(file_path, convert_neg_666, rid, cid, ridx, cidx, row_meta_only, col_meta_only,
