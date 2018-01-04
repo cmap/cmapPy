@@ -7,11 +7,14 @@ Takes in a file path corresponding to either a .gct or .gctx,
 Note: Supports GCT1.2, GCT1.3, and GCTX1.0 files. 
 """
 import sys
-sys.path.insert(0, "../..")
+sys.path.insert(0, "../../")
 import logging
 from cmapPy.pandasGEXpress import setup_GCToo_logger as setup_logger
 from cmapPy.pandasGEXpress import parse_gct as parse_gct
 from cmapPy.pandasGEXpress import parse_gctx as parse_gctx
+
+import parse_gct as parse_gct
+import parse_gctx as parse_gctx 
 
 __author__ = "Oana Enache"
 __email__ = "oana@broadinstitute.org"

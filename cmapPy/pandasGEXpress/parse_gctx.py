@@ -6,7 +6,7 @@ import os
 import numpy as np
 import pandas as pd
 import h5py
-import cmapPy.pandasGEXpress.GCToo as GCToo
+from cmapPy.pandasGEXpress import GCToo as GCToo
 
 __author__ = "Oana Enache"
 __email__ = "oana@broadinstitute.org"

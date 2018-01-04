@@ -128,7 +128,7 @@ def main():
         # Parse each file and append to a list
         gctoos = []
         for f in files:
-            gctoos.append(parse.parse(f))
+            gctoos.append(parse(f))
 
         # Create concatenated gctoo object
         if args.concat_direction == "horiz":
