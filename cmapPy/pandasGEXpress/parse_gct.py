@@ -65,6 +65,7 @@ import pandas as pd
 import numpy as np
 import os.path
 from . import GCToo
+import io
 
 __author__ = "Lev Litichevskiy, Oana Enache"
 __email__ = "lev@broadinstitute.org"
@@ -141,7 +142,7 @@ def parse(file_path, convert_neg_666=True, row_meta_only=False, col_meta_only=Fa
 
 def read_version_and_dims(file_path):
     # Open file
-    f = open(file_path, "rb")
+    f = io.open(file_path, "r", encoding="utf8")
 
     # Get version from the first line
     version = f.readline().strip().lstrip("#")
