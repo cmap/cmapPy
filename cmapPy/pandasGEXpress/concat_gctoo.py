@@ -30,6 +30,8 @@ with unique integers.
 N.B. This script sorts everything!
 
 """
+import sys
+sys.path.insert(0, "../..")
 
 import argparse
 import os
@@ -41,11 +43,11 @@ import numpy
 import pandas as pd
 from six.moves import range
 
-from . import GCToo
-from . import parse
-from . import setup_GCToo_logger as setup_logger
-from . import write_gct
-from . import write_gctx
+from cmapPy.pandasGEXpress import GCToo
+from cmapPy.pandasGEXpress import parse
+from cmapPy.pandasGEXpress import setup_GCToo_logger as setup_logger
+from cmapPy.pandasGEXpress import write_gct
+from cmapPy.pandasGEXpress import write_gctx
 
 __author__ = "Lev Litichevskiy"
 __email__ = "lev@broadinstitute.org"
@@ -126,7 +128,7 @@ def main():
         # Parse each file and append to a list
         gctoos = []
         for f in files:
-            gctoos.append(parse.parse(f))
+            gctoos.append(parse(f))
 
         # Create concatenated gctoo object
         if args.concat_direction == "horiz":

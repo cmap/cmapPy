@@ -6,11 +6,12 @@ Takes in a file path corresponding to either a .gct or .gctx,
 
 Note: Supports GCT1.2, GCT1.3, and GCTX1.0 files. 
 """
-
+import sys
+sys.path.insert(0, "../../")
 import logging
-from . import setup_GCToo_logger as setup_logger
-from . import parse_gct
-from . import parse_gctx
+from cmapPy.pandasGEXpress import setup_GCToo_logger as setup_logger
+from cmapPy.pandasGEXpress import parse_gct as parse_gct
+from cmapPy.pandasGEXpress import parse_gctx as parse_gctx
 
 __author__ = "Oana Enache"
 __email__ = "oana@broadinstitute.org"
@@ -52,10 +53,11 @@ def parse(file_path, convert_neg_666=True, rid=None, cid=None, ridx=None, cidx=N
     """
     if file_path.endswith(".gct"):
         # Ignoring arguments that won't be passed to parse_gct
-        for unused_arg in ["rid", "cid", "cidx"]:
+        for unused_arg in ["rid", "cid", "ridx", "cidx"]:
             if eval(unused_arg):
-                msg = "parse_gct does not use the argument {}. Ignoring it...".format(unused_arg)
-                logger.warning(msg)
+                err_msg = "parse_gct does not use the argument {}. Ignoring it...".format(unused_arg)
+                logger.error(err_msg)
+                raise Exception(err_msg)
         curr = parse_gct.parse(file_path, convert_neg_666, row_meta_only, col_meta_only, make_multiindex)
     elif file_path.endswith(".gctx"):
         curr = parse_gctx.parse(file_path, convert_neg_666, rid, cid, ridx, cidx, row_meta_only, col_meta_only,
