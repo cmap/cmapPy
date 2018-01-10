@@ -49,7 +49,8 @@ def write(gctoo_object, out_file_name, convert_back_to_neg_666=True):
     write_src(hdf5_out, gctoo_object, gctx_out_name)
 
     # write data matrix
-    hdf5_out.create_dataset(data_matrix_node, data=gctoo_object.data_df.transpose().as_matrix())
+    hdf5_out.create_dataset(data_matrix_node, data=gctoo_object.data_df.transpose().as_matrix(), 
+        dtype=numpy.float32)
 
     # write col metadata
     write_metadata(hdf5_out, "col", gctoo_object.col_metadata_df, convert_back_to_neg_666)
