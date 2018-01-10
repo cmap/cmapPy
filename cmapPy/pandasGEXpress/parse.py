@@ -71,6 +71,10 @@ class Parse(object):
             raise Exception(err_msg)
         return curr
 
+#replace this module with the class above, which is callable, making it possible to call the method of interest directly
+#e.g. from other code:
+#   import cmapPy.pandasGEXpress.parse as parse
+#   g = parse("my_gct_file.gct")
 logger.debug("setting up parse module to be effectively callable - __name__:  {}".format(__name__))
 sys.modules[__name__] = Parse()
 
