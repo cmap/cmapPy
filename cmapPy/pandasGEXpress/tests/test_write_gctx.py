@@ -79,6 +79,37 @@ class TestWriteGctx(unittest.TestCase):
         self.assertEqual(hdf5_v2, write_gctx.version_number)
         os.remove(fn)
 
+    def test_calculate_elem_per_kb(self):
+        max_chunk_kb = 1024
+
+        # dtype is numpy.float32
+        dtype1 = numpy.float32
+        correct_elem_per_kb1 = 256
+        elem_per_kb1 = write_gctx.calculate_elem_per_kb(max_chunk_kb, dtype1)
+        self.assertEqual(elem_per_kb1, correct_elem_per_kb1)
+
+        # dtype is numpy.float64
+        dtype2 = numpy.float64
+        correct_elem_per_kb2 = 128
+        elem_per_kb2 = write_gctx.calculate_elem_per_kb(max_chunk_kb, dtype2)
+        self.assertEqual(elem_per_kb2, correct_elem_per_kb2)
+
+        # dtype is somethign else 
+        dtype3 = numpy.int 
+        with self.assertRaises(Exception) as context:
+            write_gctx.calculate_elem_per_kb(max_chunk_kb, dtype3)
+        self.assertTrue("only numpy.float32 and numpy.float64 are currently supported" in str(context.exception))
+
+
+    def test_set_data_matrix_chunk_size(self):
+        max_chunk_kb = 1024
+        elem_per_kb = 256
+        sample_data_shape = (978, 1000)
+        expected_chunk_size = (978, 268)
+        calculated_chunk_size = write_gctx.set_data_matrix_chunk_size(sample_data_shape, max_chunk_kb, elem_per_kb)
+        self.assertEqual(calculated_chunk_size, expected_chunk_size)
+
+
     def test_write_metadata(self):
         """
 		CASE 1:
