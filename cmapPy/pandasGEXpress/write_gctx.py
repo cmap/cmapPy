@@ -18,7 +18,7 @@ version_attr = "version"
 version_number = "GCTX1.0"
 
 
-def write_gctx(gctoo_object, out_file_name, convert_back_to_neg_666=True):
+def write_gctx(gctoo_object, out_file_name, convert_back_to_neg_666=True, gzip_compression_level=6):
     """
 	Essentially the same as write() method; enables user to call write_gctx() from
 	cmapPy instead of write_gctx.write()
@@ -28,13 +28,15 @@ def write_gctx(gctoo_object, out_file_name, convert_back_to_neg_666=True):
     write(gctoo_object, out_file_name, convert_back_to_neg_666)
 
 
-def write(gctoo_object, out_file_name, convert_back_to_neg_666=True):
+def write(gctoo_object, out_file_name, convert_back_to_neg_666=True, gzip_compression_level=6):
     """
 	Writes a GCToo instance to specified file.
 
 	Input:
 		- gctoo_object (GCToo): A GCToo instance.
 		- out_file_name (str): file name to write gctoo_object to.
+        - convert_back_to_neg_666 (bool): whether to convert np.NAN in metadata back to "-666"
+        - gzip_compression_level (int, default=6): Compression level to use for metadata. 
 	"""
     # make sure out file has a .gctx suffix
     gctx_out_name = add_gctx_to_out_name(out_file_name)
@@ -48,15 +50,19 @@ def write(gctoo_object, out_file_name, convert_back_to_neg_666=True):
     # write src
     write_src(hdf5_out, gctoo_object, gctx_out_name)
 
+    # TODO: set chunk size 
+
     # write data matrix
     hdf5_out.create_dataset(data_matrix_node, data=gctoo_object.data_df.transpose().as_matrix(), 
         dtype=numpy.float32)
 
     # write col metadata
-    write_metadata(hdf5_out, "col", gctoo_object.col_metadata_df, convert_back_to_neg_666)
+    write_metadata(hdf5_out, "col", gctoo_object.col_metadata_df, convert_back_to_neg_666, 
+        gzip_compression=gzip_compression_level)
 
     # write row metadata
-    write_metadata(hdf5_out, "row", gctoo_object.row_metadata_df, convert_back_to_neg_666)
+    write_metadata(hdf5_out, "row", gctoo_object.row_metadata_df, convert_back_to_neg_666,
+        gzip_compression=gzip_compression_level)
 
     # close gctx file
     hdf5_out.close()
@@ -103,7 +109,7 @@ def write_version(hdf5_out):
     hdf5_out.attrs[version_attr] = numpy.string_(version_number)
 
 
-def write_metadata(hdf5_out, dim, metadata_df, convert_back_to_neg_666):
+def write_metadata(hdf5_out, dim, metadata_df, convert_back_to_neg_666, gzip_compression):
     """
 	Writes either column or row metadata to proper node of gctx out (hdf5) file.
 
@@ -124,7 +130,8 @@ def write_metadata(hdf5_out, dim, metadata_df, convert_back_to_neg_666):
         logger.error("'dim' argument must be either 'row' or 'col'!")
 
     # write id field to expected node
-    hdf5_out.create_dataset(metadata_node_name + "/id", data=[str(x) for x in metadata_df.index])
+    hdf5_out.create_dataset(metadata_node_name + "/id", data=[str(x) for x in metadata_df.index], 
+        compression=gzip_compression)
 
     metadata_fields = list(metadata_df.columns.copy())
 
@@ -136,4 +143,5 @@ def write_metadata(hdf5_out, dim, metadata_df, convert_back_to_neg_666):
     # write metadata columns to their own arrays
     for field in [entry for entry in metadata_fields if entry != "ind"]:
         hdf5_out.create_dataset(metadata_node_name + "/" + field,
-                                data=numpy.array(list(metadata_df.loc[:, field])))
+                                data=numpy.array(list(metadata_df.loc[:, field])), 
+                                compression=gzip_compression)

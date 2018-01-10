@@ -87,8 +87,8 @@ class TestWriteGctx(unittest.TestCase):
 		"""
         mini_gctoo = mini_gctoo_for_testing.make(convert_neg_666=False)
         hdf5_writer = h5py.File(FUNCTIONAL_TESTS_PATH + "/mini_gctoo_metadata.gctx", "w")
-        write_gctx.write_metadata(hdf5_writer, "row", mini_gctoo.row_metadata_df, False)
-        write_gctx.write_metadata(hdf5_writer, "col", mini_gctoo.col_metadata_df, False)
+        write_gctx.write_metadata(hdf5_writer, "row", mini_gctoo.row_metadata_df, False, 6)
+        write_gctx.write_metadata(hdf5_writer, "col", mini_gctoo.col_metadata_df, False, 6)
         hdf5_writer.close()
         logger.debug("Wrote mini_gctoo_metadata.gctx to {}".format(
             os.path.join(FUNCTIONAL_TESTS_PATH, "mini_gctoo_metadata.gctx")))
@@ -142,8 +142,8 @@ class TestWriteGctx(unittest.TestCase):
         # write row and col metadata fields from mini_gctoo_for_testing instance to file
         # Note this time does convert back to -666
         hdf5_writer = h5py.File(FUNCTIONAL_TESTS_PATH + "/mini_gctoo_metadata.gctx", "w")
-        write_gctx.write_metadata(hdf5_writer, "row", converted_row_metadata, True)
-        write_gctx.write_metadata(hdf5_writer, "col", converted_col_metadata, True)
+        write_gctx.write_metadata(hdf5_writer, "row", converted_row_metadata, True, 6)
+        write_gctx.write_metadata(hdf5_writer, "col", converted_col_metadata, True, 6)
         hdf5_writer.close()
 
         # read in written metadata, then close and delete file
