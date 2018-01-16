@@ -1,7 +1,7 @@
 import sys
 sys.path.insert(0, "../..")
 import logging
-from cmapPy.pandasGEXpress import setup_logger
+from cmapPy.pandasGEXpress import setup_GCToo_logger as setup_logger
 
 __authors__ = "David L. Lahr"
 __email__ = "dlahr@broadinstitute.org"
