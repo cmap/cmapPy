@@ -15,7 +15,7 @@ logger = logging.getLogger(setup_logger.LOGGER_NAME)
 cao = None
 
 
-class TestGenesQueries(unittest.TestCase):
+class TestGeneQueries(unittest.TestCase):
     def test_are_genes_in_api(self):
         #happy path mix of valid and invalid genes
         r = gq.are_genes_in_api(cao, ["AKT1", "BRAF", "Dave Lahr's fake cell line that never existed"])
