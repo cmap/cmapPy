@@ -7,17 +7,17 @@ We  highly recommend the using a prebuilt distribution of cmapPy along with a vi
 
 **Option 1 (recommended): Setup pandasGEXpress in a new conda environment**
 
-* (Mac and Windows; If you haven't already) install ``miniconda``
+* (All operating systems; If you haven't already) install ``miniconda``
 	* Download/follow instructions provided `here <https://conda.io/miniconda.html>`_. Unless you have personal preferences/reasons to do so, we recommend installing Miniconda over Anaconda because it's more lightweight.
 	* On the command line, type ``conda info`` to verify that conda has been properly instaled on your system. You should see some information about the "current conda install"; if not, your installation didn't work.
-* (Mac only) Set up your conda channels:
+* (Linux and Mac) Set up your conda channels:
 	``conda config --add channels defaults``
 
 	``conda config --add channels conda-forge``
 
 	``conda config --add channels bioconda``
 
-* (Mac) Create & activate your cmapPy environment:
+* (Linux and Mac) Create & activate your cmapPy environment:
 
 	Note. We currently use Python 2.7.11 for our production code (hence its specification); however, other versions of Python 2 should be stable as well. We do not currently support Python 3. 
 
