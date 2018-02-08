@@ -167,11 +167,14 @@ def get_file_list(wildcard):
     return files
 
 
-def hstack(gctoos, remove_all_metadata_fields, error_report_file, fields_to_remove=[], reset_ids=False):
+def hstack(gctoos, remove_all_metadata_fields=False, error_report_file=None, fields_to_remove=[], reset_ids=False):
     """ Horizontally concatenate gctoos.
 
     Args:
         gctoos (list of gctoo objects)
+        remove_all_metadata_fields (bool):  ignore/strip all common metadata when combining gctoos
+        error_report_file (string):  path to write file containing error report indicating 
+            problems that occurred during hstack, mainly for inconsistencies in common metadata
         fields_to_remove (list of strings): fields to be removed from the
             common metadata because they don't agree across files
         reset_ids (bool): set to True if sample ids are not unique
@@ -218,11 +221,14 @@ def hstack(gctoos, remove_all_metadata_fields, error_report_file, fields_to_remo
     return concated
 
 
-def vstack(gctoos, remove_all_metadata_fields, error_report_file, fields_to_remove=[], reset_ids=False):
+def vstack(gctoos, remove_all_metadata_fields=False, error_report_file=None, fields_to_remove=[], reset_ids=False):
     """ Vertically concatenate gctoos.
 
     Args:
         gctoos (list of gctoo objects)
+        remove_all_metadata_fields (bool):  ignore/strip all common metadata when combining gctoos
+        error_report_file (string):  path to write file containing error report indicating 
+            problems that occurred during vstack, mainly for inconsistencies in common metadata
         fields_to_remove (list of strings): fields to be removed from the
             common metadata because they don't agree across files
         reset_ids (bool): set to True if row ids are not unique
