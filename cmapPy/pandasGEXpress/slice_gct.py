@@ -6,18 +6,16 @@ ids can be provided as a list or as a path to a grp file. If using the
 slice method in Python, ids or boolean arrays can be used.
 
 """
-import sys
-sys.path.insert(0, "../..")
 import logging
 import sys
 import os
 import argparse
 import pandas as pd
 import re
-from cmapPy.pandasGEXpress import setup_GCToo_logger as setup_logger
-from cmapPy.pandasGEXpress import GCToo
-from cmapPy.pandasGEXpress import parse_gct as pg
-from cmapPy.pandasGEXpress import write_gct as wg
+import cmapPy.pandasGEXpress.setup_GCToo_logger as setup_logger
+import cmapPy.pandasGEXpress.GCToo as GCToo
+import cmapPy.pandasGEXpress.parse_gct as pg
+import cmapPy.pandasGEXpress.write_gct as wg
 
 __author__ = "Lev Litichevskiy"
 __email__ = "lev@broadinstitute.org"

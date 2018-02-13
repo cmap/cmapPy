@@ -1,11 +1,10 @@
 """
 Slices a random subset of a GCToo instance of a user-specified size. 
 """
-import sys
-sys.path.insert(0, "../..")
 import logging
 import numpy
-from cmapPy.pandasGEXpress import GCToo, setup_GCToo_logger as setup_logger
+import cmapPy.pandasGEXpress.GCToo as GCToo
+import cmapPy.pandasGEXpress.setup_GCToo_logger as setup_logger
 
 __author__ = "Oana Enache"
 __email__ = "oana@broadinstitute.org"

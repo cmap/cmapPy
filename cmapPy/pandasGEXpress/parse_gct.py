@@ -58,7 +58,6 @@ assemble_multi_index_df method in GCToo.py assembles them.
                 -36 = number of data columns   
 
 """
-import sys
 import logging
 import pandas as pd
 import numpy as np

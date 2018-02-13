@@ -1,10 +1,8 @@
-import sys
-sys.path.insert(0, "../../../")
 import unittest
-from cmapPy.clue_api_client import  setup_logger as setup_logger
+import cmapPy.clue_api_client.setup_logger as setup_logger
 import logging
 import test_clue_api_client
-from cmapPy.clue_api_client import gene_queries as gq
+import cmapPy.clue_api_client.gene_queries as gq
 
 __authors__ = "David L. Lahr"
 __email__ = "dlahr@broadinstitute.org"

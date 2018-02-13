@@ -1,15 +1,11 @@
-from __future__ import print_function
-
-import sys
-sys.path.insert(0, "../../../")
 import os
 import unittest
 import logging
 import numpy as np
 import pandas as pd
-from cmapPy.pandasGEXpress import setup_GCToo_logger as setup_logger
-from cmapPy.pandasGEXpress import concat_gctoo as cg
-from cmapPy.pandasGEXpress import parse_gct as pg
+import cmapPy.pandasGEXpress.setup_GCToo_logger as setup_logger
+import cmapPy.pandasGEXpress.concat_gctoo as cg
+import cmapPy.pandasGEXpress.parse_gct as pg
 import tempfile
 
 

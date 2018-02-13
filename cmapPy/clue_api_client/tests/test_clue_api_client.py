@@ -1,13 +1,10 @@
-import sys
-sys.path.insert(0, "../../../")
 import unittest
-from cmapPy.clue_api_client import setup_logger as setup_logger
+import cmapPy.clue_api_client.setup_logger as setup_logger
 import logging
-from cmapPy.clue_api_client import clue_api_client as clue_api_client
+import cmapPy.clue_api_client.clue_api_client as clue_api_client
 import os.path
 import collections
-
-from six.moves import configparser
+import six.moves.configparser as configparser
 
 __authors__ = "David L. Lahr"
 __email__ = "dlahr@broadinstitute.org"

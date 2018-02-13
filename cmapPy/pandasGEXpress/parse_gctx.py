@@ -1,12 +1,10 @@
-import sys
-sys.path.insert(0, "../..")
 import logging
-from cmapPy.pandasGEXpress import setup_GCToo_logger as setup_logger
+import cmapPy.pandasGEXpress.setup_GCToo_logger as setup_logger
 import os
 import numpy as np
 import pandas as pd
 import h5py
-from cmapPy.pandasGEXpress import GCToo as GCToo
+import cmapPy.pandasGEXpress.GCToo as GCToo
 
 __author__ = "Oana Enache"
 __email__ = "oana@broadinstitute.org"

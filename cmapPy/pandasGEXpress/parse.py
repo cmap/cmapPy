@@ -6,7 +6,6 @@ Takes in a file path corresponding to either a .gct or .gctx,
 
 Note: Supports GCT1.2, GCT1.3, and GCTX1.0 files. 
 """
-import sys
 import logging
 import cmapPy.pandasGEXpress.setup_GCToo_logger as setup_logger
 import cmapPy.pandasGEXpress.parse_gct as parse_gct
@@ -19,62 +18,51 @@ __email__ = "oana@broadinstitute.org"
 logger = logging.getLogger(setup_logger.LOGGER_NAME)
 
 
-class Parse(object):
-    def __init__(self):
-        self.orig_module = sys.modules[__name__]
+def parse(file_path, convert_neg_666=True, rid=None, cid=None, ridx=None, cidx=None,
+          row_meta_only=False, col_meta_only=False, make_multiindex=False):
+    """
+    Identifies whether file_path corresponds to a .gct or .gctx file and calls the
+    correct corresponding parse method.
 
-    def __call__(self, file_path, convert_neg_666=True, rid=None, cid=None, ridx=None, cidx=None,
-            row_meta_only=False, col_meta_only=False, make_multiindex=False):
-        """
-        Identifies whether file_path corresponds to a .gct or .gctx file and calls the
-        correct corresponding parse method.
+    Input:
+        Mandatory:
+        - gct(x)_file_path (str): full path to gct(x) file you want to parse.
 
-        Input:
-            Mandatory:
-            - gct(x)_file_path (str): full path to gct(x) file you want to parse.
+        Optional:
+        - row_meta_only (bool): Whether to load data + metadata (if False), or just row metadata (if True)
+            as pandas DataFrame
+        - col_meta_only (bool): Whether to load data + metadata (if False), or just col metadata (if True)
+            as pandas DataFrame
+        - convert_neg_666 (bool): whether to convert -666 values to numpy.nan or not
+            (see Note below for more details on this). Default = False.
+        - rid (list of strings): list of row ids to specifically keep from gctx. Default=None.
+        - cid (list of strings): list of col ids to specifically keep from gctx. Default=None.
+        - make_multiindex (bool): whether to create a multi-index df combining
+            the 3 component dfs
 
-            Optional:
-            - row_meta_only (bool): Whether to load data + metadata (if False), or just row metadata (if True)
-                as pandas DataFrame
-            - col_meta_only (bool): Whether to load data + metadata (if False), or just col metadata (if True)
-                as pandas DataFrame
-            - convert_neg_666 (bool): whether to convert -666 values to numpy.nan or not
-                (see Note below for more details on this). Default = False.
-            - rid (list of strings): list of row ids to specifically keep from gctx. Default=None.
-            - cid (list of strings): list of col ids to specifically keep from gctx. Default=None.
-            - make_multiindex (bool): whether to create a multi-index df combining
-                the 3 component dfs
+    Output:
+        - myGCToo (GCToo)
 
-        Output:
-            - myGCToo (GCToo)
-
-        Note: why does convert_neg_666 exist?
-            - In CMap--for somewhat obscure historical reasons--we use "-666" as our null value
-            for metadata. However (so that users can take full advantage of pandas' methods,
-            including those for filtering nan's etc) we provide the option of converting these
-            into numpy.NaN values, the pandas default.
-        """
-        if file_path.endswith(".gct"):
-            # Ignoring arguments that won't be passed to parse_gct
-            for unused_arg in ["rid", "cid", "ridx", "cidx"]:
-                if eval(unused_arg):
-                    err_msg = "parse_gct does not use the argument {}. Ignoring it...".format(unused_arg)
-                    logger.error(err_msg)
-                    raise Exception(err_msg)
-            curr = parse_gct.parse(file_path, convert_neg_666, row_meta_only, col_meta_only, make_multiindex)
-        elif file_path.endswith(".gctx"):
-            curr = parse_gctx.parse(file_path, convert_neg_666, rid, cid, ridx, cidx, row_meta_only, col_meta_only,
-                                    make_multiindex)
-        else:
-            err_msg = "File to parse must be .gct or .gctx!"
-            logger.error(err_msg)
-            raise Exception(err_msg)
-        return curr
-
-#replace this module with the class above, which is callable, making it possible to call the method of interest directly
-#e.g. from other code:
-#   import cmapPy.pandasGEXpress.parse as parse
-#   g = parse("my_gct_file.gct")
-logger.debug("setting up parse module to be effectively callable - __name__:  {}".format(__name__))
-sys.modules[__name__] = Parse()
+    Note: why does convert_neg_666 exist?
+        - In CMap--for somewhat obscure historical reasons--we use "-666" as our null value
+        for metadata. However (so that users can take full advantage of pandas' methods,
+        including those for filtering nan's etc) we provide the option of converting these
+        into numpy.NaN values, the pandas default.
+    """
+    if file_path.endswith(".gct"):
+        # Ignoring arguments that won't be passed to parse_gct
+        for unused_arg in ["rid", "cid", "ridx", "cidx"]:
+            if eval(unused_arg):
+                err_msg = "parse_gct does not use the argument {}. Ignoring it...".format(unused_arg)
+                logger.error(err_msg)
+                raise Exception(err_msg)
+        curr = parse_gct.parse(file_path, convert_neg_666, row_meta_only, col_meta_only, make_multiindex)
+    elif file_path.endswith(".gctx"):
+        curr = parse_gctx.parse(file_path, convert_neg_666, rid, cid, ridx, cidx, row_meta_only, col_meta_only,
+                                make_multiindex)
+    else:
+        err_msg = "File to parse must be .gct or .gctx!"
+        logger.error(err_msg)
+        raise Exception(err_msg)
+    return curr
 

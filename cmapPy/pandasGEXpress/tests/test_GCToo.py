@@ -1,10 +1,8 @@
-import sys
-sys.path.insert(0, "../../..")
 import unittest
 import pandas as pd
 import logging
-from cmapPy.pandasGEXpress import setup_GCToo_logger as setup_GCToo_logger
-from cmapPy.pandasGEXpress import GCToo as GCToo
+import cmapPy.pandasGEXpress.setup_GCToo_logger as setup_GCToo_logger
+import cmapPy.pandasGEXpress.GCToo as GCToo
 
 logger = logging.getLogger(setup_GCToo_logger.LOGGER_NAME)
 
