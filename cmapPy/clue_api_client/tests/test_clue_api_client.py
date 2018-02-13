@@ -4,7 +4,6 @@ import logging
 import cmapPy.clue_api_client.clue_api_client as clue_api_client
 import os.path
 import collections
-import six.moves.configparser as configparser
 
 __authors__ = "David L. Lahr"
 __email__ = "dlahr@broadinstitute.org"

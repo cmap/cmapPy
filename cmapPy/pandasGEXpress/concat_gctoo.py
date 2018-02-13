@@ -35,10 +35,8 @@ import os
 import sys
 import glob
 import logging
-
 import numpy
 import pandas as pd
-import six.moves.range as range
 
 import cmapPy.pandasGEXpress.GCToo as GCToo
 import cmapPy.pandasGEXpress.setup_GCToo_logger as setup_logger

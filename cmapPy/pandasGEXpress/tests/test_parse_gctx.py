@@ -11,7 +11,6 @@ import cmapPy.pandasGEXpress.mini_gctoo_for_testing as mini_gctoo_for_testing
 import cmapPy.pandasGEXpress.slice_gct as slice_gct
 import cmapPy.pandasGEXpress.write_gctx as write_gctx
 import pandas.util.testing as pandas_testing
-import six.moves.range as range
 
 
 __author__ = "Oana Enache"
