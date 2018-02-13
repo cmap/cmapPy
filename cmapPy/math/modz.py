@@ -19,21 +19,27 @@ def upper_triangle(correlation_matrix):
 
 def calculate_weights(correlation_matrix):
 
+    # fill diagonal of corr_mat with 0s
     np.fill_diagonal(correlation_matrix.values, 0)
+
+    # remove negative values
     correlation_matrix[correlation_matrix < 0] = 0
-    raw_weights = 0.5 * correlation_matrix.sum(axis=1)
+    raw_weights = correlation_matrix.sum(axis=1) / (len(correlation_matrix.index) - 1)
     raw_weights[raw_weights < .01] = .01
     weights = raw_weights / sum(raw_weights.abs())
 
     return raw_weights, weights
 
 
-def modz(mat):
+def main(mat):
 
+    # Make correlation matrix column wise
     corr_mat = mat.corr(method='spearman')
 
+    # Extract just the values in the upper triangle
     upper_tri_series = upper_triangle(corr_mat)
 
+    # Get rid of negative values
     upper_tri_series['spearman_corr'][upper_tri_series['spearman_corr'] < 0] = 0
 
     raw_weights, weights = calculate_weights(corr_mat)

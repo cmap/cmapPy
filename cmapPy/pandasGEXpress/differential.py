@@ -14,8 +14,11 @@ def prep_mats(df, plate_control=True, group_field='pert_type', group_val='ctl_ve
 
     row_metadata_df = df.row_metadata_df
 
+    # Threshold zscore data before returning
     zscore_data[zscore_data < -10] = -10
     zscore_data[zscore_data > 10] = 10
+
+    # These sortings might be unnecessary now with updates to GCToo
     zscore_data.sort_index(inplace=True)
     row_metadata_df.sort_index(inplace=True)
     zscore_gctoo = GCToo.GCToo(data_df=zscore_data, row_metadata_df=row_metadata_df, col_metadata_df=df.col_metadata_df)
