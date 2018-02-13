@@ -51,17 +51,15 @@ class TestGctoo(unittest.TestCase):
                                        index=["a", "b", "c"], columns=["chd1"])
 
         ## happy path, no multi-index
-        my_gctoo1 = GCToo.GCToo(data_df=data_df, row_metadata_df=row_metadata_df,
-                    col_metadata_df=col_metadata_df)
+        my_gctoo1 = GCToo.GCToo(data_df=data_df, row_metadata_df=row_metadata_df,col_metadata_df=col_metadata_df)
 
         ## reset row_metadata_df: happy case
-        new_row_meta1 = my_gctoo1.row_metadata_df.copy()
-
         new_rid_order = ["B", "A"]
+        new_row_meta1 = my_gctoo1.row_metadata_df.copy().reindex(new_rid_order)
 
-        new_row_meta1.index = new_rid_order
         # shouldn't have any problems re-setting row_meta
         my_gctoo1.row_metadata_df = new_row_meta1
+        pd.util.testing.assert_frame_equal(my_gctoo1.row_metadata_df, row_metadata_df)
 
         ## reset row_metadata_df: to not a DF
         new_row_meta2 = "this is my new row metadata"
@@ -90,13 +88,12 @@ class TestGctoo(unittest.TestCase):
                     col_metadata_df=col_metadata_df)
 
         ## reset col_metadata_df: happy case
-        new_col_meta1 = my_gctoo2.col_metadata_df.copy()
-
         new_cid_order = ["c", "a", "b"]
-        new_col_meta1.index = new_cid_order
+        new_col_meta1 = my_gctoo2.col_metadata_df.copy().reindex(new_cid_order)
 
         # shouldn't have any problems
         my_gctoo2.col_metadata_df = new_col_meta1
+        pd.util.testing.assert_frame_equal(my_gctoo2.col_metadata_df, col_metadata_df)
 
         ## reset col_metadata_df: to not a DF
         new_col_meta2 = "this is my new col metadata"
@@ -125,12 +122,16 @@ class TestGctoo(unittest.TestCase):
                     col_metadata_df=col_metadata_df)
 
         ## reset data_df: happy case
-        new_data_df1 = my_gctoo3.data_df.copy()
-        new_data_df1.index = ["B","A"]
-        new_data_df1.columns = ["c", "b", "a"]
+        new_data_df1_tmp = my_gctoo3.data_df.copy().reindex(new_rid_order)
+        new_data_df1 = new_data_df1_tmp.reindex(columns=new_cid_order)
 
         # shouldn't have problems
         my_gctoo3.data_df = new_data_df1
+
+        # resetting data_df means rearranging the row and col meta dfs
+        pd.util.testing.assert_frame_equal(my_gctoo3.data_df, new_data_df1)
+        pd.util.testing.assert_frame_equal(my_gctoo3.col_metadata_df, new_col_meta1)
+        pd.util.testing.assert_frame_equal(my_gctoo3.row_metadata_df, new_row_meta1)
 
         ## reset data_df: row_meta doesn't match
         new_data_df2 = my_gctoo3.data_df.copy()
@@ -170,6 +171,10 @@ class TestGctoo(unittest.TestCase):
             ("version should just be re-set with object's set_attr method but doesn't appear to be") +
             ("expected {} but found {}").format("other_version", my_gctoo1.version))
 
+        ## needs rearrangement upon initializing
+        my_gctoo5 = GCToo.GCToo(data_df=data_df, row_metadata_df=row_metadata_df, col_metadata_df=new_col_meta1)
+
+        pd.util.testing.assert_frame_equal(my_gctoo5.col_metadata_df, col_metadata_df)
 
 
     def test_check_df(self):
