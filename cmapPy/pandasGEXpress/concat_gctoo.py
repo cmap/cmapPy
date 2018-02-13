@@ -30,24 +30,20 @@ with unique integers.
 N.B. This script sorts everything!
 
 """
-import sys
-sys.path.insert(0, "../..")
-
 import argparse
 import os
 import sys
 import glob
 import logging
-
 import numpy
 import pandas as pd
-from six.moves import range
 
-from cmapPy.pandasGEXpress import GCToo
-from cmapPy.pandasGEXpress import parse
-from cmapPy.pandasGEXpress import setup_GCToo_logger as setup_logger
-from cmapPy.pandasGEXpress import write_gct
-from cmapPy.pandasGEXpress import write_gctx
+import cmapPy.pandasGEXpress.GCToo as GCToo
+import cmapPy.pandasGEXpress.setup_GCToo_logger as setup_logger
+import cmapPy.pandasGEXpress.parse as parse
+import cmapPy.pandasGEXpress.write_gct as write_gct
+import cmapPy.pandasGEXpress.write_gctx as write_gctx
+
 
 __author__ = "Lev Litichevskiy"
 __email__ = "lev@broadinstitute.org"
@@ -128,7 +124,7 @@ def main():
         # Parse each file and append to a list
         gctoos = []
         for f in files:
-            gctoos.append(parse(f))
+            gctoos.append(parse.parse(f))
 
         # Create concatenated gctoo object
         if args.concat_direction == "horiz":

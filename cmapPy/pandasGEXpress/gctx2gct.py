@@ -8,11 +8,12 @@ Main method takes in a .gctx file path (and, optionally, an
 Note: Only supports v1.0 .gctx files. 
 """
 import sys
-sys.path.insert(0, "../..")
 import logging
 import argparse
 import os.path
-from cmapPy.pandasGEXpress import setup_GCToo_logger as setup_logger, parse_gctx, write_gct
+import cmapPy.pandasGEXpress.setup_GCToo_logger as setup_logger
+import cmapPy.pandasGEXpress.parse_gctx as parse_gctx
+import cmapPy.pandasGEXpress.write_gct as write_gct
 
 __author__ = "Oana Enache"
 __email__ = "oana@broadinstitute.org"

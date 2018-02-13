@@ -6,12 +6,10 @@ Takes in a file path corresponding to either a .gct or .gctx,
 
 Note: Supports GCT1.2, GCT1.3, and GCTX1.0 files. 
 """
-import sys
-sys.path.insert(0, "../../")
 import logging
-from cmapPy.pandasGEXpress import setup_GCToo_logger as setup_logger
-from cmapPy.pandasGEXpress import parse_gct as parse_gct
-from cmapPy.pandasGEXpress import parse_gctx as parse_gctx
+import cmapPy.pandasGEXpress.setup_GCToo_logger as setup_logger
+import cmapPy.pandasGEXpress.parse_gct as parse_gct
+import cmapPy.pandasGEXpress.parse_gctx as parse_gctx
 
 __author__ = "Oana Enache"
 __email__ = "oana@broadinstitute.org"
@@ -21,7 +19,7 @@ logger = logging.getLogger(setup_logger.LOGGER_NAME)
 
 
 def parse(file_path, convert_neg_666=True, rid=None, cid=None, ridx=None, cidx=None,
-        row_meta_only=False, col_meta_only=False, make_multiindex=False):
+          row_meta_only=False, col_meta_only=False, make_multiindex=False):
     """
     Identifies whether file_path corresponds to a .gct or .gctx file and calls the
     correct corresponding parse method.
@@ -67,3 +65,4 @@ def parse(file_path, convert_neg_666=True, rid=None, cid=None, ridx=None, cidx=N
         logger.error(err_msg)
         raise Exception(err_msg)
     return curr
+
