@@ -16,6 +16,7 @@ import cmapPy.pandasGEXpress.parse as parse
 import cmapPy.pandasGEXpress.slice_gctoo as sg
 import cmapPy.pandasGEXpress.write_gct as wg
 import cmapPy.pandasGEXpress.write_gct as wgx
+import cmapPy.set_io.grp as grp
 
 __author__ = "Lev Litichevskiy"
 __email__ = "lev@broadinstitute.org"

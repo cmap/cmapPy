@@ -34,7 +34,7 @@ class TestParse(unittest.TestCase):
         test_rids = ['LJP007_MCF10A_24H:TRT_CP:BRD-K93918653:3.33', 'LJP007_MCF7_24H:CTL_VEHICLE:DMSO:-666']
         test_cids = ['LJP007_MCF7_24H:TRT_POSCON:BRD-A61304759:10']
         mg3 = slice_gctoo.slice_gctoo(mg1, rid=test_rids, cid=test_cids)
-        mg4 = parse("functional_tests/mini_gctoo_for_testing.gctx",
+        mg4 = parse.parse("functional_tests/mini_gctoo_for_testing.gctx",
                     rid=test_rids, cid=test_cids)
         pandas_testing.assert_frame_equal(mg3.data_df, mg4.data_df)
         pandas_testing.assert_frame_equal(mg3.row_metadata_df, mg4.row_metadata_df)
