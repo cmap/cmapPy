@@ -70,4 +70,4 @@ To test your setup, change into a directory outside the repo, run the python int
 
 	``$ python``
 
-	``>> import cmapPy.pandasGEXpress.parse as parse``
+	``>> from cmapPy.pandasGEXpress.parse import parse``

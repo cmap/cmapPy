@@ -41,10 +41,10 @@ import pandas as pd
 import six.moves.range as range
 
 import cmapPy.pandasGEXpress.GCToo as GCToo
-import cmapPy.pandasGEXpress.parse as parse
 import cmapPy.pandasGEXpress.setup_GCToo_logger as setup_logger
 import cmapPy.pandasGEXpress.write_gct as write_gct
 import cmapPy.pandasGEXpress.write_gctx as write_gctx
+from cmapPy.pandasGEXpress.parse import parse
 
 __author__ = "Lev Litichevskiy"
 __email__ = "lev@broadinstitute.org"

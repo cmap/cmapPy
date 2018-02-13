@@ -2,9 +2,9 @@ import logging
 import cmapPy.pandasGEXpress.setup_GCToo_logger as setup_logger
 import unittest
 import pandas.util.testing as pandas_testing
-import cmapPy.pandasGEXpress.parse as parse
 import cmapPy.pandasGEXpress.slice_gct as slice_gct
 import cmapPy.pandasGEXpress.mini_gctoo_for_testing as mini_gctoo_for_testing
+from cmapPy.pandasGEXpress.parse import parse
 
 __author__ = "Oana Enache"
 __email__ = "oana@broadinstitute.org"
