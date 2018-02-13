@@ -40,9 +40,10 @@ import pandas as pd
 
 import cmapPy.pandasGEXpress.GCToo as GCToo
 import cmapPy.pandasGEXpress.setup_GCToo_logger as setup_logger
+import cmapPy.pandasGEXpress.parse as parse
 import cmapPy.pandasGEXpress.write_gct as write_gct
 import cmapPy.pandasGEXpress.write_gctx as write_gctx
-from cmapPy.pandasGEXpress.parse import parse
+
 
 __author__ = "Lev Litichevskiy"
 __email__ = "lev@broadinstitute.org"
@@ -123,7 +124,7 @@ def main():
         # Parse each file and append to a list
         gctoos = []
         for f in files:
-            gctoos.append(parse(f))
+            gctoos.append(parse.parse(f))
 
         # Create concatenated gctoo object
         if args.concat_direction == "horiz":

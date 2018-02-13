@@ -13,8 +13,8 @@ import argparse
 import pandas as pd
 import re
 import cmapPy.pandasGEXpress.setup_GCToo_logger as setup_logger
+import cmapPy.pandasGEXpress.parse as parse
 import cmapPy.pandasGEXpress.GCToo as GCToo
-import cmapPy.pandasGEXpress.parse_gct as pg
 import cmapPy.pandasGEXpress.write_gct as wg
 
 __author__ = "Lev Litichevskiy"
@@ -50,7 +50,7 @@ def main():
     setup_logger.setup(verbose=args.verbose)
 
     # Read the input gct
-    in_gct = pg.parse(args.in_gct_path)
+    in_gct = parse.parse(args.in_gct_path)
 
     # Read in each of the command line arguments
     rid = _read_arg(args.rid)
