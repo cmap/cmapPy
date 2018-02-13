@@ -1,7 +1,5 @@
-import sys
-sys.path.insert(0, "../../../")
 import logging
-from cmapPy.pandasGEXpress import setup_GCToo_logger as setup_logger
+import cmapPy.pandasGEXpress.setup_GCToo_logger as setup_logger
 import unittest
 import h5py
 import os

@@ -1,19 +1,17 @@
-import sys
-sys.path.insert(0, "../../..")
 import logging
-from cmapPy.pandasGEXpress import setup_GCToo_logger as setup_logger
 import unittest
 import os
 import pandas as pd
 import numpy as np
 import h5py
-from cmapPy.pandasGEXpress import GCToo as GCToo 
-from cmapPy.pandasGEXpress import parse_gctx as parse_gctx
-from cmapPy.pandasGEXpress import mini_gctoo_for_testing as mini_gctoo_for_testing
-from cmapPy.pandasGEXpress import slice_gct as slice_gct
-from cmapPy.pandasGEXpress import write_gctx as write_gctx
+
 import pandas.util.testing as pandas_testing
-from six.moves import range
+import cmapPy.pandasGEXpress.setup_GCToo_logger as setup_logger
+import cmapPy.pandasGEXpress.GCToo as GCToo
+import cmapPy.pandasGEXpress.parse_gctx as parse_gctx
+import cmapPy.pandasGEXpress.mini_gctoo_for_testing as mini_gctoo_for_testing
+import cmapPy.pandasGEXpress.slice_gctoo as slice_gctoo
+import cmapPy.pandasGEXpress.write_gctx as write_gctx
 
 
 __author__ = "Oana Enache"
@@ -55,7 +53,7 @@ class TestParseGctx(unittest.TestCase):
         # test with string rid/cid
         test_rids = ['LJP007_MCF10A_24H:TRT_CP:BRD-K93918653:3.33', 'LJP007_MCF7_24H:CTL_VEHICLE:DMSO:-666']
         test_cids = ['LJP007_MCF7_24H:TRT_POSCON:BRD-A61304759:10']
-        mg3 = slice_gct.slice_gctoo(mg1, rid=test_rids, cid=test_cids)
+        mg3 = slice_gctoo.slice_gctoo(mg1, rid=test_rids, cid=test_cids)
         mg4 = parse_gctx.parse("functional_tests/mini_gctoo_for_testing.gctx",
                                rid=test_rids, cid=test_cids)
         pandas_testing.assert_frame_equal(mg3.data_df, mg4.data_df)
@@ -82,7 +80,7 @@ class TestParseGctx(unittest.TestCase):
         # test with numeric (repr as string) rid/cid
         mg5 = GCToo.GCToo(data_df=int_indexed_data_df, row_metadata_df=int_indexed_row_meta,
                           col_metadata_df=int_indexed_col_meta)
-        mg5 = slice_gct.slice_gctoo(mg5, row_bool=[True, False, True, False, True, False],
+        mg5 = slice_gctoo.slice_gctoo(mg5, row_bool=[True, False, True, False, True, False],
                                     col_bool=[True, False, False, True, True, True])
 
         mg5.data_df.index.name = "rid"
@@ -104,7 +102,7 @@ class TestParseGctx(unittest.TestCase):
         pandas_testing.assert_frame_equal(mg5.col_metadata_df, mg6.col_metadata_df)
 
         # test with ridx/cidx
-        mg7 = slice_gct.slice_gctoo(mg1, rid=['LJP007_MCF7_24H:CTL_VEHICLE:DMSO:-666'],
+        mg7 = slice_gctoo.slice_gctoo(mg1, rid=['LJP007_MCF7_24H:CTL_VEHICLE:DMSO:-666'],
                                     cid='LJP007_MCF7_24H:CTL_VEHICLE:DMSO:-666')
         mg8 = parse_gctx.parse("functional_tests/mini_gctoo_for_testing.gctx", ridx=[4], cidx=[4])
 
