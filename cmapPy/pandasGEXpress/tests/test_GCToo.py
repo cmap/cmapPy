@@ -171,6 +171,11 @@ class TestGctoo(unittest.TestCase):
             ("version should just be re-set with object's set_attr method but doesn't appear to be") +
             ("expected {} but found {}").format("other_version", my_gctoo1.version))
 
+        ## needs rearrangement upon initializing
+        my_gctoo5 = GCToo.GCToo(data_df=data_df, row_metadata_df=row_metadata_df, col_metadata_df=new_col_meta1)
+
+        pd.util.testing.assert_frame_equal(my_gctoo5.col_metadata_df, col_metadata_df)
+
 
     def test_check_df(self):
         not_unique_data_df = pd.DataFrame([[1, 2, 3], [4, 5, 6]],

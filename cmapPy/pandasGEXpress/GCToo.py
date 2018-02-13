@@ -65,60 +65,63 @@ class GCToo(object):
         self.src = src
         self.version = version
 
+        # Check data_df before setting
+        self.check_df(data_df)
+        self.data_df = data_df
+
         if row_metadata_df is None:
             self.row_metadata_df = pd.DataFrame(index=data_df.index)
         else:
+            # Lots of checks will occur when this attribute is set (see __setattr__ below)
             self.row_metadata_df = row_metadata_df
 
         if col_metadata_df is None:
             self.col_metadata_df = pd.DataFrame(index=data_df.columns)
         else:
+            # Lots of checks will occur when this attribute is set (see __setattr__ below)
             self.col_metadata_df = col_metadata_df
 
-        self.data_df = data_df
-        self.multi_index_df = None
-
-        for df_field in ["row_metadata_df", "col_metadata_df", "data_df"]:
-            df = self.__dict__[df_field]
-            self.check_df(df)
-
-        # check rids match in data & meta
-        self.id_match_check(self.data_df, self.row_metadata_df, "row")
-
-        # check cids match in data & meta
-        self.id_match_check(self.data_df, self.col_metadata_df, "col")
-
+        # Create multi_index_df if explicitly requested
         if make_multiindex:
             self.assemble_multi_index_df()
+        else:
+            self.multi_index_df = None
 
+        # This GCToo object is now initialized
         self._initialized = True
 
     def __setattr__(self, name, value):
-        if "_initialized" in self.__dict__ and self._initialized:
-            if name in ["data_df", "row_metadata_df", "col_metadata_df"]:
-                if self.check_df(value):
-                    if (name == "row_metadata_df" and self.id_match_check(self.data_df, value, "row")):
-                        value = value.reindex(self.data_df.index)
-                        super(GCToo, self).__setattr__(name, value)
-                    elif (name == "col_metadata_df" and self.id_match_check(self.data_df, value, "col")):
-                        value = value.reindex(self.data_df.columns)
-                        super(GCToo, self).__setattr__(name, value)
-                    elif (name == "data_df" and (self.id_match_check(value, self.row_metadata_df, "row")
-                                                and self.id_match_check(value, self.col_metadata_df, "col"))):
-                        # in this case we need to reindex both row/col metadata so that indexes are ordered
-                        # the same as the new data_df
-                        super(GCToo, self).__setattr__("row_metadata_df", self.row_metadata_df.reindex(value.index))
-                        super(GCToo, self).__setattr__("col_metadata_df", self.col_metadata_df.reindex(value.columns))
-                        super(GCToo, self).__setattr__(name, value)
-            elif name == "multi_index_df":
-                msg = ("Cannot reassign value of multi_index_df attribute; "  +
-                    "if you'd like a new multiindex df, please create a new GCToo instance" +
-                    "with appropriate data_df, row_metadata_df, and col_metadata_df fields.")
-                self.logger.error(msg)
-                raise Exception("GCToo.__setattr__: " + msg)
-            else:
+        # Make sure row/col metadata agree with data_df before setting
+        if name in ["row_metadata_df", "col_metadata_df"]:
+            self.check_df(value)
+            if name == "row_metadata_df":
+                self.id_match_check(self.data_df, value, "row")
+                value = value.reindex(self.data_df.index)
                 super(GCToo, self).__setattr__(name, value)
-        else: # for init we first want to set everything
+            else:
+                self.id_match_check(self.data_df, value, "col")
+                value = value.reindex(self.data_df.columns)
+                super(GCToo, self).__setattr__(name, value)
+
+        # When reassigning data_df after initialization, reindex row/col metadata if necessary
+        # N.B. Need to check if _initialized is present before checking if it's true, or code will break
+        elif name == "data_df" and "_initialized" in self.__dict__ and self._initialized:
+            self.id_match_check(value, self.row_metadata_df, "row")
+            self.id_match_check(value, self.col_metadata_df, "col")
+            super(GCToo, self).__setattr__("row_metadata_df", self.row_metadata_df.reindex(value.index))
+            super(GCToo, self).__setattr__("col_metadata_df", self.col_metadata_df.reindex(value.columns))
+            super(GCToo, self).__setattr__(name, value)
+
+        # Can't reassign multi_index_df after initialization
+        elif name == "multi_index_df" and "_initialized" in self.__dict__ and self._initialized:
+            msg = ("Cannot reassign value of multi_index_df attribute; "  +
+                "if you'd like a new multiindex df, please create a new GCToo instance" +
+                "with appropriate data_df, row_metadata_df, and col_metadata_df fields.")
+            self.logger.error(msg)
+            raise Exception("GCToo.__setattr__: " + msg)
+
+        # Otherwise, use the normal __setattr__ method
+        else:
             super(GCToo, self).__setattr__(name, value)
 
     def check_df(self, df):
