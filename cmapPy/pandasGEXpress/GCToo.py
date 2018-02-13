@@ -108,7 +108,8 @@ class GCToo(object):
                         # in this case we need to reindex both row/col metadata so that indexes are ordered
                         # the same as the new data_df
                         super(GCToo, self).__setattr__("row_metadata_df", self.row_metadata_df.reindex(value.index))
-                        super(GCToo, self).__setattr__("col_metadata_df", self.col_metadata_df.reindex(value.index))
+                        super(GCToo, self).__setattr__("col_metadata_df", self.col_metadata_df.reindex(value.columns))
+                        super(GCToo, self).__setattr__(name, value)
             elif name == "multi_index_df":
                 msg = ("Cannot reassign value of multi_index_df attribute; "  +
                     "if you'd like a new multiindex df, please create a new GCToo instance" +
