@@ -5,12 +5,10 @@ Extract a subset of data from a GCToo object using ids or boolean arrays.
 See slice_gct.py for the command line equivalent.
 
 """
-import sys
-sys.path.insert(0, "../..")
 import logging
 import pandas as pd
-from cmapPy.pandasGEXpress import setup_GCToo_logger as setup_logger
-from cmapPy.pandasGEXpress import GCToo
+import cmapPy.pandasGEXpress.setup_GCToo_logger as setup_logger
+import cmapPy.pandasGEXpress.GCToo as GCToo
 
 __author__ = "Lev Litichevskiy"
 __email__ = "lev@broadinstitute.org"
