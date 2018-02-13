@@ -1,19 +1,17 @@
-import sys
-sys.path.insert(0, "../../..")
 import logging
-from cmapPy.pandasGEXpress import setup_GCToo_logger as setup_logger
 import unittest
 import os
 import pandas as pd
 import numpy as np
 import h5py
-from cmapPy.pandasGEXpress import GCToo as GCToo 
-from cmapPy.pandasGEXpress import parse_gctx as parse_gctx
-from cmapPy.pandasGEXpress import mini_gctoo_for_testing as mini_gctoo_for_testing
-from cmapPy.pandasGEXpress import slice_gctoo as slice_gctoo
-from cmapPy.pandasGEXpress import write_gctx as write_gctx
+
 import pandas.util.testing as pandas_testing
-from six.moves import range
+import cmapPy.pandasGEXpress.setup_GCToo_logger as setup_logger
+import cmapPy.pandasGEXpress.GCToo as GCToo
+import cmapPy.pandasGEXpress.parse_gctx as parse_gctx
+import cmapPy.pandasGEXpress.mini_gctoo_for_testing as mini_gctoo_for_testing
+import cmapPy.pandasGEXpress.slice_gctoo as slice_gctoo
+import cmapPy.pandasGEXpress.write_gctx as write_gctx
 
 
 __author__ = "Oana Enache"

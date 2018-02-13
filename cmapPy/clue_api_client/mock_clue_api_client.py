@@ -1,8 +1,6 @@
-import sys
-sys.path.insert(0, "../..")
 import logging
-from cmapPy.clue_api_client import setup_logger
-from cmapPy.clue_api_client import clue_api_client
+import cmapPy.clue_api_client.setup_logger as setup_logger
+import cmapPy.clue_api_client.clue_api_client as clue_api_client
 
 __authors__ = "David L. Lahr"
 __email__ = "dlahr@broadinstitute.org"

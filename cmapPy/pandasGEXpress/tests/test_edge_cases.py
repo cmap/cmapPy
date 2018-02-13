@@ -2,13 +2,11 @@
 Functional tests comparing gct vs gctx parsing for equivalent file content 
 (stored in gct/text vs gctx/hdf5 format)
 """
-import sys
-sys.path.insert(0, "../../..")
 import unittest
 import logging
-from cmapPy.pandasGEXpress import setup_GCToo_logger as setup_logger
-from cmapPy.pandasGEXpress import parse_gct as parse_gct
-from cmapPy.pandasGEXpress import parse_gctx as parse_gctx
+import cmapPy.pandasGEXpress.setup_GCToo_logger as setup_logger
+import cmapPy.pandasGEXpress.parse_gct as parse_gct
+import cmapPy.pandasGEXpress.parse_gctx as parse_gctx
 import pandas.util.testing as pandas_testing
 
 

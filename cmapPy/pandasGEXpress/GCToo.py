@@ -39,12 +39,10 @@ N.B. rids, cids, rhds, and chds must be:
 - unique
 - matching in both content & order everywhere they're found
 """
-import sys
-sys.path.insert(0, "../..")
 import numpy as np
 import pandas as pd
 import logging
-from cmapPy.pandasGEXpress import setup_GCToo_logger as setup_logger
+import cmapPy.pandasGEXpress.setup_GCToo_logger as setup_logger
 
 
 __authors__ = 'Oana Enache, Lev Litichevskiy, Dave Lahr'

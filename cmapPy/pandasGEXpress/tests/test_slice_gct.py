@@ -1,12 +1,10 @@
-import sys
-sys.path.insert(0, "../../..")
 import unittest
 import logging
 import os
 import pandas as pd
-from cmapPy.pandasGEXpress import setup_GCToo_logger as setup_logger
-from cmapPy.pandasGEXpress import slice_gct as slice_gct
+import cmapPy.pandasGEXpress.setup_GCToo_logger as setup_logger
 import cmapPy.pandasGEXpress.parse as parse
+import cmapPy.pandasGEXpress.slice_gct as slice_gct
 
 logger = logging.getLogger(setup_logger.LOGGER_NAME)
 
@@ -54,8 +52,8 @@ class TestSliceGct(unittest.TestCase):
         slice_gct.main()
 
         # Compare output to expected
-        out_gct = parse(out_name)
-        expected_gct = parse(expected_out_path)
+        out_gct = parse.parse(out_name)
+        expected_gct = parse.parse(expected_out_path)
 
         pd.util.testing.assert_frame_equal(out_gct.data_df, expected_gct.data_df)
         pd.util.testing.assert_frame_equal(out_gct.row_metadata_df, expected_gct.row_metadata_df)
