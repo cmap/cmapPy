@@ -3,14 +3,9 @@ sys.path.insert(0, "../../..")
 import logging
 from cmapPy.pandasGEXpress import setup_GCToo_logger as setup_logger
 import unittest
-import pandas as pd 
 import pandas.util.testing as pandas_testing
 from cmapPy.pandasGEXpress import parse 
-from cmapPy.pandasGEXpress import mini_gctoo_for_testing as mini_gctoo_for_testing
-from cmapPy.pandasGEXpress import slice_gct as slice_gct
-
-from cmapPy.pandasGEXpress import GCToo as GCToo 
-from cmapPy.pandasGEXpress import parse_gctx as parse_gctx
+from cmapPy.pandasGEXpress import slice_gctoo as slice_gctoo
 from cmapPy.pandasGEXpress import mini_gctoo_for_testing as mini_gctoo_for_testing
 
 __author__ = "Oana Enache"
@@ -40,7 +35,7 @@ class TestParse(unittest.TestCase):
         # parsing w/rids & cids specified 
         test_rids = ['LJP007_MCF10A_24H:TRT_CP:BRD-K93918653:3.33', 'LJP007_MCF7_24H:CTL_VEHICLE:DMSO:-666']
         test_cids = ['LJP007_MCF7_24H:TRT_POSCON:BRD-A61304759:10']
-        mg3 = slice_gct.slice_gctoo(mg1, rid=test_rids, cid=test_cids)
+        mg3 = slice_gctoo.slice_gctoo(mg1, rid=test_rids, cid=test_cids)
         mg4 = parse("functional_tests/mini_gctoo_for_testing.gctx",
                                rid=test_rids, cid=test_cids)
         pandas_testing.assert_frame_equal(mg3.data_df, mg4.data_df)
@@ -48,7 +43,7 @@ class TestParse(unittest.TestCase):
         pandas_testing.assert_frame_equal(mg3.col_metadata_df, mg4.col_metadata_df)
 
         # parsing w/ridx & cidx specified 
-        mg5 = slice_gct.slice_gctoo(mg1, rid=['LJP007_MCF7_24H:CTL_VEHICLE:DMSO:-666'],
+        mg5 = slice_gctoo.slice_gctoo(mg1, rid=['LJP007_MCF7_24H:CTL_VEHICLE:DMSO:-666'],
                                     cid='LJP007_MCF7_24H:CTL_VEHICLE:DMSO:-666')
         mg6 = parse("functional_tests/mini_gctoo_for_testing.gctx", ridx=[4], cidx=[4])
 
