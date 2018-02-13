@@ -10,12 +10,6 @@ We  highly recommend the using a prebuilt distribution of cmapPy along with a vi
 * (All operating systems; If you haven't already) install ``miniconda``
 	* Download/follow instructions provided `here <https://conda.io/miniconda.html>`_. Unless you have personal preferences/reasons to do so, we recommend installing Miniconda over Anaconda because it's more lightweight.
 	* On the command line, type ``conda info`` to verify that conda has been properly instaled on your system. You should see some information about the "current conda install"; if not, your installation didn't work.
-* (Linux and Mac) Set up your conda channels:
-	``conda config --add channels defaults``
-
-	``conda config --add channels conda-forge``
-
-	``conda config --add channels bioconda``
 
 * (Linux and Mac) Create & activate your cmapPy environment:
 
@@ -23,7 +17,9 @@ We  highly recommend the using a prebuilt distribution of cmapPy along with a vi
 
 	**Step 1** 
 
-	Python 2: ``conda create --name my_cmapPy_env python=2.7.11 numpy=1.11.2 pandas=0.20.3 h5py=2.7.0 requests==2.13.0 six cmappy``
+	Python 2: ``conda create --name my_cmapPy_env -c bioconda python=2.7.11 numpy=1.11.2 pandas=0.20.3 h5py=2.7.0 requests==2.13.0 six cmappy``
+
+	* ``-c bionconda`` tells conda that it should look for packages in the bioconda channel (that's where cmapPy lives)
 
 
 	**Step 2**
@@ -40,7 +36,7 @@ We  highly recommend the using a prebuilt distribution of cmapPy along with a vi
 
 	``pip install cmapPy``
 
-	``source activate my_cmapPy_environment``
+	``source activate my_cmapPy_env``
 
 ...and then cmapPy (including command line tools) should be available for use.
 
