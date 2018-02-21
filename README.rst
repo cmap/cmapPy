@@ -29,6 +29,7 @@ We welcome contributors! For your pull requests, please include the following:
 * Sample code/file that reproducibly causes the bug/issue
 * Documented code providing fix
 * Unit tests evaluating added/modified methods. 
+* 
 
 Citation
 ====================
