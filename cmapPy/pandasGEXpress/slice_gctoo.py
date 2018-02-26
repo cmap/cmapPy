@@ -23,10 +23,10 @@ def slice_gctoo(gctoo, row_bool=None, col_bool=None, rid=None, cid=None, exclude
         gctoo (GCToo object)
         row_bool (list of bools): length must equal gctoo.data_df.shape[0]
         col_bool (list of bools): length must equal gctoo.data_df.shape[1]
-        rid (list of strings): length must equal gctoo.data_df.shape[0]
-        cid (list of strings): length must equal gctoo.data_df.shape[0]
-        exclude_rid (bool): if true, select row ids EXCLUDING 'rid' (default: False)
-        exclude_cid (bool): if true, select col ids EXCLUDING 'cid' (default: False)
+        rid (list of strings): rids to include
+        cid (list of strings): cids to include
+        exclude_rid (list of strings): rids to exclude
+        exclude_cid (list of strings): cids to exclude
 
     Returns:
         out_gctoo (GCToo object): gctoo after slicing
