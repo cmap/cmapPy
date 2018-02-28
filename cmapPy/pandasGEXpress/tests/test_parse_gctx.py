@@ -103,7 +103,7 @@ class TestParseGctx(unittest.TestCase):
 
         # test with ridx/cidx
         mg7 = slice_gctoo.slice_gctoo(mg1, rid=['LJP007_MCF7_24H:CTL_VEHICLE:DMSO:-666'],
-                                    cid='LJP007_MCF7_24H:CTL_VEHICLE:DMSO:-666')
+                                    cid=['LJP007_MCF7_24H:CTL_VEHICLE:DMSO:-666'])
         mg8 = parse_gctx.parse("functional_tests/mini_gctoo_for_testing.gctx", ridx=[4], cidx=[4])
 
         pandas_testing.assert_frame_equal(mg7.data_df, mg8.data_df)

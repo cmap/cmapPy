@@ -29,19 +29,25 @@ def parse(file_path, convert_neg_666=True, rid=None, cid=None, ridx=None, cidx=N
         - gct(x)_file_path (str): full path to gct(x) file you want to parse.
 
         Optional:
-        - row_meta_only (bool): Whether to load data + metadata (if False), or just row metadata (if True)
-            as pandas DataFrame
-        - col_meta_only (bool): Whether to load data + metadata (if False), or just col metadata (if True)
-            as pandas DataFrame
         - convert_neg_666 (bool): whether to convert -666 values to numpy.nan or not
             (see Note below for more details on this). Default = False.
         - rid (list of strings): list of row ids to specifically keep from gctx. Default=None.
         - cid (list of strings): list of col ids to specifically keep from gctx. Default=None.
+        - ridx (list of integers): only read the rows corresponding to this
+            list of integer ids. Default=None.
+        - cidx (list of integers): only read the columns corresponding to this
+            list of integer ids. Default=None.
+        - row_meta_only (bool): Whether to load data + metadata (if False), or just row metadata (if True)
+            as pandas DataFrame
+        - col_meta_only (bool): Whether to load data + metadata (if False), or just col metadata (if True)
+            as pandas DataFrame
         - make_multiindex (bool): whether to create a multi-index df combining
             the 3 component dfs
 
     Output:
-        - myGCToo (GCToo)
+        - out (GCToo object or pandas df): if row_meta_only or col_meta_only, then
+            out is a metadata df; otherwise, it's a GCToo instance containing
+            content of parsed gct(x) file
 
     Note: why does convert_neg_666 exist?
         - In CMap--for somewhat obscure historical reasons--we use "-666" as our null value
@@ -50,19 +56,21 @@ def parse(file_path, convert_neg_666=True, rid=None, cid=None, ridx=None, cidx=N
         into numpy.NaN values, the pandas default.
     """
     if file_path.endswith(".gct"):
-        # Ignoring arguments that won't be passed to parse_gct
-        for unused_arg in ["rid", "cid", "ridx", "cidx"]:
-            if eval(unused_arg):
-                err_msg = "parse_gct does not use the argument {}. Ignoring it...".format(unused_arg)
-                logger.error(err_msg)
-                raise Exception(err_msg)
-        curr = parse_gct.parse(file_path, convert_neg_666, row_meta_only, col_meta_only, make_multiindex)
+        out = parse_gct.parse(file_path, convert_neg_666=convert_neg_666,
+                              rid=rid, cid=cid, ridx=ridx, cidx=cidx,
+                              row_meta_only=row_meta_only, col_meta_only=col_meta_only,
+                              make_multiindex=make_multiindex)
+
     elif file_path.endswith(".gctx"):
-        curr = parse_gctx.parse(file_path, convert_neg_666, rid, cid, ridx, cidx, row_meta_only, col_meta_only,
-                                make_multiindex)
+        out = parse_gctx.parse(file_path, convert_neg_666=convert_neg_666,
+                              rid=rid, cid=cid, ridx=ridx, cidx=cidx,
+                              row_meta_only=row_meta_only, col_meta_only=col_meta_only,
+                              make_multiindex=make_multiindex)
+
     else:
         err_msg = "File to parse must be .gct or .gctx!"
         logger.error(err_msg)
         raise Exception(err_msg)
-    return curr
+
+    return out
 

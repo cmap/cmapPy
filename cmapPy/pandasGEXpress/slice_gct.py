@@ -63,7 +63,6 @@ def main():
 
     # Slice the gct
     out_gct = sg.slice_gctoo(in_gct, rid=rid, cid=cid, exclude_rid=exclude_rid, exclude_cid=exclude_cid)
-    assert out_gct.data_df.size > 0, "Slicing yielded an empty gct!"
 
     # Write the output gct
     if args.use_gctx:

@@ -63,6 +63,7 @@ import pandas as pd
 import numpy as np
 import os.path
 import cmapPy.pandasGEXpress.GCToo as GCToo
+import cmapPy.pandasGEXpress.slice_gctoo as sg
 import cmapPy.pandasGEXpress.setup_GCToo_logger as setup_logger
 
 __author__ = "Lev Litichevskiy, Oana Enache"
@@ -78,22 +79,32 @@ column_header_name = "chd"
 DATA_TYPE = np.float32
 
 
-def parse(file_path, convert_neg_666=True, row_meta_only=False, col_meta_only=False, make_multiindex=False):
-    """ The main method.
+def parse(file_path, convert_neg_666=True, rid=None, cid=None,
+          ridx=None, cidx=None, row_meta_only=False, col_meta_only=False, make_multiindex=False):
+    """
+    The main method.
 
     Args:
         - file_path (string): full path to gct(x) file you want to parse
         - convert_neg_666 (bool): whether to convert -666 values to numpy.nan
-            (see Note below for more details). Default = True.
-        - row_meta_only (bool): Whether to load data + metadata (if False), or just row metadata (if True)
-            as pandas DataFrame
-        - col_meta_only (bool): Whether to load data + metadata (if False), or just col metadata (if True)
-            as pandas DataFrame
+            (see Note below for more details). Default = False.
+        - rid (list of strings): list of row ids to specifically keep from gct. Default=None.
+        - cid (list of strings): list of col ids to specifically keep from gct. Default=None.
+        - ridx (list of integers): only read the rows corresponding to this
+            list of integer ids. Default=None.
+        - cidx (list of integers): only read the columns corresponding to this
+            list of integer ids. Default=None.
+        - row_meta_only (bool): Whether to load data + metadata (if False), or
+            just row metadata (if True) as pandas DataFrame
+        - col_meta_only (bool): Whether to load data + metadata (if False), or
+            just col metadata (if True) as pandas DataFrame
         - make_multiindex (bool): whether to create a multi-index df combining
             the 3 component dfs
 
     Returns:
-        gctoo_obj (GCToo object)
+        - myGCToo (GCToo object): A GCToo instance containing content of
+            parsed gct file ** OR **
+        - row_metadata (pandas df) ** OR ** col_metadata (pandas df)
 
     Note: why is convert_neg_666 even a thing?
         In CMap--for somewhat obscure historical reasons--we use "-666" as our null value
@@ -102,6 +113,9 @@ def parse(file_path, convert_neg_666=True, row_meta_only=False, col_meta_only=Fa
         into numpy.nan values, the pandas default.
 
     """
+    assert sum([row_meta_only, col_meta_only]) <= 1, (
+        "row_meta_only and col_meta_only cannot both be requested.")
+
     nan_values = [
         "#N/A", "N/A", "NA", "#NA", "NULL", "NaN", "-NaN",
         "nan", "-nan", "#N/A!", "na", "NA", "None", "#VALUE!"]
@@ -126,16 +140,24 @@ def parse(file_path, convert_neg_666=True, row_meta_only=False, col_meta_only=Fa
         file_path, num_data_rows, num_data_cols,
         num_row_metadata, num_col_metadata, nan_values)
 
-    if row_meta_only:
-        return row_metadata
-    elif col_meta_only:
-        return col_metadata
-    else:
-        # Create the gctoo object and assemble 3 component dataframes
-        gctoo_obj = create_gctoo_obj(file_path, version,
-            row_metadata, col_metadata, data, make_multiindex)
+    # Create the gctoo object and assemble 3 component dataframes
+    # Not the most efficient if only metadata requested (i.e. creating the
+    # whole GCToo just to return the metadata df), but simplest
+    myGCToo = create_gctoo_obj(file_path, version, row_metadata, col_metadata,
+                               data, make_multiindex)
+    # Slice if requested
+    if (rid is not None) or (ridx is not None) or (cid is not None) or (cidx is not None):
+        logger.info("Slicing GCT... (note that there are no speed gains when slicing GCTs)")
+        myGCToo = sg.slice_gctoo(myGCToo, rid=rid, cid=cid, ridx=ridx, cidx=cidx)
 
-        return gctoo_obj
+    if row_meta_only:
+        return myGCToo.row_metadata_df
+
+    elif col_meta_only:
+        return myGCToo.col_metadata_df
+
+    else:
+        return myGCToo
 
 
 def read_version_and_dims(file_path):

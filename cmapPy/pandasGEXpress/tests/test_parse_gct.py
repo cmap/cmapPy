@@ -53,7 +53,6 @@ class TestParseGct(unittest.TestCase):
         # Remove the file created
         os.remove(fname2)
 
-
     def test_parse_into_3_df(self):
         gct_filepath = os.path.join(FUNCTIONAL_TESTS_PATH, "test_l1000.gct")
         e_dims = [978, 377, 11, 35]
@@ -223,7 +222,7 @@ class TestParseGct(unittest.TestCase):
         # GCT1.2
         gct_v1point2_path = os.path.join(FUNCTIONAL_TESTS_PATH, "test_v1point2_n5x10.gct")
         gct_v1point2 = pg.parse(gct_v1point2_path)
-        logger.debug("parse GC1.2 - gct_v1point2:  {}".format(gct_v1point2))
+        logger.debug("parse GCT1.2 - gct_v1point2:  {}".format(gct_v1point2))
         self.assertEqual(GCToo.GCToo, type(gct_v1point2))
 
         # Check a few values
@@ -247,6 +246,26 @@ class TestParseGct(unittest.TestCase):
         logger.debug("col_meta_only=True - col_metadata_df.shape:  {}".format(col_metadata_df.shape))
         self.assertEqual(pd.DataFrame, type(col_metadata_df))
         self.assertEqual((377, 35), col_metadata_df.shape)
+
+        #subsetting
+        my_rids = ["218597_s_at", "214404_x_at", "209253_at"]
+        my_rids_order_in_gct = ["218597_s_at", "209253_at", "214404_x_at"]
+        my_cidxs = [4, 0]
+        e_data_df = pd.DataFrame({"LJP005_A375_24H_X1_B19:A07": [11.04, 7.53, 6.01],
+                                  "LJP005_A375_24H_X1_B19:A03": [10.45, 8.14, 4.92]},
+                                 dtype=np.float32)
+        e_data_df.index = pd.Index(my_rids_order_in_gct)
+        e_col_meta_df = pd.DataFrame({"pert_iname": ["DMSO", "CP-724714"],
+                                      "pert_id": ["DMSO", "BRD-K76908866"]}, )
+        e_col_meta_df.index = pd.Index(
+            ["LJP005_A375_24H_X1_B19:A03", "LJP005_A375_24H_X1_B19:A07"])
+
+        out_g = pg.parse(l1000_file_path, rid=my_rids, cidx=my_cidxs)
+        self.assertEqual(out_g.data_df.shape, (3, 2))
+
+        # N.B. returned object should have same order as input
+        pd.util.testing.assert_frame_equal(e_data_df, out_g.data_df, check_less_precise=2, check_names=False)
+        pd.util.testing.assert_frame_equal(e_col_meta_df, out_g.col_metadata_df[["pert_id", "pert_iname"]], check_names=False)
 
     def test_parse_gct_int_ids(self):
         path = os.path.join(FUNCTIONAL_TESTS_PATH, "test_parse_gct_int_ids.gct")
