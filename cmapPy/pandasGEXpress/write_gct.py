@@ -13,7 +13,7 @@ logger = logging.getLogger(setup_logger.LOGGER_NAME)
 VERSION = "1.3"
 
 def write_gct(gctoo, out_fname, data_null="NaN", metadata_null="-666", 
-    filler_null="-666", data_float_format=":.4f"):
+    filler_null="-666", data_float_format="%.4f"):
     """
     Essentially the same as write() method; enables user to call write_gct() from
     cmapPy instead of write_gct.write()
@@ -23,7 +23,7 @@ def write_gct(gctoo, out_fname, data_null="NaN", metadata_null="-666",
     write(gctoo, out_fname, data_null="NaN", metadata_null="-666", 
     filler_null="-666", data_float_format=":.4f")
 
-def write(gctoo, out_fname, data_null="NaN", metadata_null="-666", filler_null="-666", data_float_format=":.4f"):
+def write(gctoo, out_fname, data_null="NaN", metadata_null="-666", filler_null="-666", data_float_format="%.4f"):
     """Write a gctoo object to a gct file.
 
     Args:
@@ -124,10 +124,14 @@ def write_bottom_half(f, row_metadata_df, data_df, data_null, data_float_format,
     Returns:
         None
     """
-    # Initialize the bottom half of the gct
-    size_of_bottom_half_df = (row_metadata_df.shape[0],
-                              1 + row_metadata_df.shape[1] + data_df.shape[1])
-    bottom_half_df = pd.DataFrame(np.full(size_of_bottom_half_df, metadata_null, dtype=object))
+    # create the left side of the bottom half of the gct (for the row metadata)
+    size_of_left_bottom_half_df = (row_metadata_df.shape[0],
+                              1 + row_metadata_df.shape[1])
+    left_bottom_half_df = pd.DataFrame(np.full(size_of_left_bottom_half_df, metadata_null, dtype=object))
+
+    #create the full bottom half by combining with the above with the matrix data
+    bottom_half_df = pd.concat([left_bottom_half_df, data_df.reset_index(drop=True)], axis=1)
+    bottom_half_df.columns = range(bottom_half_df.shape[1])
 
     # Insert the rids
     bottom_half_df.iloc[:, 0] = row_metadata_df.index.values
@@ -136,10 +140,6 @@ def write_bottom_half(f, row_metadata_df, data_df, data_null, data_float_format,
     row_metadata_col_indices = range(1, 1 + row_metadata_df.shape[1])
     bottom_half_df.iloc[:, row_metadata_col_indices] = (
         row_metadata_df.astype(str).replace("nan", value=metadata_null).values)
-
-    # Insert the data
-    data_col_indices = range(1 + row_metadata_df.shape[1], bottom_half_df.shape[1])
-    bottom_half_df.iloc[:, data_col_indices] = data_df.values
 
     # Write bottom_half_df to file
     bottom_half_df.to_csv(f, header=False, index=False, sep="\t",

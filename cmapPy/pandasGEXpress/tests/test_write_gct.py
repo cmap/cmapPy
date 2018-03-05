@@ -98,7 +98,7 @@ class TestWriteGct(unittest.TestCase):
         # Write
         fname = "test_write_bottom_half.tsv"
         f = open(fname, "wb")
-        wg.write_bottom_half(f, self.row_metadata_df, self.data_df, "NaN", "%.f", "-666")
+        wg.write_bottom_half(f, self.row_metadata_df, self.data_df, "NaN", "%.1f", "-666")
         f.close()
 
         # Compare what was written to what was expected
@@ -130,13 +130,15 @@ class TestWriteGct(unittest.TestCase):
         # Read in original gct file
         l1000_in_gct = pg.parse(l1000_in_path)
 
-        # Read in new gct file
+        # do write operation
         wg.write(l1000_in_gct, l1000_out_path)
+        
+        # Read in new gct file
         l1000_out_gct = pg.parse(l1000_out_path)
 
-        self.assertTrue(l1000_in_gct.data_df.equals(l1000_out_gct.data_df))
-        self.assertTrue(l1000_in_gct.row_metadata_df.equals(l1000_out_gct.row_metadata_df))
-        self.assertTrue(l1000_in_gct.col_metadata_df.equals(l1000_out_gct.col_metadata_df))
+        pd.util.testing.assert_frame_equal(l1000_in_gct.data_df, l1000_out_gct.data_df)
+        pd.util.testing.assert_frame_equal(l1000_in_gct.row_metadata_df, l1000_out_gct.row_metadata_df)
+        pd.util.testing.assert_frame_equal(l1000_in_gct.col_metadata_df, l1000_out_gct.col_metadata_df)
 
         # Clean up
         os.remove(l1000_out_path)
@@ -148,13 +150,15 @@ class TestWriteGct(unittest.TestCase):
         # Read in original gct file
         p100_in_gct = pg.parse(p100_in_path)
 
+        # do write operation - note data_float_format set to None to preserve precision of input file
+        wg.write(p100_in_gct, p100_out_path, data_float_format=None)
+        
         # Read in new gct file
-        wg.write(p100_in_gct, p100_out_path)
         p100_out_gct = pg.parse(p100_out_path)
 
-        self.assertTrue(p100_in_gct.data_df.equals(p100_out_gct.data_df))
-        self.assertTrue(p100_in_gct.row_metadata_df.equals(p100_out_gct.row_metadata_df))
-        self.assertTrue(p100_in_gct.col_metadata_df.equals(p100_out_gct.col_metadata_df))
+        pd.util.testing.assert_frame_equal(p100_in_gct.data_df, p100_out_gct.data_df)
+        pd.util.testing.assert_frame_equal(p100_in_gct.row_metadata_df, p100_out_gct.row_metadata_df)
+        pd.util.testing.assert_frame_equal(p100_in_gct.col_metadata_df, p100_out_gct.col_metadata_df)
 
         # Clean up
         os.remove(p100_out_path)
