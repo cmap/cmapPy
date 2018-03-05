@@ -20,8 +20,8 @@ def write_gct(gctoo, out_fname, data_null="NaN", metadata_null="-666",
 
     Included as a separate method for backwards compatibility.
     """
-    write(gctoo, out_fname, data_null="NaN", metadata_null="-666", 
-    filler_null="-666", data_float_format=":.4f")
+    write(gctoo, out_fname, data_null=data_null, metadata_null=metadata_null, 
+    filler_null=filler_null, data_float_format=data_float_format)
 
 def write(gctoo, out_fname, data_null="NaN", metadata_null="-666", filler_null="-666", data_float_format="%.4f"):
     """Write a gctoo object to a gct file.
