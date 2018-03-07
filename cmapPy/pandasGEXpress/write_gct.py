@@ -12,16 +12,6 @@ logger = logging.getLogger(setup_logger.LOGGER_NAME)
 # Only writes GCT1.3
 VERSION = "1.3"
 
-def write_gct(gctoo, out_fname, data_null="NaN", metadata_null="-666", 
-    filler_null="-666", data_float_format="%.4f"):
-    """
-    Essentially the same as write() method; enables user to call write_gct() from
-    cmapPy instead of write_gct.write()
-
-    Included as a separate method for backwards compatibility.
-    """
-    write(gctoo, out_fname, data_null=data_null, metadata_null=metadata_null, 
-    filler_null=filler_null, data_float_format=data_float_format)
 
 def write(gctoo, out_fname, data_null="NaN", metadata_null="-666", filler_null="-666", data_float_format="%.4f"):
     """Write a gctoo object to a gct file.

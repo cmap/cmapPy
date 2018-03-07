@@ -57,30 +57,6 @@ class TestWriteGct(unittest.TestCase):
 
         # Cleanup
         os.remove(out_name)
-
-    def test_write_gct(self):
-        out_name = os.path.join(FUNCTIONAL_TESTS_PATH, "test_write_gct_out.gct")
-
-        gctoo = GCToo.GCToo(data_df=self.data_df,
-                            row_metadata_df=self.row_metadata_df,
-                            col_metadata_df=self.col_metadata_df)
-        wg.write_gct(gctoo, out_name, data_null="NaN",
-                 metadata_null="-666", filler_null="-666")
-
-        # Read in the gct and verify that it's the same as gctoo
-        new_gct = pg.parse(out_name)
-
-        pd.util.testing.assert_frame_equal(new_gct.data_df, gctoo.data_df)
-        pd.util.testing.assert_frame_equal(new_gct.row_metadata_df, gctoo.row_metadata_df)
-        pd.util.testing.assert_frame_equal(new_gct.col_metadata_df, gctoo.col_metadata_df)
-
-        # Also check that missing values were written to the file as expected
-        in_df = pd.read_csv(out_name, sep="\t", skiprows=2, keep_default_na=False)
-        self.assertEqual(in_df.iloc[0, 1], "-666")
-        self.assertEqual(in_df.iloc[5, 6], "NaN")
-
-        # Cleanup
-        os.remove(out_name)
    
     def test_write_version_and_dims(self):
         # Write
