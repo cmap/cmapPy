@@ -11,19 +11,6 @@ num_iterations_functional_tests = 20
 max_dimension_functional_tests = 10
 multiplier_max_functional_tests = 100
 
-# Some notes on testing conventions (more in cuppers convention doc):
-#    (1) Use "self.assert..." over "assert"
-#        - self.assert* methods: https://docs.python.org/2.7/library/unittest.html#assert-methods
-#       - This will ensure that if one assertion fails inside a test method,
-#         exectution won't halt and the rest of the test method will be executed
-#         and other assertions are also verified in the same run.  
-#     (2) For testing exceptions use:
-#        with self.assertRaises(some_exception) as context:
-#            [call method that should raise some_exception]
-#        self.assertEqual(str(context.exception), "expected exception message")
-#
-#        self.assertAlmostEquals(...) for comparing floats
-
 
 class TestFastCorr(unittest.TestCase):
     @staticmethod

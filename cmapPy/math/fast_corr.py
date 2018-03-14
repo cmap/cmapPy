@@ -8,7 +8,7 @@ logger = logging.getLogger(setup_logger.LOGGER_NAME)
 
 
 def fast_corr(x, y=None, axis=0, do_print_trace=False):
-    """calculate the correlation matrix for x, or optionally, the correlaton matrix between x and y.
+    """calculate the pearson correlation matrix for x, or optionally, the correlaton matrix between x and y.
     axis parameter defines whether to treat the rows or columns as vectors that the covariance is calculated
     between
 
