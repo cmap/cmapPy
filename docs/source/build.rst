@@ -17,7 +17,7 @@ We  highly recommend the using a prebuilt distribution of cmapPy along with a vi
 
 	**Step 1** 
 
-	Python 2: ``conda create --name my_cmapPy_env -c bioconda python=2.7.11 numpy=1.11.2 pandas=0.20.3 h5py=2.7.0 requests==2.13.0 scipy=0.18.1 cmappy``
+	Python 2: ``conda create --name my_cmapPy_env -c bioconda python=2.7.11 numpy=1.11.2 pandas=0.20.3 h5py=2.7.0 requests==2.13.0 cmappy``
 
 	* ``-c bionconda`` tells conda that it should look for packages in the bioconda channel (that's where cmapPy lives)
 
@@ -30,7 +30,7 @@ We  highly recommend the using a prebuilt distribution of cmapPy along with a vi
 
 	**Step 1**
 
-	Python 2: ``conda create --name my_cmapPy_env python=2.7.11 numpy=1.11.2 pandas=0.20.3 h5py=2.7.0 requests==2.13.0 scipy=0.18.1``
+	Python 2: ``conda create --name my_cmapPy_env python=2.7.11 numpy=1.11.2 pandas=0.20.3 h5py=2.7.0 requests==2.13.0``
 
 	**Step 2**
 
@@ -53,7 +53,7 @@ A development environment will allow you to use the cmapPy code as it is in a cl
 
 Follow the instructions for Option 1 or Option 2 above but change the name of the environment to e.g. ``my_cmapPy_dev_env`` and do not include ``cmappy`` in the list of packages to install (or do not install it with pip), then activate this environment, i.e.:
 	
-	Python 2.7: ``conda create --name my_cmapPy_dev_env python=2.7.11 numpy=1.11.2 pandas=0.20.3 h5py=2.7.0 requests==2.13.0 scipy=0.18.1``
+	Python 2.7: ``conda create --name my_cmapPy_dev_env python=2.7.11 numpy=1.11.2 pandas=0.20.3 h5py=2.7.0 requests==2.13.0``
 	
 	``source activate my_cmapPy_dev_env``
 
