@@ -16,18 +16,7 @@ version_attr = "version"
 version_number = "GCTX1.0"
 
 
-def write_gctx(gctoo_object, out_file_name, convert_back_to_neg_666=True, gzip_compression_level=6, 
-    max_chunk_kb=1024):
-    """
-	Essentially the same as write() method; enables user to call write_gctx() from
-	cmapPy instead of write_gctx.write()
-
-	Included as a separate method for backwards compatibility.
-	"""
-    write(gctoo_object, out_file_name, convert_back_to_neg_666)
-
-
-def write(gctoo_object, out_file_name, convert_back_to_neg_666=True, gzip_compression_level=6, 
+def write(gctoo_object, out_file_name, convert_back_to_neg_666=True, gzip_compression_level=6,
     max_chunk_kb=1024, matrix_dtype=numpy.float32):
     """
 	Writes a GCToo instance to specified file.
