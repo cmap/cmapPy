@@ -39,8 +39,8 @@ def build_parser():
     parser.add_argument("--exclude_cid", "-ec", nargs="+", help="filepath to grp file or string array for excluding cols")
     parser.add_argument("--out_name", "-o", default="ds_sliced.gct",
                         help="what to name the output file")
-    parser.add_argument("--use_gctx", action="store_true", default=False,
-                        help="whether to write output as GCTx")
+    parser.add_argument("--out_type", default="gct", choices=["gct", "gctx"],
+                        help="whether to write output as GCT or GCTx")
     parser.add_argument("--verbose", "-v", action="store_true", default=False,
                         help="whether to increase the # of messages reported")
 
@@ -65,7 +65,7 @@ def main():
     out_gct = sg.slice_gctoo(in_gct, rid=rid, cid=cid, exclude_rid=exclude_rid, exclude_cid=exclude_cid)
 
     # Write the output gct
-    if args.use_gctx:
+    if args.out_type == "gctx":
         wgx.write(out_gct, args.out_name)
     else:
         wg.write(out_gct, args.out_name, data_null="NaN", metadata_null="NA", filler_null="NA")
