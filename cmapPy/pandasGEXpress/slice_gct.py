@@ -66,7 +66,7 @@ def slice_main(args):
     exclude_cid = _read_arg(args.exclude_cid)
 
     # If GCT, use slice_gctoo
-    if os.path.splitext(args.in_gct_path)[1] == ".gct":
+    if args.in_gct_path.endswith(".gct"):
 
         in_gct = parse_gct.parse(args.in_gct_path)
         out_gct = sg.slice_gctoo(in_gct, rid=rid, cid=cid,
