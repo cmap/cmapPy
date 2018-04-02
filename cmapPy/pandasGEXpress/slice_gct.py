@@ -12,7 +12,8 @@ import os
 import argparse
 
 import cmapPy.pandasGEXpress.setup_GCToo_logger as setup_logger
-import cmapPy.pandasGEXpress.parse as parse
+import cmapPy.pandasGEXpress.parse_gct as parse_gct
+import cmapPy.pandasGEXpress.parse_gctx as parse_gctx
 import cmapPy.pandasGEXpress.slice_gctoo as sg
 import cmapPy.pandasGEXpress.write_gct as wg
 import cmapPy.pandasGEXpress.write_gct as wgx
@@ -51,9 +52,12 @@ def main():
     # Get args
     args = build_parser().parse_args(sys.argv[1:])
     setup_logger.setup(verbose=args.verbose)
+    slice_main(args)
 
-    # Read the input gct
-    in_gct = parse.parse(args.in_gct_path)
+
+def slice_main(args):
+    """ Separate method from main() in order to make testing easier and to
+    enable command-line access. """
 
     # Read in each of the command line arguments
     rid = _read_arg(args.rid)
@@ -61,8 +65,23 @@ def main():
     exclude_rid = _read_arg(args.exclude_rid)
     exclude_cid = _read_arg(args.exclude_cid)
 
-    # Slice the gct
-    out_gct = sg.slice_gctoo(in_gct, rid=rid, cid=cid, exclude_rid=exclude_rid, exclude_cid=exclude_cid)
+    # If GCT, use slice_gctoo
+    if os.path.splitext(args.in_gct_path)[1] == ".gct":
+
+        in_gct = parse_gct.parse(args.in_gct_path)
+        out_gct = sg.slice_gctoo(in_gct, rid=rid, cid=cid,
+                                 exclude_rid=exclude_rid,
+                                 exclude_cid=exclude_cid)
+
+    # If GCTx, use parse_gctx
+    else:
+
+        if (exclude_rid is not None) or (exclude_cid is not None):
+            msg = "exclude_{rid,cid} args not currently supported for parse_gctx."
+            raise(Exception(msg))
+
+        logger.info("Using hyperslab selection functionality of parse_gctx...")
+        out_gct = parse_gctx.parse(args.in_gct_path, rid=rid, cid=cid)
 
     # Write the output gct
     if args.out_type == "gctx":
