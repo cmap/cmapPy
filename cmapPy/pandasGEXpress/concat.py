@@ -1,5 +1,5 @@
 """
-concat_gctoo.py
+concat.py
 
 This function is for concatenating gct(x) files together. You can tell it to
 find files using the file_wildcard argument, or you can tell it exactly
@@ -304,7 +304,7 @@ def assemble_common_meta(common_meta_dfs, fields_to_remove, sources, remove_all_
 using the fields_to_remove argument.  unique_duplicate_ids: {}
 all_report_df:
 {}""".format(unique_duplicate_ids, all_report_df)
-        raise MismatchCommonMetadataConcatGctooException(msg)
+        raise MismatchCommonMetadataConcatException(msg)
 
     # Finally, sort the index
     all_meta_df_sorted = all_meta_df.sort_index(axis=0)
@@ -356,10 +356,10 @@ def build_common_all_meta_df(common_meta_dfs, fields_to_remove, remove_all_metad
         all_meta_df = pd.DataFrame(index=all_meta_df_with_dups.index.unique())
 
     else:
-        all_meta_df_with_dups["concat_gctoo_column_for_index"] = all_meta_df_with_dups.index
+        all_meta_df_with_dups["concat_column_for_index"] = all_meta_df_with_dups.index
         all_meta_df = all_meta_df_with_dups.copy(deep=True).drop_duplicates()
-        all_meta_df.drop("concat_gctoo_column_for_index", axis=1, inplace=True)
-        all_meta_df_with_dups.drop("concat_gctoo_column_for_index", axis=1, inplace=True)
+        all_meta_df.drop("concat_column_for_index", axis=1, inplace=True)
+        all_meta_df_with_dups.drop("concat_column_for_index", axis=1, inplace=True)
 
     logger.debug("all_meta_df_with_dups.shape: {}".format(all_meta_df_with_dups.shape))
     logger.debug("all_meta_df.shape: {}".format(all_meta_df.shape))
@@ -549,7 +549,7 @@ def reset_ids_in_meta_df(meta_df):
     meta_df.index.name = original_index_name
 
 
-class MismatchCommonMetadataConcatGctooException(Exception):
+class MismatchCommonMetadataConcatException(Exception):
     pass
 
 if __name__ == "__main__":

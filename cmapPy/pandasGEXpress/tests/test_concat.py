@@ -4,7 +4,7 @@ import logging
 import numpy as np
 import pandas as pd
 import cmapPy.pandasGEXpress.setup_GCToo_logger as setup_logger
-import cmapPy.pandasGEXpress.concat_gctoo as cg
+import cmapPy.pandasGEXpress.concat as cg
 import cmapPy.pandasGEXpress.parse_gct as pg
 import tempfile
 
@@ -13,7 +13,7 @@ logger = logging.getLogger(setup_logger.LOGGER_NAME)
 FUNCTIONAL_TESTS_DIR = "functional_tests"
 
 
-class TestConcatGctoo(unittest.TestCase):
+class TestConcat(unittest.TestCase):
     def test_left_right(self):
         left_gct_path = os.path.join(FUNCTIONAL_TESTS_DIR, "test_merge_left.gct")
         right_gct_path = os.path.join(FUNCTIONAL_TESTS_DIR, "test_merge_right.gct")
@@ -73,7 +73,7 @@ class TestConcatGctoo(unittest.TestCase):
 
         error_report_file = tempfile.NamedTemporaryFile().name
         logger.debug("rhd3 header needs to be removed - error_report_file:  {}".format(error_report_file))
-        with self.assertRaises(cg.MismatchCommonMetadataConcatGctooException) as e:
+        with self.assertRaises(cg.MismatchCommonMetadataConcatException) as e:
             cg.assemble_common_meta([meta1, meta2], [], ["my_src1", "my_src2"], False, error_report_file)
         self.assertIn("r3", str(e.exception))
         logger.debug("rhd3 header needs to be removed - e.exception:  {}".format(e.exception))
@@ -120,7 +120,7 @@ class TestConcatGctoo(unittest.TestCase):
         logger.debug("meta1:\n{}".format(meta1))
         logger.debug("meta4:\n{}".format(meta4))
 
-        with self.assertRaises(cg.MismatchCommonMetadataConcatGctooException) as e:
+        with self.assertRaises(cg.MismatchCommonMetadataConcatException) as e:
             cg.assemble_common_meta([meta1, meta4], [], ["my_src1", "my_src4"], False, None)
         self.assertIn("r1", str(e.exception))
 
@@ -333,7 +333,7 @@ class TestConcatGctoo(unittest.TestCase):
         self.assertEqual({"r3"}, set(r.orig_rid))
 
     def test_concat_main(self):
-        test_dir = "functional_tests/test_concat_gctoo/test_main"
+        test_dir = "functional_tests/test_concat/test_main"
 
         g_a = pg.parse(os.path.join(test_dir, "a.gct"))
         logger.debug("g_a:  {}".format(g_a))
@@ -348,7 +348,7 @@ class TestConcatGctoo(unittest.TestCase):
                                              "-ot", "gct", "-erof", expected_output_file])
         logger.debug("args:  {}".format(args))
 
-        with self.assertRaises(cg.MismatchCommonMetadataConcatGctooException) as context:
+        with self.assertRaises(cg.MismatchCommonMetadataConcatException) as context:
             cg.concat_main(args)
 
         self.assertTrue(os.path.exists(expected_output_file))

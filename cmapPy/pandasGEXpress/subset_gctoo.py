@@ -1,9 +1,9 @@
 """
-slice_gctoo.py
+subset_gctoo.py
 
 Extract a subset of data from a GCToo object using string ids, integer ids,
 or boolean arrays. The order of rows and columns will be preserved.
-See slice_gct.py for the command line equivalent.
+See subset.py for the command line equivalent.
 
 """
 import logging
@@ -16,7 +16,7 @@ __email__ = "lev@broadinstitute.org"
 logger = logging.getLogger(setup_logger.LOGGER_NAME)
 
 
-def slice_gctoo(gctoo, row_bool=None, col_bool=None, rid=None, cid=None,
+def subset_gctoo(gctoo, row_bool=None, col_bool=None, rid=None, cid=None,
                 ridx=None, cidx=None, exclude_rid=None, exclude_cid=None):
     """ Extract a subset of data from a GCToo object in a variety of ways.
     The order of rows and columns will be preserved.
@@ -33,7 +33,7 @@ def slice_gctoo(gctoo, row_bool=None, col_bool=None, rid=None, cid=None,
         exclude_cid (list of strings): cids to exclude
 
     Returns:
-        out_gctoo (GCToo object): gctoo after slicing
+        out_gctoo (GCToo object): gctoo after subsetting
     """
     assert sum([(rid is not None), (row_bool is not None), (ridx is not None)]) <= 1, (
         "Only one of rid, row_bool, and ridx can be provided.")
@@ -55,9 +55,9 @@ def slice_gctoo(gctoo, row_bool=None, col_bool=None, rid=None, cid=None,
         row_metadata_df=gctoo.row_metadata_df.loc[rows_to_keep_bools, :],
         col_metadata_df=gctoo.col_metadata_df.loc[cols_to_keep_bools, :])
 
-    assert out_gctoo.data_df.size > 0, "Slicing yielded an empty gct!"
+    assert out_gctoo.data_df.size > 0, "Subsetting yielded an empty gct!"
 
-    logger.info(("Initial GCToo with {} rows and {} columns sliced down to " +
+    logger.info(("Initial GCToo with {} rows and {} columns subsetted down to " +
                  "{} rows and {} columns.").format(
                       gctoo.data_df.shape[0], gctoo.data_df.shape[1],
                       out_gctoo.data_df.shape[0], out_gctoo.data_df.shape[1]))

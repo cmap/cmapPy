@@ -1,8 +1,8 @@
 """
-slice_gct.py
+subset.py
 
 Extract a subset of data from a GCT(x) file using the command line. ids can
-be provided as a list or as a path to a grp file. See slice_gctoo for the
+be provided as a list or as a path to a grp file. See subset_gctoo for the
 equivalent method to be used on GCToo objects.
 
 """
@@ -14,7 +14,7 @@ import argparse
 import cmapPy.pandasGEXpress.setup_GCToo_logger as setup_logger
 import cmapPy.pandasGEXpress.parse_gct as parse_gct
 import cmapPy.pandasGEXpress.parse_gctx as parse_gctx
-import cmapPy.pandasGEXpress.slice_gctoo as sg
+import cmapPy.pandasGEXpress.subset_gctoo as sg
 import cmapPy.pandasGEXpress.write_gct as wg
 import cmapPy.pandasGEXpress.write_gct as wgx
 import cmapPy.set_io.grp as grp
@@ -32,13 +32,14 @@ def build_parser():
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     # Required args
-    parser.add_argument("--in_gct_path", "-i", required=True, help="file path to input gct file")
+    parser.add_argument("--in_path", "-i", required=True,
+                        help="file path to input GCT(x) file")
 
     parser.add_argument("--rid", nargs="+", help="filepath to grp file or string array for including rows")
     parser.add_argument("--cid", nargs="+", help="filepath to grp file or string array for including cols")
     parser.add_argument("--exclude_rid", "-er", nargs="+", help="filepath to grp file or string array for excluding rows")
     parser.add_argument("--exclude_cid", "-ec", nargs="+", help="filepath to grp file or string array for excluding cols")
-    parser.add_argument("--out_name", "-o", default="ds_sliced.gct",
+    parser.add_argument("--out_name", "-o", default="ds_subsetted.gct",
                         help="what to name the output file")
     parser.add_argument("--out_type", default="gct", choices=["gct", "gctx"],
                         help="whether to write output as GCT or GCTx")
@@ -52,10 +53,10 @@ def main():
     # Get args
     args = build_parser().parse_args(sys.argv[1:])
     setup_logger.setup(verbose=args.verbose)
-    slice_main(args)
+    subset_main(args)
 
 
-def slice_main(args):
+def subset_main(args):
     """ Separate method from main() in order to make testing easier and to
     enable command-line access. """
 
@@ -65,11 +66,11 @@ def slice_main(args):
     exclude_rid = _read_arg(args.exclude_rid)
     exclude_cid = _read_arg(args.exclude_cid)
 
-    # If GCT, use slice_gctoo
-    if args.in_gct_path.endswith(".gct"):
+    # If GCT, use subset_gctoo
+    if args.in_path.endswith(".gct"):
 
-        in_gct = parse_gct.parse(args.in_gct_path)
-        out_gct = sg.slice_gctoo(in_gct, rid=rid, cid=cid,
+        in_gct = parse_gct.parse(args.in_path)
+        out_gct = sg.subset_gctoo(in_gct, rid=rid, cid=cid,
                                  exclude_rid=exclude_rid,
                                  exclude_cid=exclude_cid)
 
@@ -81,7 +82,7 @@ def slice_main(args):
             raise(Exception(msg))
 
         logger.info("Using hyperslab selection functionality of parse_gctx...")
-        out_gct = parse_gctx.parse(args.in_gct_path, rid=rid, cid=cid)
+        out_gct = parse_gctx.parse(args.in_path, rid=rid, cid=cid)
 
     # Write the output gct
     if args.out_type == "gctx":

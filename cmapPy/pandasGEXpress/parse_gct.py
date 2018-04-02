@@ -63,7 +63,7 @@ import pandas as pd
 import numpy as np
 import os.path
 import cmapPy.pandasGEXpress.GCToo as GCToo
-import cmapPy.pandasGEXpress.slice_gctoo as sg
+import cmapPy.pandasGEXpress.subset_gctoo as sg
 import cmapPy.pandasGEXpress.setup_GCToo_logger as setup_logger
 
 __author__ = "Lev Litichevskiy, Oana Enache"
@@ -145,10 +145,10 @@ def parse(file_path, convert_neg_666=True, rid=None, cid=None,
     # whole GCToo just to return the metadata df), but simplest
     myGCToo = create_gctoo_obj(file_path, version, row_metadata, col_metadata,
                                data, make_multiindex)
-    # Slice if requested
+    # Subset if requested
     if (rid is not None) or (ridx is not None) or (cid is not None) or (cidx is not None):
-        logger.info("Slicing GCT... (note that there are no speed gains when slicing GCTs)")
-        myGCToo = sg.slice_gctoo(myGCToo, rid=rid, cid=cid, ridx=ridx, cidx=cidx)
+        logger.info("Subsetting GCT... (note that there are no speed gains when subsetting GCTs)")
+        myGCToo = sg.subset_gctoo(myGCToo, rid=rid, cid=cid, ridx=ridx, cidx=cidx)
 
     if row_meta_only:
         return myGCToo.row_metadata_df

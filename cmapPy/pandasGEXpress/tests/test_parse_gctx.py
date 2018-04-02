@@ -10,7 +10,7 @@ import cmapPy.pandasGEXpress.setup_GCToo_logger as setup_logger
 import cmapPy.pandasGEXpress.GCToo as GCToo
 import cmapPy.pandasGEXpress.parse_gctx as parse_gctx
 import cmapPy.pandasGEXpress.mini_gctoo_for_testing as mini_gctoo_for_testing
-import cmapPy.pandasGEXpress.slice_gctoo as slice_gctoo
+import cmapPy.pandasGEXpress.subset_gctoo as subset_gctoo
 import cmapPy.pandasGEXpress.write_gctx as write_gctx
 
 
@@ -53,7 +53,7 @@ class TestParseGctx(unittest.TestCase):
         # test with string rid/cid
         test_rids = ['LJP007_MCF10A_24H:TRT_CP:BRD-K93918653:3.33', 'LJP007_MCF7_24H:CTL_VEHICLE:DMSO:-666']
         test_cids = ['LJP007_MCF7_24H:TRT_POSCON:BRD-A61304759:10']
-        mg3 = slice_gctoo.slice_gctoo(mg1, rid=test_rids, cid=test_cids)
+        mg3 = subset_gctoo.subset_gctoo(mg1, rid=test_rids, cid=test_cids)
         mg4 = parse_gctx.parse("functional_tests/mini_gctoo_for_testing.gctx",
                                rid=test_rids, cid=test_cids)
         pandas_testing.assert_frame_equal(mg3.data_df, mg4.data_df)
@@ -80,7 +80,7 @@ class TestParseGctx(unittest.TestCase):
         # test with numeric (repr as string) rid/cid
         mg5 = GCToo.GCToo(data_df=int_indexed_data_df, row_metadata_df=int_indexed_row_meta,
                           col_metadata_df=int_indexed_col_meta)
-        mg5 = slice_gctoo.slice_gctoo(mg5, row_bool=[True, False, True, False, True, False],
+        mg5 = subset_gctoo.subset_gctoo(mg5, row_bool=[True, False, True, False, True, False],
                                     col_bool=[True, False, False, True, True, True])
 
         mg5.data_df.index.name = "rid"
@@ -102,7 +102,7 @@ class TestParseGctx(unittest.TestCase):
         pandas_testing.assert_frame_equal(mg5.col_metadata_df, mg6.col_metadata_df)
 
         # test with ridx/cidx
-        mg7 = slice_gctoo.slice_gctoo(mg1, rid=['LJP007_MCF7_24H:CTL_VEHICLE:DMSO:-666'],
+        mg7 = subset_gctoo.subset_gctoo(mg1, rid=['LJP007_MCF7_24H:CTL_VEHICLE:DMSO:-666'],
                                     cid=['LJP007_MCF7_24H:CTL_VEHICLE:DMSO:-666'])
         mg8 = parse_gctx.parse("functional_tests/mini_gctoo_for_testing.gctx", ridx=[4], cidx=[4])
 
@@ -302,23 +302,23 @@ class TestParseGctx(unittest.TestCase):
         col_meta = parse_gctx.get_column_metadata("functional_tests/mini_gctx_with_metadata_n2x3.gctx")
         row_meta = parse_gctx.get_row_metadata("functional_tests/mini_gctx_with_metadata_n2x3.gctx")
 
-        # case 1: no slicing
+        # case 1: no subsetting
         data_df1 = parse_gctx.parse_data_df(data_dset, [0, 1, 2], [0, 1], row_meta, col_meta)
         # note: checks to 3 decimal places
         pandas_testing.assert_frame_equal(mini_data_df, data_df1,
                            check_exact=False, check_less_precise=True)
 
-        # case 2: slice; ridx < cidx
+        # case 2: subset; ridx < cidx
         data_df2 = parse_gctx.parse_data_df(data_dset, [0], [0, 1], row_meta, col_meta)
         pandas_testing.assert_frame_equal(mini_data_df.iloc[[0], [0, 1]], data_df2,
                            check_exact=False, check_less_precise=True)
 
-        # case 3: slice; ridx == cidx
+        # case 3: subset; ridx == cidx
         data_df3 = parse_gctx.parse_data_df(data_dset, [0], [0], row_meta, col_meta)
         pandas_testing.assert_frame_equal(mini_data_df.iloc[[0], [0]], data_df3,
                            check_exact=False, check_less_precise=True)
 
-        # case 4: slice; ridx > cidx
+        # case 4: subset; ridx > cidx
         data_df4 = parse_gctx.parse_data_df(data_dset, [0, 1, 2], [0], row_meta, col_meta)
         pandas_testing.assert_frame_equal(mini_data_df.iloc[[0, 1, 2], [0]], data_df4,
                            check_exact=False, check_less_precise=True)

@@ -25,7 +25,7 @@ Writing
 Concatenating
 -------------
 
-.. automodule:: cmapPy.pandasGEXpress.concat_gctoo
+.. automodule:: cmapPy.pandasGEXpress.concat
    :members:
 
 Converting .gct <-> .gctx
@@ -43,13 +43,13 @@ Extracting from .grp files
 .. automodule:: cmapPy.pandasGEXpress.plategrp
    :members:
 
-Slicing
+Subsetting
 -------
 
 .. automodule:: cmapPy.pandasGEXpress.random_slice
    :members:
 
-.. automodule:: cmapPy.pandasGEXpress.slice_gct
+.. automodule:: cmapPy.pandasGEXpress.subset
    :members:
 
 

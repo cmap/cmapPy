@@ -3,13 +3,13 @@ import logging
 import pandas as pd
 import cmapPy.pandasGEXpress.setup_GCToo_logger as setup_logger
 import cmapPy.pandasGEXpress.GCToo as GCToo
-import cmapPy.pandasGEXpress.slice_gctoo as sg
+import cmapPy.pandasGEXpress.subset_gctoo as sg
 
 
 logger = logging.getLogger(setup_logger.LOGGER_NAME)
 
 
-class TestSliceGCToo(unittest.TestCase):
+class TestSubsetGCToo(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
@@ -21,25 +21,25 @@ class TestSliceGCToo(unittest.TestCase):
                                        index=["e", "f", "g"], columns=["chd1", "chd2"])
         cls.in_gct = GCToo.GCToo(data_df, row_metadata_df, col_metadata_df)
 
-    def test_slice_gctoo(self):
+    def test_subset_gctoo(self):
 
         # Error if resulting GCT is empty
         with self.assertRaises(AssertionError) as e:
-            sg.slice_gctoo(self.in_gct, rid=["bad"], cid=["x", "y"])
-        self.assertIn("Slicing yielded an", str(e.exception))
+            sg.subset_gctoo(self.in_gct, rid=["bad"], cid=["x", "y"])
+        self.assertIn("Subsetting yielded an", str(e.exception))
 
         # cid and col_bool should not both be provided
         with self.assertRaises(AssertionError) as e:
-            sg.slice_gctoo(self.in_gct, cid=["e", "f", "g"], col_bool=[True, True, False])
+            sg.subset_gctoo(self.in_gct, cid=["e", "f", "g"], col_bool=[True, True, False])
         self.assertIn("Only one of cid,", str(e.exception))
 
         # Providing all 3 row inputs is also bad!
         with self.assertRaises(AssertionError) as e:
-            sg.slice_gctoo(self.in_gct, rid="blah", ridx="bloop", row_bool="no!")
+            sg.subset_gctoo(self.in_gct, rid="blah", ridx="bloop", row_bool="no!")
         self.assertIn("Only one of rid,", str(e.exception))
 
         # happy path
-        out_g = sg.slice_gctoo(self.in_gct, rid=["d", "a", "b"], cidx=[0],
+        out_g = sg.subset_gctoo(self.in_gct, rid=["d", "a", "b"], cidx=[0],
                                exclude_rid=["a"])
         pd.util.testing.assert_frame_equal(out_g.data_df, self.in_gct.data_df.iloc[[1, 3], [0]])
 
