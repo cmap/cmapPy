@@ -100,6 +100,13 @@ def main():
     setup_logger.setup(verbose=args.verbose)
     logger.debug("args:  {}".format(args))
 
+    concat_main(args)
+
+
+def concat_main(args):
+    """ Separate method from main() in order to make testing easier and to
+    enable command-line access. """
+
     # Get files directly
     if args.input_filepaths is not None:
         files = args.input_filepaths
