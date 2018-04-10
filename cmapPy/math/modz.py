@@ -1,9 +1,19 @@
+'''
+modz.py
+
+Given a matrix of profiles on which you want to calculate a weighted average, returns a single profile of modz values
+'''
+
 import pandas as pd
 import numpy as np
 import os
 import math
 
 def upper_triangle(correlation_matrix):
+    '''
+    :param correlation_matrix (pandas df): Correlations between all replicates
+    :return upper_tri_series (pandas series): Upper triangle extracted from corr mat
+    '''
     upper_triangle = correlation_matrix.where(np.triu(np.ones(correlation_matrix.shape), k=1).astype(np.bool))
 
     # convert matrix into long form description
@@ -14,10 +24,14 @@ def upper_triangle(correlation_matrix):
     # Index at this point is CID, it now becomes a column
     upper_tri_series.reset_index(level=0, inplace=True)
 
-    return upper_tri_series
+    return upper_tri_series.round(4)
 
 
 def calculate_weights(correlation_matrix):
+    '''
+    :param correlation_matrix (pandas df): Correlations between all replicates
+    :return raw weights, weights (pandas series): Weights computed by summing correlations (raw weights) and then normalized to add to 1 (weights)
+    '''
 
     # fill diagonal of corr_mat with 0s
     np.fill_diagonal(correlation_matrix.values, 0)
@@ -28,11 +42,14 @@ def calculate_weights(correlation_matrix):
     raw_weights[raw_weights < .01] = .01
     weights = raw_weights / sum(raw_weights.abs())
 
-    return raw_weights, weights
+    return raw_weights.round(4), weights.round(4)
 
 
 def main(mat):
-
+    '''
+    :param mat (pandas df): One matching profile from each replicate
+    :return (4 pandas series): modz values, correlations from upper tri series, raw weights, normalized weights
+    '''
     # Make correlation matrix column wise
     corr_mat = mat.corr(method='spearman')
 
