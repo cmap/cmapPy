@@ -1,5 +1,5 @@
 import unittest
-import merino.setup_logger as setup_logger
+import cmapPy.pandasGEXpress.setup_GCToo_logger as setup_logger
 import logging
 import pandas as pd
 import sys
