@@ -21,7 +21,7 @@ pandasGEXpress
 	
 	``gctx2gct``: converts .gctx to .gct file. Type ``gctx2gct -h`` for help.
 
-	``concat_gctoo``: Concats two or more .gct/x files as specified by user. Type ``concat_gctoo -h`` for help.
+	``concat``: Concats two or more .gct/x files as specified by user. Type ``concat -h`` for help.
 
   Maintainer: Oana Enache, oana@broadinstitute.org
   

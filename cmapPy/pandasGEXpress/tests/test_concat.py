@@ -4,7 +4,7 @@ import logging
 import numpy as np
 import pandas as pd
 import cmapPy.pandasGEXpress.setup_GCToo_logger as setup_logger
-import cmapPy.pandasGEXpress.concat_gctoo as cg
+import cmapPy.pandasGEXpress.concat as cg
 import cmapPy.pandasGEXpress.parse_gct as pg
 import tempfile
 
@@ -13,7 +13,7 @@ logger = logging.getLogger(setup_logger.LOGGER_NAME)
 FUNCTIONAL_TESTS_DIR = "functional_tests"
 
 
-class TestConcatGctoo(unittest.TestCase):
+class TestConcat(unittest.TestCase):
     def test_left_right(self):
         left_gct_path = os.path.join(FUNCTIONAL_TESTS_DIR, "test_merge_left.gct")
         right_gct_path = os.path.join(FUNCTIONAL_TESTS_DIR, "test_merge_right.gct")
@@ -73,7 +73,7 @@ class TestConcatGctoo(unittest.TestCase):
 
         error_report_file = tempfile.NamedTemporaryFile().name
         logger.debug("rhd3 header needs to be removed - error_report_file:  {}".format(error_report_file))
-        with self.assertRaises(cg.MismatchCommonMetadataConcatGctooException) as e:
+        with self.assertRaises(cg.MismatchCommonMetadataConcatException) as e:
             cg.assemble_common_meta([meta1, meta2], [], ["my_src1", "my_src2"], False, error_report_file)
         self.assertIn("r3", str(e.exception))
         logger.debug("rhd3 header needs to be removed - e.exception:  {}".format(e.exception))
@@ -120,7 +120,7 @@ class TestConcatGctoo(unittest.TestCase):
         logger.debug("meta1:\n{}".format(meta1))
         logger.debug("meta4:\n{}".format(meta4))
 
-        with self.assertRaises(cg.MismatchCommonMetadataConcatGctooException) as e:
+        with self.assertRaises(cg.MismatchCommonMetadataConcatException) as e:
             cg.assemble_common_meta([meta1, meta4], [], ["my_src1", "my_src4"], False, None)
         self.assertIn("r1", str(e.exception))
 
@@ -332,35 +332,24 @@ class TestConcatGctoo(unittest.TestCase):
         self.assertTrue(set(meta1.columns) < set(r.columns))
         self.assertEqual({"r3"}, set(r.orig_rid))
 
-    def test_main(self):
-        test_dir = "functional_tests/test_concat_gctoo/test_main"
+    def test_concat_main(self):
+        test_dir = "functional_tests/test_concat/test_main"
 
         g_a = pg.parse(os.path.join(test_dir, "a.gct"))
         logger.debug("g_a:  {}".format(g_a))
         g_b = pg.parse(os.path.join(test_dir, "b.gct"))
         logger.debug("g_b:  {}".format(g_b))
 
-        save_build_parser = cg.build_parser
-
-        class MockParser:
-            def __init__(self, args):
-                self.args = args
-            def parse_args(self, unused):
-                return self.args
-
         #unhappy path - write out error report file
         expected_output_file = tempfile.mkstemp()[1]
         logger.debug("unhappy path - write out error report file - expected_output_file:  {}".format(expected_output_file))
 
-        args = save_build_parser().parse_args(["-d", "horiz", "-if", g_a.src, g_b.src, "-o", "should_not_be_used",
+        args = cg.build_parser().parse_args(["-d", "horiz", "-if", g_a.src, g_b.src, "-o", "should_not_be_used",
                                              "-ot", "gct", "-erof", expected_output_file])
         logger.debug("args:  {}".format(args))
 
-        my_mock_parser = MockParser(args)
-        cg.build_parser = lambda: my_mock_parser
-
-        with self.assertRaises(cg.MismatchCommonMetadataConcatGctooException) as context:
-            cg.main()
+        with self.assertRaises(cg.MismatchCommonMetadataConcatException) as context:
+            cg.concat_main(args)
 
         self.assertTrue(os.path.exists(expected_output_file))
         report_df = pd.read_csv(expected_output_file, sep="\t")
@@ -369,22 +358,15 @@ class TestConcatGctoo(unittest.TestCase):
 
         os.remove(expected_output_file)
 
-        print()
-        print()
-        print()
-
         #happy path
-        args.remove_all_metadata_fields = True
-        args.error_report_output_file = None
-
         expected_output_file = tempfile.mkstemp(suffix=".gct")[1]
         logger.debug("happy path - expected_output_file:  {}".format(expected_output_file))
-        args.out_name = expected_output_file
 
-        my_mock_parser = MockParser(args)
-        cg.buid_parser = lambda: my_mock_parser
+        args2 = cg.build_parser().parse_args(["-d", "horiz", "-if", g_a.src, g_b.src,
+                                              "-o", expected_output_file, "-ot", "gct", "-ramf"])
+        logger.debug("args2:  {}".format(args2))
 
-        cg.main()
+        cg.concat_main(args2)
         self.assertTrue(os.path.exists(expected_output_file))
 
         r = pg.parse(expected_output_file)
@@ -397,8 +379,6 @@ class TestConcatGctoo(unittest.TestCase):
 
         #cleanup
         os.remove(expected_output_file)
-
-        cg.build_parser = save_build_parser
 
 
 if __name__ == "__main__":

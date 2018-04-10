@@ -32,8 +32,12 @@ def parse(gctx_file_path, convert_neg_666=True, rid=None, cid=None,
         Optional:
         - convert_neg_666 (bool): whether to convert -666 values to numpy.nan or not
             (see Note below for more details on this). Default = False.
-        - rid (list of strings): only read the row ids in this list from the gctx. Default=None.
-        - cid (list of strings): only read the column ids in this list from the gctx. Default=None.
+        - rid (list of strings): list of row ids to specifically keep from gctx. Default=None.
+        - cid (list of strings): list of col ids to specifically keep from gctx. Default=None.
+        - ridx (list of integers): only read the rows corresponding to this
+            list of integer ids. Default=None.
+        - cidx (list of integers): only read the columns corresponding to this
+            list of integer ids. Default=None.
         - row_meta_only (bool): Whether to load data + metadata (if False), or just row metadata (if True)
             as pandas DataFrame
         - col_meta_only (bool): Whether to load data + metadata (if False), or just col metadata (if True)
@@ -74,7 +78,7 @@ def parse(gctx_file_path, convert_neg_666=True, rid=None, cid=None,
 
         gctx_file.close()
 
-        # slice if specified, then return
+        # subset if specified, then return
         row_meta = row_meta.iloc[sorted_ridx]
         return row_meta
     elif col_meta_only:
@@ -87,7 +91,7 @@ def parse(gctx_file_path, convert_neg_666=True, rid=None, cid=None,
 
         gctx_file.close()
 
-        # slice if specified, then return
+        # subset if specified, then return
         col_meta = col_meta.iloc[sorted_cidx]
         return col_meta
     else:
@@ -105,7 +109,7 @@ def parse(gctx_file_path, convert_neg_666=True, rid=None, cid=None,
         data_dset = gctx_file[data_node]
         data_df = parse_data_df(data_dset, sorted_ridx, sorted_cidx, row_meta, col_meta)
 
-        # (if slicing) slice metadata
+        # (if subsetting) subset metadata
         row_meta = row_meta.iloc[sorted_ridx]
         col_meta = col_meta.iloc[sorted_cidx]
 
@@ -146,7 +150,7 @@ def check_and_order_id_inputs(rid, ridx, cid, cidx, row_meta_df, col_meta_df):
 
 def check_id_idx_exclusivity(id, idx):
     """
-    Makes sure user didn't provide both ids and idx values to slice by.
+    Makes sure user didn't provide both ids and idx values to subset by.
 
     Input:
         - id (list or None): if not None, a list of string id names
@@ -157,7 +161,7 @@ def check_id_idx_exclusivity(id, idx):
     """
     if (id is not None and idx is not None):
         msg = ("'id' and 'idx' fields can't both not be None," +
-               " please specify slice in only one of these fields")
+               " please specify subset in only one of these fields")
         logger.error(msg)
         raise Exception("parse_gctx.check_id_idx_exclusivity: " + msg)
     elif id is not None:
@@ -312,27 +316,27 @@ def set_metadata_index_and_column_names(dim, meta_df):
 
 def parse_data_df(data_dset, ridx, cidx, row_meta, col_meta):
     """
-    Parses in data_df from hdf5, slicing if specified.
+    Parses in data_df from hdf5, subsetting if specified.
 
     Input:
         -data_dset (h5py dset): HDF5 dataset from which to read data_df
-        -ridx (list): list of indexes to slice from data_df
-            (may be all of them if no slicing)
-        -cidx (list): list of indexes to slice from data_df
-            (may be all of them if no slicing)
+        -ridx (list): list of indexes to subset from data_df
+            (may be all of them if no subsetting)
+        -cidx (list): list of indexes to subset from data_df
+            (may be all of them if no subsetting)
         -row_meta (pandas DataFrame): the parsed in row metadata
         -col_meta (pandas DataFrame): the parsed in col metadata
     """
-    if len(ridx) == len(row_meta.index) and len(cidx) == len(col_meta.index):  # no slice
+    if len(ridx) == len(row_meta.index) and len(cidx) == len(col_meta.index):  # no subset
         data_array = np.empty(data_dset.shape, dtype=np.float32)
         data_dset.read_direct(data_array)
         data_array = data_array.transpose()
     elif len(ridx) <= len(cidx):
-        first_slice = data_dset[:, ridx].astype(np.float32)
-        data_array = first_slice[cidx, :].transpose()
+        first_subset = data_dset[:, ridx].astype(np.float32)
+        data_array = first_subset[cidx, :].transpose()
     elif len(cidx) < len(ridx):
-        first_slice = data_dset[cidx, :].astype(np.float32)
-        data_array = first_slice[:, ridx].transpose()
+        first_subset = data_dset[cidx, :].astype(np.float32)
+        data_array = first_subset[:, ridx].transpose()
     # make DataFrame instance
     data_df = pd.DataFrame(data_array, index=row_meta.index[ridx], columns=col_meta.index[cidx])
     return data_df
