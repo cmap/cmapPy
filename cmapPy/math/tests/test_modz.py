@@ -19,12 +19,12 @@ class TestModz(unittest.TestCase):
 
     def test_upper_triangle(self):
         upper_tri_series = modz.upper_triangle(test_mat.corr())
-        self.assertTrue(upper_tri_series['spearman_corr'].tolist() == [0.6547, 0.982, 0.7857])
+        self.assertTrue(upper_tri_series['corr'].tolist() == [0.6547, 0.982, 0.7857])
         self.assertTrue(upper_tri_series['rid'].tolist() == ['B', 'C', 'C'])
         self.assertTrue(upper_tri_series['index'].tolist() == ['A', 'A', 'B'])
 
     def test_main(self):
-        modz_values, x, y, z = modz.main(test_mat)
+        modz_values, x, y, z = modz.calc_modz(test_mat)
         self.assertTrue(modz_values.tolist() == [3.125, 5.75, 6.0])
 
 

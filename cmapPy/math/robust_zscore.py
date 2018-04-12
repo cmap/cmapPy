@@ -2,13 +2,18 @@
 robust_zscore.py
 
 Given a pandas df, and an optional control df, will calculate zscores using plate control or vehicle control
+Values can be zscored relative to all samples on a plate ("plate-control")
+or relative to negative control samples ("vehicle-control").
 '''
-
-def calc_zscore(mat, ctrl_mat=None):
+rounding_precision = 4
+def calc_zscore(mat, ctrl_mat=None, min_mad=.1):
     '''
-    :param mat (pandas df): Matrix of data that zscoring will be applied to
-    :param ctrl_mat (pandas df): Optional subset matrix from which to draw medians and MADS (vehicle control)
-    :return zscore_data (pandas_df):
+    Args:
+    mat (pandas df): Matrix of data that zscoring will be applied to
+    ctrl_mat (pandas df): Optional subset matrix from which to draw medians and MADS (vehicle control)
+
+    Returns:
+    zscore_data (pandas_df): Zscored data!
     '''
 
     # If optional df exists, calc medians and mads from it
@@ -25,7 +30,8 @@ def calc_zscore(mat, ctrl_mat=None):
     mads = median_devs.median(axis=1)
 
     # Threshold mads
-    mads[mads < .1] = .1
+    mads[mads < min_mad] = min_mad
+    # Must multiply values by 1.4826 to make MAD comparable to SD (https://en.wikipedia.org/wiki/Median_absolute_deviation)
     zscore_data = sub.divide(mads * 1.4826, axis='index')
 
-    return zscore_data.round(4)
+    return zscore_data.round(rounding_precision)
