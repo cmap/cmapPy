@@ -48,6 +48,7 @@ def calculate_weights(correlation_matrix, min_wt):
 
     Args:
     correlation_matrix (pandas df): Correlations between all replicates
+    min_wt (float): Minimum raw weight when calculating weighted average
 
     Returns:
     raw weights (pandas series):  Mean correlation to other replicates
