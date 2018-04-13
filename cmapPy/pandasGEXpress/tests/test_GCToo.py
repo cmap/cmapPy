@@ -180,13 +180,6 @@ class TestGctoo(unittest.TestCase):
                                           index=["A", "B"], columns=["a", "b", "a"])
         not_unique_rhd = pd.DataFrame([["rhd_A", "rhd_B"], ["rhd_C", "rhd_D"]],
                                        index=["A", "B"], columns=["rhd1", "rhd1"])
-        """
-        # case 3: row subsetting - sample subset > og # of samples
-        with self.assertRaises(AssertionError) as context:
-            random_slice.make_specified_size_gctoo(mini_gctoo, 30, "row")
-        self.assertTrue("number of entries must be smaller than dimension being subsetted " in str(context.exception))
-
-        """
         # cids in data_df are not unique
         with self.assertRaises(Exception) as context:
             GCToo.GCToo(data_df=not_unique_data_df,

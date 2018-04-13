@@ -2,9 +2,9 @@ pandasGEXpress library
 ======================
 
 This is a package of Python scripts that enable reading, writing, and
-basic modifications (slicing, concatenation) of .gct and .gctx files.
+basic modifications (subsetting, concatenation) of .gct and .gctx files.
 
-Installation instructions and documentation can be found  `on the package's ReadTheDocs page <http://cmappy.readthedocs.io/en/latest/build.html>`_. 
+Installation instructions and documentation can be found  `on the package's ReadTheDocs page <https://clue.io/cmapPy/index.html>`_. 
 
 Questions/issues
 ======================

@@ -17,7 +17,7 @@
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 **Connectivity Map, Broad Institute of MIT and Harvard**
 
-Documentation: `<http://cmappy.readthedocs.io/en/latest/>`_
+Documentation: `<https://clue.io/cmapPy/index.html>`_
 
 For questions/problems, please add an issue (that includes code/files that reproduce your problem) to the repository. 
 
@@ -29,6 +29,7 @@ We welcome contributors! For your pull requests, please include the following:
 * Sample code/file that reproducibly causes the bug/issue
 * Documented code providing fix
 * Unit tests evaluating added/modified methods. 
+ 
 
 Citation
 ====================
