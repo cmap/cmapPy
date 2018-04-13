@@ -1,19 +1,38 @@
 '''
 robust_zscore.py
 
-Given a pandas df, and an optional control df, will calculate zscores using plate control or vehicle control
-Values can be zscored relative to all samples on a plate ("plate-control")
-or relative to negative control samples ("vehicle-control").
+Robustly z-scores a pandas df along the rows (i.e. the z-score is made relative
+to a row). A robust z-score means that median is used instead of mean and
+median absolute deviation (MAD) instead of standard deviation in the
+standard z-score calculation:
+
+z = (x - u) / s
+
+x: input value
+u: median
+s: MAD
+
+Optionally, the median and MAD can be computed from a control df, instead of the
+input df. This functionality is useful for "vehicle-control"; that is, if
+the control df consists only of negative control samples, the median and MAD
+can be computed using just those samples but applied to the input df.
 '''
+
 rounding_precision = 4
-def calc_zscore(mat, ctrl_mat=None, min_mad=.1):
-    '''
+
+
+def robust_zscore(mat, ctrl_mat=None, min_mad=0.1):
+    ''' Robustly z-score a pandas df along the rows.
+
     Args:
-    mat (pandas df): Matrix of data that zscoring will be applied to
-    ctrl_mat (pandas df): Optional subset matrix from which to draw medians and MADS (vehicle control)
+    mat (pandas df): Matrix of data that z-scoring will be applied to
+    ctrl_mat (pandas df): Optional matrix from which to compute medians and MADs
+        (e.g. vehicle control)
+    min_mad (float): Minimum MAD to threshold to; tiny MAD values will cause
+        z-scores to blow up
 
     Returns:
-    zscore_data (pandas_df): Zscored data!
+    zscore_df (pandas_df): z-scored data
     '''
 
     # If optional df exists, calc medians and mads from it
@@ -30,8 +49,10 @@ def calc_zscore(mat, ctrl_mat=None, min_mad=.1):
     mads = median_devs.median(axis=1)
 
     # Threshold mads
-    mads[mads < min_mad] = min_mad
-    # Must multiply values by 1.4826 to make MAD comparable to SD (https://en.wikipedia.org/wiki/Median_absolute_deviation)
-    zscore_data = sub.divide(mads * 1.4826, axis='index')
+    mads = mads.clip(lower=min_mad)
 
-    return zscore_data.round(rounding_precision)
+    # Must multiply values by 1.4826 to make MAD comparable to SD
+    # (https://en.wikipedia.org/wiki/Median_absolute_deviation)
+    zscore_df = sub.divide(mads * 1.4826, axis='index')
+
+    return zscore_df.round(rounding_precision)
