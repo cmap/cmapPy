@@ -212,11 +212,13 @@ def parse_into_3_df(file_path, num_data_rows, num_data_cols, num_row_metadata, n
                           dtype=str, na_values=nan_values, keep_default_na=False)
 
     # Check that full_df is the size we expect
-    assert full_df.shape == (num_col_metadata + num_data_rows + 1,
-                             num_row_metadata + num_data_cols + 1), (
-        ("The shape of full_df is not as expected: data is {} x {} " +
-         "but there are {} row meta fields and {} col fields").format(
-            num_data_rows, num_data_cols, num_row_metadata, num_col_metadata))
+    expected_row_num = num_col_metadata + num_data_rows + 1
+    expected_col_num = num_row_metadata + num_data_cols + 1
+    assert full_df.shape == (expected_row_num,
+                             expected_col_num), (
+        ("The shape of full_df is not as expected: expected shape is {} x {} " +
+         "parsed shape is {} x {}").format(expected_row_num, expected_col_num,
+                full_df.shape[0], full_df.shape[1]))
 
     # Assemble metadata dataframes
     row_metadata = assemble_row_metadata(full_df, num_col_metadata, num_data_rows, num_row_metadata)
