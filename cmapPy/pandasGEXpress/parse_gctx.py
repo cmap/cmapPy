@@ -229,7 +229,8 @@ def get_ordered_idx(id_type, id_list, meta_df):
         if id_type is None:
             id_list = range(0, len(list(meta_df.index)))
         elif id_type == "id":
-            id_list = [list(meta_df.index).index(str(i)) for i in id_list]
+            lookup = {x: i for (i,x) in enumerate(meta_df.index)}
+            id_list = [lookup[str(i)] for i in id_list]
         return sorted(id_list)
     else:
         return None
