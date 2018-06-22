@@ -236,7 +236,6 @@ def get_ordered_idx(id_type, id_list, meta_df):
         return None
 
 
-
 def parse_metadata_df(dim, meta_group, convert_neg_666):
     """
     Reads in all metadata from .gctx file to pandas DataFrame
