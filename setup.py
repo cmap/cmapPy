@@ -12,7 +12,7 @@ setup(
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='3.3.0',
+    version='3.3.1',
 
     description='Assorted tools for interacting with .gct, .gctx files and other Connectivity Map (Broad Institute) data/tools',
     long_description="cmapPy: Tools for interacting with .gctx and .gct files, and other Connectivity Map resources. See our documentation at http://cmappy.readthedocs.io/en/latest/, and for more information on the file formats and available resources, please see clue.io/gctx.",
@@ -53,7 +53,7 @@ setup(
 
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().
-    packages=find_packages(exclude=['contrib','docs','tutorials', 'tests']),
+    packages=find_packages(exclude=['contrib','docs','tutorials', 'tests', 'performance_testing']),
 
     # List run-time dependencies here.  These will be installed by pip when
     # your project is installed. For an analysis of "install_requires" vs pip's
