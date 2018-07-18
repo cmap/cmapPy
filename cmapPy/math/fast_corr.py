@@ -9,12 +9,12 @@ logger = logging.getLogger(setup_logger.LOGGER_NAME)
 
 
 def fast_corr(x, y=None):
-    """calculate the pearson correlation matrix for the columns of x (MxN), or optionally, the correlaton matrix between x and y (OxP).
-    In the language of statistics the columns are the variables and the rows are the observations.
+    """calculate the pearson correlation matrix for the columns of x (with dimensions MxN), or optionally, the pearson correlaton matrix
+    between x and y (with dimensions OxP).  In the language of statistics the columns are the variables and the rows are the observations.
 
     Args:
         x (numpy array-like) MxN in shape
-        y (optional, numpy array-like) OxP in shape
+        y (optional, numpy array-like) OxP in shape.  M (# rows in x) must equal O (# rows in y)
 
         returns (numpy array-like) array of the covariance values
             for defaults (y=None), shape is NxN
@@ -34,12 +34,13 @@ def fast_corr(x, y=None):
 
 
 def fast_spearman(x, y=None):
-    """calculate the spearnab correlation matrix for the columns of x (MxN), or optionally, the spearmancorrelaton matrix between x and y (OxP).
+    """calculate the spearman correlation matrix for the columns of x (with dimensions MxN), or optionally, the spearman correlaton
+    matrix between the columns of x and the columns of y (with dimensions OxP).
     In the language of statistics the columns are the variables and the rows are the observations.
 
     Args:
         x (numpy array-like) MxN in shape
-        y (optional, numpy array-like) OxP in shape
+        y (optional, numpy array-like) OxP in shape.  M (# rows in x) must equal O (# rows in y)
 
         returns:
             (numpy array-like) array of the covariance values
