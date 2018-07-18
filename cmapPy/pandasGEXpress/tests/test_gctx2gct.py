@@ -29,8 +29,27 @@ class TestGCTx2GCT(unittest.TestCase):
 		pd.util.testing.assert_frame_equal(in_gctx.col_metadata_df, out_gct.col_metadata_df)
 		pd.util.testing.assert_frame_equal(in_gctx.row_metadata_df, out_gct.row_metadata_df)
 
+		no_meta = "functional_tests/mini_gctoo_for_testing_nometa.gctx"
+		added_meta = "functional_tests/test_gctx2gct_out_annotated.gct"
+		row_meta = "functional_tests/test_rowmeta_n6.txt"
+		col_meta = "functional_tests/test_colmeta_n6.txt"
+		args_string = "-f {} -o {} -annot_rows {} -annot_cols {}".format(no_meta, added_meta, row_meta, col_meta )
+		args = gctx2gct.build_parser().parse_args(args_string.split())
+
+		gctx2gct.gctx2gct_main(args)
+
+		annotated_gct = parse_gct.parse(added_meta)
+
+		#Check added annotations are the same as original input GCTX
+		pd.util.testing.assert_frame_equal(in_gctx.data_df, annotated_gct.data_df, check_less_precise=3)
+		pd.util.testing.assert_frame_equal(in_gctx.col_metadata_df, annotated_gct.col_metadata_df)
+		pd.util.testing.assert_frame_equal(in_gctx.row_metadata_df, annotated_gct.row_metadata_df)
+
+		gctx2gct.gctx2gct_main(args)
+
 		# Clean up
 		os.remove(out_name)
+		os.remove(added_meta)
 
 if __name__ == "__main__":
 	setup_logger.setup(verbose=True)
