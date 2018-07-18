@@ -11,6 +11,7 @@ import sys
 import logging
 import argparse
 import os.path
+import pandas as pd
 import cmapPy.pandasGEXpress.setup_GCToo_logger as setup_logger
 import cmapPy.pandasGEXpress.parse_gct as parse_gct
 import cmapPy.pandasGEXpress.write_gctx as write_gctx
@@ -33,6 +34,8 @@ def build_parser():
                               "Default is just to modify the extension"))
     parser.add_argument("-verbose", "-v",
                         help="Whether to print a bunch of output.", action="store_true", default=False)
+    parser.add_argument("-annot_rows", help="Path to annotations file for rows")
+    parser.add_argument("-annot_cols", help="Path to annotations file for columns")
     return parser
 
 
@@ -52,6 +55,19 @@ def gct2gctx_main(args):
         out_name = os.path.splitext(basename)[0] + ".gctx"
     else:
         out_name = args.output_filepath
+
+    """ If annotations are supplied, parse table and set metadata_df """
+    if args.annot_rows is None:
+        pass
+    else:
+        row_metadata = pd.read_csv(args.annot_rows, sep='\t', index_col=0, header=0, low_memory=False)
+        in_gctoo.row_metadata_df = row_metadata
+
+    if args.annot_cols is None:
+        pass
+    else:
+        col_metadata = pd.read_csv(args.annot_cols, sep='\t', index_col=0, header=0, low_memory=False)
+        in_gctoo.col_metadata_df = col_metadata
 
     write_gctx.write(in_gctoo, out_name)
 

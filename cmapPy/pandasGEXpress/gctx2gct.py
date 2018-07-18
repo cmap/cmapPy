@@ -56,7 +56,7 @@ def gctx2gct_main(args):
     else:
         out_name = args.output_filepath
 
-    """ If annot_rows is supplied, parse table and set to row_metadata_df """
+    """ If annotations are supplied, parse table and set metadata_df """
     if args.annot_rows is None:
         pass
     else:
