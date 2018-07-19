@@ -49,6 +49,30 @@ class TestGCT2GCTx(unittest.TestCase):
 		os.remove(out_name)
 		os.remove(added_meta)
 
+	def test_missing_annotations(self):
+		with self.assertRaises(Exception) as context:
+			no_meta = "functional_tests/mini_gctoo_for_testing_nometa.gct"
+			added_meta = "functional_tests/test_gctx2gct_out_annotated.gctx"
+			row_meta = "functional_tests/test_missing_rowmeta.txt"
+			args_string = "-f {} -o {} -row_annot_path {}".format(no_meta, added_meta, row_meta)
+			args = gct2gctx.build_parser().parse_args(args_string.split())
+
+			gct2gctx.gct2gctx_main(args)
+
+		self.assertTrue('Row ids in matrix missing from annotations file' in context.exception)
+
+		with self.assertRaises(Exception) as context:
+			no_meta = "functional_tests/mini_gctoo_for_testing_nometa.gct"
+			added_meta = "functional_tests/test_gctx2gct_out_annotated.gctx"
+			col_meta = "functional_tests/test_missing_colmeta.txt"
+			args_string = "-f {} -o {} -col_annot_path {}".format(no_meta, added_meta, col_meta)
+			args = gct2gctx.build_parser().parse_args(args_string.split())
+
+			gct2gctx.gct2gctx_main(args)
+
+		self.assertTrue('Column ids in matrix missing from annotations file' in context.exception)
+
+
 if __name__ == "__main__":
 	setup_logger.setup(verbose=True)
 	unittest.main()
