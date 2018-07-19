@@ -34,8 +34,8 @@ def build_parser():
                               "Default is just to modify the extension"))
     parser.add_argument("-verbose", "-v",
                         help="Whether to print a bunch of output.", action="store_true", default=False)
-    parser.add_argument("-annot_rows", help="Path to annotations file for rows")
-    parser.add_argument("-annot_cols", help="Path to annotations file for columns")
+    parser.add_argument("-row_annot_path", help="Path to annotations file for rows")
+    parser.add_argument("-col_annot_path", help="Path to annotations file for columns")
     return parser
 
 
@@ -57,17 +57,21 @@ def gctx2gct_main(args):
         out_name = args.output_filepath
 
     """ If annotations are supplied, parse table and set metadata_df """
-    if args.annot_rows is None:
+    if args.row_annot_path is None:
         pass
     else:
-        row_metadata = pd.read_csv(args.annot_rows, sep='\t', index_col=0, header=0, low_memory=False)
-        in_gctoo.row_metadata_df = row_metadata
+        row_metadata = pd.read_csv(args.row_annot_path, sep='\t', index_col=0, header=0, low_memory=False)
+        assert all(in_gctoo.data_df.index.isin(row_metadata.index)), \
+            "Row ids in matrix missing from annotations file"
+        in_gctoo.row_metadata_df = row_metadata.loc[row_metadata.index.isin(in_gctoo.data_df.index)]
 
-    if args.annot_cols is None:
+    if args.col_annot_path is None:
         pass
     else:
-        col_metadata = pd.read_csv(args.annot_cols, sep='\t', index_col=0, header=0, low_memory=False)
-        in_gctoo.col_metadata_df = col_metadata
+        col_metadata = pd.read_csv(args.col_annot_path, sep='\t', index_col=0, header=0, low_memory=False)
+        assert all(in_gctoo.data_df.columns.isin(col_metadata.index)), \
+            "Column ids in matrix missing from annotations file"
+        in_gctoo.col_metadata_df = col_metadata.loc[col_metadata.index.isin(in_gctoo.data_df.columns)]
 
     write_gct.write(in_gctoo, out_name)
 
