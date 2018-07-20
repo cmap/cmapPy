@@ -38,6 +38,12 @@ class TestFastCorr(unittest.TestCase):
         
         self.assertTrue(numpy.allclose(ex, r))
 
+        #happy path just x, destination provided
+        dest = numpy.zeros((x.shape[1], x.shape[1]))
+        r = fast_corr.fast_corr(x, destination=dest)
+        self.assertIs(dest, r)
+        self.assertTrue(numpy.allclose(ex, dest))
+
         #happy path just x, other direction
         ex = numpy.corrcoef(x, rowvar=True)
         logger.debug("happy path just x, other direction, expected ex:  {}".format(ex))
@@ -63,6 +69,12 @@ class TestFastCorr(unittest.TestCase):
         r = fast_corr.fast_corr(x, y)
         logger.debug("r:  {}".format(r))
         self.assertTrue(numpy.allclose(ex, r))
+
+        #happy path x, y, and destination
+        dest = numpy.zeros((x.shape[1], y.shape[1]))
+        r = fast_corr.fast_corr(x, y, dest)
+        self.assertIs(dest, r)
+        self.assertTrue(numpy.allclose(ex, dest))
 
         #happy path x and y, other direction
         combined = numpy.hstack([x.T, y.T])
@@ -145,6 +157,12 @@ class TestFastCorr(unittest.TestCase):
         logger.debug("r:  {}".format(r))
 
         self.assertTrue(numpy.allclose(ex, r))
+
+        #happy path x, y, and destination
+        dest = numpy.zeros((x.shape[1], y.shape[1]))
+        r = fast_corr.fast_spearman(x, y, dest)
+        self.assertIs(dest, r)
+        self.assertTrue(numpy.allclose(ex, dest))
 
 
 if __name__ == "__main__":
