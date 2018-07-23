@@ -12,7 +12,7 @@ setup(
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='3.3.2',
+    version='3.3.3',
 
     description='Assorted tools for interacting with .gct, .gctx files and other Connectivity Map (Broad Institute) data/tools',
     long_description="cmapPy: Tools for interacting with .gctx and .gct files, and other Connectivity Map resources. See our documentation at http://cmappy.readthedocs.io/en/latest/, and for more information on the file formats and available resources, please see clue.io/gctx.",
