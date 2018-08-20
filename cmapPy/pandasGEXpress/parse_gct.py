@@ -62,6 +62,7 @@ import logging
 import pandas as pd
 import numpy as np
 import os.path
+import sys
 import cmapPy.pandasGEXpress.GCToo as GCToo
 import cmapPy.pandasGEXpress.subset_gctoo as sg
 import cmapPy.pandasGEXpress.setup_GCToo_logger as setup_logger
@@ -162,7 +163,11 @@ def parse(file_path, convert_neg_666=True, rid=None, cid=None,
 
 def read_version_and_dims(file_path):
     # Open file
-    f = open(file_path, "rb")
+    if sys.version_info[0] < 3:
+        f = open(file_path, "rb")
+    else:
+        # Python 3 expects "bytes" objects rather than str when opening with "rb"
+        f = open(file_path, "r")
 
     # Get version from the first line
     version = f.readline().strip().lstrip("#")
