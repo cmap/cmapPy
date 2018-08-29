@@ -1,21 +1,22 @@
 language: python
 
-# python versioning 
+# python versioning
 python:
   - 2.7
+  - 3.7
 
 # requirements
-install: 
+install:
   - pip install -r requirements.txt
   - python setup.py develop
 
 # environments to use for tests (below)
-env: 
+env:
   - TEST_DIR=cmapPy/pandasGEXpress/tests
   - TEST_DIR=cmapPy/set_io/tests
   - TEST_DIR=cmapPy/math/tests
 
-# run all tests in each test dir 
+# run all tests in each test dir
 script: cd $TEST_DIR && python -m unittest discover -p "test_*.py"
 
 # what branches of github to use
