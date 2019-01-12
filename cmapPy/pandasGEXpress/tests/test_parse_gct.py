@@ -21,7 +21,7 @@ class TestParseGct(unittest.TestCase):
         dims1 = ["10", "15", "3", "4"]
         fname1 = "testing_testing1"
 
-        f1 = open(fname1, "wb")
+        f1 = open(fname1, "w")
         f1.write(("#" + version1 + "\n"))
         f1.write((dims1[0] + "\t" + dims1[1] + "\t" + dims1[2] + "\t" + dims1[3] + "\n"))
         f1.close()
@@ -40,7 +40,7 @@ class TestParseGct(unittest.TestCase):
         dims2 = ["10", "15"]
         fname2 = "testing_testing2"
 
-        f2 = open(fname2, "wb")
+        f2 = open(fname2, "w")
         f2.write(("#" + version2 + "\n"))
         f2.write((dims2[0] + "\t" + dims2[1] + "\n"))
         f2.close()
@@ -251,12 +251,15 @@ class TestParseGct(unittest.TestCase):
         my_rids = ["218597_s_at", "214404_x_at", "209253_at"]
         my_rids_order_in_gct = ["218597_s_at", "209253_at", "214404_x_at"]
         my_cidxs = [4, 0]
+        # add columns argument because of pandas change in python2 and python3
         e_data_df = pd.DataFrame({"LJP005_A375_24H_X1_B19:A07": [11.04, 7.53, 6.01],
                                   "LJP005_A375_24H_X1_B19:A03": [10.45, 8.14, 4.92]},
+                                 columns=["LJP005_A375_24H_X1_B19:A03", "LJP005_A375_24H_X1_B19:A07"],
                                  dtype=np.float32)
         e_data_df.index = pd.Index(my_rids_order_in_gct)
         e_col_meta_df = pd.DataFrame({"pert_iname": ["DMSO", "CP-724714"],
-                                      "pert_id": ["DMSO", "BRD-K76908866"]}, )
+                                      "pert_id": ["DMSO", "BRD-K76908866"]},
+                                     columns=["pert_id", "pert_iname"])
         e_col_meta_df.index = pd.Index(
             ["LJP005_A375_24H_X1_B19:A03", "LJP005_A375_24H_X1_B19:A07"])
 
@@ -264,8 +267,8 @@ class TestParseGct(unittest.TestCase):
         self.assertEqual(out_g.data_df.shape, (3, 2))
 
         # N.B. returned object should have same order as input
-        pd.util.testing.assert_frame_equal(e_data_df, out_g.data_df, check_less_precise=2, check_names=False)
-        pd.util.testing.assert_frame_equal(e_col_meta_df, out_g.col_metadata_df[["pert_id", "pert_iname"]], check_names=False)
+        pd.testing.assert_frame_equal(e_data_df, out_g.data_df, check_less_precise=2, check_names=False)
+        pd.testing.assert_frame_equal(e_col_meta_df, out_g.col_metadata_df[["pert_id", "pert_iname"]], check_names=False)
 
     def test_parse_gct_int_ids(self):
         path = os.path.join(FUNCTIONAL_TESTS_PATH, "test_parse_gct_int_ids.gct")
