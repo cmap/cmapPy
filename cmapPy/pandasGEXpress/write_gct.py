@@ -32,7 +32,7 @@ def write(gctoo, out_fname, data_null="NaN", metadata_null="-666", filler_null="
     # Create handle for output file
     if not out_fname.endswith(".gct"):
         out_fname += ".gct"
-    f = open(out_fname, "wb")
+    f = open(out_fname, "w")
 
     # Write first two lines
     dims = [str(gctoo.data_df.shape[0]), str(gctoo.data_df.shape[1]),
@@ -82,6 +82,7 @@ def write_top_half(f, row_metadata_df, col_metadata_df, metadata_null, filler_nu
     # Initialize the top half of the gct including the third line
     size_of_top_half_df = (1 + col_metadata_df.shape[1],
                            1 + row_metadata_df.shape[1] + col_metadata_df.shape[0])
+
     top_half_df = pd.DataFrame(np.full(size_of_top_half_df, filler_null, dtype=object))
 
     # Assemble the third line of the gct: "id", then rhds, then cids
@@ -93,7 +94,8 @@ def write_top_half(f, row_metadata_df, col_metadata_df, metadata_null, filler_nu
     # Insert the column metadata, but first convert to strings and replace NaNs
     col_metadata_indices = (range(1, top_half_df.shape[0]),
                             range(1 + row_metadata_df.shape[1], top_half_df.shape[1]))
-    top_half_df.iloc[col_metadata_indices[0], col_metadata_indices[1]] = (
+    # pd.DataFrame.at to insert into dataframe(python3)
+    top_half_df.at[col_metadata_indices[0], col_metadata_indices[1]] = (
         col_metadata_df.astype(str).replace("nan", value=metadata_null).T.values)
 
     # Write top_half_df to file
