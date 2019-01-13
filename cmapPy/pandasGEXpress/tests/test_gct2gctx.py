@@ -59,7 +59,7 @@ class TestGCT2GCTx(unittest.TestCase):
 
 			gct2gctx.gct2gctx_main(args)
 
-		self.assertTrue('Row ids in matrix missing from annotations file' in context.exception)
+		self.assertTrue('Row ids in matrix missing from annotations file', context.exception)
 
 		with self.assertRaises(Exception) as context:
 			no_meta = "functional_tests/mini_gctoo_for_testing_nometa.gct"
@@ -70,7 +70,7 @@ class TestGCT2GCTx(unittest.TestCase):
 
 			gct2gctx.gct2gctx_main(args)
 
-		self.assertTrue('Column ids in matrix missing from annotations file' in context.exception)
+		self.assertTrue('Column ids in matrix missing from annotations file', context.exception)
 
 
 if __name__ == "__main__":
