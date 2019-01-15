@@ -29,7 +29,8 @@ class TestDifferential(unittest.TestCase):
              'C': [0.2248, -0.1349, 1.349],
              'B': [-1.5738, 0.6745, 0.0], 'E': [1.1242, 0.6745, 0.0],
              'D': [-0.2248, -0.9443, -2], # last val should be -2 bc of thresholding
-             'F': [0.6745, 0.1349, 0.0]}))
+             'F': [0.6745, 0.1349, 0.0]},
+            columns=['A', 'C', 'B', 'E', 'D', 'F']))
 
         # test diff_method assertion
         with self.assertRaises(AssertionError) as e:
@@ -55,7 +56,8 @@ class TestDifferential(unittest.TestCase):
              'B': [-7.4194, 0.6745, 0.0],
              'E': [0.6745, 0.6745, 0.0],
              'D': [-3.3725, -3.3725, -10.0],
-             'F': [-0.6745, -0.6745, 0.0]}))
+             'F': [-0.6745, -0.6745, 0.0]},
+            columns=['A', 'C', 'B', 'E', 'D', 'F']))
 
         pd.testing.assert_frame_equal(vc_zscores2.data_df, pd.DataFrame(
             {'A': [-2.0235, -0.6745, -0.3372],
@@ -63,7 +65,8 @@ class TestDifferential(unittest.TestCase):
              'B': [-4.7214, 2.0235, 0.1686],
              'E': [3.3725, 2.0235, 0.1686],
              'D': [-0.6745, -0.6745, -0.6745],
-             'F': [2.0235, 1.1242, 0.1686]}))
+             'F': [2.0235, 1.1242, 0.1686]},
+            columns=['A', 'C', 'B', 'E', 'D', 'F']))
 
         # test group_val assertion
         with self.assertRaises(AssertionError) as e:
