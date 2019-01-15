@@ -46,9 +46,9 @@ class TestWriteGct(unittest.TestCase):
         # Read in the gct and verify that it's the same as gctoo
         new_gct = pg.parse(out_name)
 
-        pd.testing.assert_frame_equal(new_gct.data_df, gctoo.data_df)
-        pd.testing.assert_frame_equal(new_gct.row_metadata_df, gctoo.row_metadata_df)
-        pd.testing.assert_frame_equal(new_gct.col_metadata_df, gctoo.col_metadata_df)
+        pd.util.testing.assert_frame_equal(new_gct.data_df, gctoo.data_df)
+        pd.util.testing.assert_frame_equal(new_gct.row_metadata_df, gctoo.row_metadata_df)
+        pd.util.testing.assert_frame_equal(new_gct.col_metadata_df, gctoo.col_metadata_df)
 
         # Also check that missing values were written to the file as expected
         in_df = pd.read_csv(out_name, sep="\t", skiprows=2, keep_default_na=False)
@@ -61,7 +61,7 @@ class TestWriteGct(unittest.TestCase):
     def test_write_version_and_dims(self):
         # Write
         fname = "test_file.gct"
-        f = open(fname, "w")
+        f = open(fname, "wb")
         wg.write_version_and_dims("1.3", ["1", "2", "3", "4"], f)
         f.close()
 
@@ -79,7 +79,7 @@ class TestWriteGct(unittest.TestCase):
     def test_write_top_half(self):
         # Write
         fname = "test_write_top_half.tsv"
-        f = open(fname, "w")
+        f = open(fname, "wb")
         wg.write_top_half(f, self.row_metadata_df, self.col_metadata_df, "-666", "-666")
         f.close()
 
@@ -91,13 +91,13 @@ class TestWriteGct(unittest.TestCase):
              ["pert_iname", "-666", "-666", "-666", "DMSO", "DMSO", "DMSO"],
              ["pert_itime", "-666", "-666", "-666", "24 h", "24 h", "24 h"]])
         top_half = pd.read_csv(fname, sep="\t", header=None)
-        pd.testing.assert_frame_equal(top_half, e_top_half)
+        pd.util.testing.assert_frame_equal(top_half, e_top_half)
         os.remove(fname)
 
     def test_write_bottom_half(self):
         # Write
         fname = "test_write_bottom_half.tsv"
-        f = open(fname, "w")
+        f = open(fname, "wb")
         wg.write_bottom_half(f, self.row_metadata_df, self.data_df, "NaN", "%.1f", "-666")
         f.close()
 
@@ -108,7 +108,7 @@ class TestWriteGct(unittest.TestCase):
              ["rid3", "Analyte 13", 13, "dp53", 13., 17., -19.],
              ["rid4", "Analyte 14", 14, "dp54", 0., 23., 29.]])
         bottom_half = pd.read_csv(fname, sep="\t", header=None)
-        pd.testing.assert_frame_equal(bottom_half, e_bottom_half)
+        pd.util.testing.assert_frame_equal(bottom_half, e_bottom_half)
         os.remove(fname)
 
     def test_append_dims_and_file_extension(self):
@@ -136,9 +136,9 @@ class TestWriteGct(unittest.TestCase):
         # Read in new gct file
         l1000_out_gct = pg.parse(l1000_out_path)
 
-        pd.testing.assert_frame_equal(l1000_in_gct.data_df, l1000_out_gct.data_df)
-        pd.testing.assert_frame_equal(l1000_in_gct.row_metadata_df, l1000_out_gct.row_metadata_df)
-        pd.testing.assert_frame_equal(l1000_in_gct.col_metadata_df, l1000_out_gct.col_metadata_df)
+        pd.util.testing.assert_frame_equal(l1000_in_gct.data_df, l1000_out_gct.data_df)
+        pd.util.testing.assert_frame_equal(l1000_in_gct.row_metadata_df, l1000_out_gct.row_metadata_df)
+        pd.util.testing.assert_frame_equal(l1000_in_gct.col_metadata_df, l1000_out_gct.col_metadata_df)
 
         # Clean up
         os.remove(l1000_out_path)
@@ -156,9 +156,9 @@ class TestWriteGct(unittest.TestCase):
         # Read in new gct file
         p100_out_gct = pg.parse(p100_out_path)
 
-        pd.testing.assert_frame_equal(p100_in_gct.data_df, p100_out_gct.data_df)
-        pd.testing.assert_frame_equal(p100_in_gct.row_metadata_df, p100_out_gct.row_metadata_df)
-        pd.testing.assert_frame_equal(p100_in_gct.col_metadata_df, p100_out_gct.col_metadata_df)
+        pd.util.testing.assert_frame_equal(p100_in_gct.data_df, p100_out_gct.data_df)
+        pd.util.testing.assert_frame_equal(p100_in_gct.row_metadata_df, p100_out_gct.row_metadata_df)
+        pd.util.testing.assert_frame_equal(p100_in_gct.col_metadata_df, p100_out_gct.col_metadata_df)
 
         # Clean up
         os.remove(p100_out_path)
