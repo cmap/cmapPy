@@ -173,13 +173,10 @@ def write_metadata(hdf5_out, dim, metadata_df, convert_back_to_neg_666, gzip_com
 
     # write metadata columns to their own arrays
     for field in [entry for entry in metadata_fields if entry != "ind"]:
-        print(field, numpy.array(metadata_df.loc[:, field]).dtype.type)
         if numpy.array(metadata_df.loc[:, field]).dtype.type in (numpy.str_, numpy.object_):
             array_write = numpy.array(metadata_df.loc[:, field]).astype('S')
-            print(array_write.dtype)
         else:
             array_write = numpy.array(metadata_df.loc[:, field])
-            print(array_write.dtype)
         hdf5_out.create_dataset(metadata_node_name + "/" + field,
                                 data=array_write,
                                 compression=gzip_compression)
