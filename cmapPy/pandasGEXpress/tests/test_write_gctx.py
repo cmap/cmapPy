@@ -63,7 +63,7 @@ class TestWriteGctx(unittest.TestCase):
         hdf5_file = h5py.File(fn)
         hdf5_v1 = hdf5_file.attrs[write_gctx.version_attr]
         hdf5_file.close()
-        self.assertEqual(hdf5_v1, write_gctx.version_number)
+        self.assertEqual(hdf5_v1.decode(), write_gctx.version_number)
         os.remove(fn)
 
         # case 2: gctoo obj does have version, but it is not used when writing
@@ -74,7 +74,7 @@ class TestWriteGctx(unittest.TestCase):
         hdf5_file = h5py.File(fn)
         hdf5_v2 = hdf5_file.attrs[write_gctx.version_attr]
         hdf5_file.close()
-        self.assertEqual(hdf5_v2, write_gctx.version_number)
+        self.assertEqual(hdf5_v2.decode(), write_gctx.version_number)
         os.remove(fn)
 
     def test_calculate_elem_per_kb(self):

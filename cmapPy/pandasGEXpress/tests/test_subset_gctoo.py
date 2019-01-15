@@ -52,15 +52,15 @@ class TestSubsetGCToo(unittest.TestCase):
 
         # bools
         out_rows = sg.get_rows_to_keep(self.in_gct, row_bool=[True, True, True, False])
-        self.assertItemsEqual(out_rows, ["a", "b", "c"])
+        self.assertCountEqual(out_rows, ["a", "b", "c"])
 
         # rid and exclude_rid
         out_rows2 = sg.get_rows_to_keep(self.in_gct, rid=["a", "c", "d"], exclude_rid=["d"])
-        self.assertItemsEqual(out_rows2, ["a", "c"])
+        self.assertCountEqual(out_rows2, ["a", "c"])
 
         # keep all rows
         out_rows3 = sg.get_rows_to_keep(self.in_gct)
-        self.assertItemsEqual(out_rows3, ["a", "b", "c", "d"])
+        self.assertCountEqual(out_rows3, ["a", "b", "c", "d"])
 
         with self.assertRaises(AssertionError) as e:
             sg.get_rows_to_keep(self.in_gct, row_bool=[True, False, True])
@@ -86,15 +86,15 @@ class TestSubsetGCToo(unittest.TestCase):
 
         # bools
         out_cols = sg.get_cols_to_keep(self.in_gct, col_bool=[False, True, True])
-        self.assertItemsEqual(out_cols, ["f", "g"])
+        self.assertCountEqual(out_cols, ["f", "g"])
 
         # cid and exclude_cid
         out_cols2 = sg.get_cols_to_keep(self.in_gct, cid=["g", "e", "f"], exclude_cid=["f"], cidx=None)
-        self.assertItemsEqual(out_cols2, ["g", "e"])
+        self.assertCountEqual(out_cols2, ["g", "e"])
 
         # keep all cols
         out_cols3 = sg.get_cols_to_keep(self.in_gct)
-        self.assertItemsEqual(out_cols3, ["e", "f", "g"])
+        self.assertCountEqual(out_cols3, ["e", "f", "g"])
 
         with self.assertRaises(AssertionError) as e:
             sg.get_cols_to_keep(self.in_gct, col_bool=[True, False, True, True])
