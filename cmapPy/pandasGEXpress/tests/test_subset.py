@@ -14,7 +14,7 @@ class TestSubset(unittest.TestCase):
     def test_read_arg(self):
         arg_path = os.path.join("functional_tests", "test_subset_rid.grp")
         rids = sg._read_arg([arg_path])
-        self.assertCountEqual(rids, ["a", "Bb", "c"])
+        self.assertItemsEqual(rids, ["a", "Bb", "c"])
 
     def test_read_arg_bad(self):
         with self.assertRaises(AssertionError) as e:

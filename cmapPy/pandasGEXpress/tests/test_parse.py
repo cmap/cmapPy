@@ -75,7 +75,7 @@ class TestParse(unittest.TestCase):
 
         # parse w/o convert_neg_666
         mg2_alt = parse.parse("functional_tests/mini_gctoo_for_testing.gct", convert_neg_666 = False)
-        self.assertCountEqual(mg2_alt.col_metadata_df["mfc_plate_id"].values.tolist(),
+        self.assertItemsEqual(mg2_alt.col_metadata_df["mfc_plate_id"].values.tolist(),
                               [-666] * 6)
 
         # parse in gct with subsetting
@@ -84,7 +84,7 @@ class TestParse(unittest.TestCase):
                           cidx=[0, 2], rid=[my_rid])
 
         self.assertEqual(mg3.data_df.shape, (1, 2))
-        self.assertCountEqual(mg3.data_df.values.flatten().tolist(), [1., 3.])
+        self.assertItemsEqual(mg3.data_df.values.flatten().tolist(), [1., 3.])
         self.assertEqual(mg3.row_metadata_df.index[0], my_rid)
 
 if __name__ == "__main__":

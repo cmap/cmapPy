@@ -8,8 +8,7 @@ import cmapPy.pandasGEXpress.diff_gctoo as diff_gctoo
 logger = logging.getLogger(setup_logger.LOGGER_NAME)
 
 test_mat = pd.DataFrame({'A':[4,2,3], 'B': [2,8,6], 'C': [6,5,9],
-                         'D': [5,2,1], 'E':[8,8,6], 'F': [7,6,6]},
-                        columns=['A','C','B','E','D','F'])
+                         'D': [5,2,1], 'E':[8,8,6], 'F': [7,6,6]})
 test_col_meta = pd.DataFrame(
     {'pert_type': ['trt_cp', 'trt_cp', 'trt_cp',
                    'trt_cp', 'ctl_vehicle', 'ctl_vehicle'],
@@ -24,13 +23,12 @@ class TestDifferential(unittest.TestCase):
         pc_zscores = diff_gctoo.diff_gctoo(test_gctoo, plate_control=True, lower_diff_thresh=-2)
         self.assertTrue(pc_zscores.data_df.shape == (3, 6))
 
-        pd.testing.assert_frame_equal(pc_zscores.data_df, pd.DataFrame(
+        pd.util.testing.assert_frame_equal(pc_zscores.data_df, pd.DataFrame(
             {'A': [-0.6745, -0.9443, -1.349],
              'C': [0.2248, -0.1349, 1.349],
              'B': [-1.5738, 0.6745, 0.0], 'E': [1.1242, 0.6745, 0.0],
              'D': [-0.2248, -0.9443, -2], # last val should be -2 bc of thresholding
-             'F': [0.6745, 0.1349, 0.0]},
-            columns=['A', 'C', 'B', 'E', 'D', 'F']))
+             'F': [0.6745, 0.1349, 0.0]}))
 
         # test diff_method assertion
         with self.assertRaises(AssertionError) as e:
@@ -50,23 +48,21 @@ class TestDifferential(unittest.TestCase):
         self.assertTrue(vc_zscores1.data_df.shape == (3, 6))
         self.assertTrue(vc_zscores2.data_df.shape == (3, 6))
 
-        pd.testing.assert_frame_equal(vc_zscores1.data_df, pd.DataFrame(
+        pd.util.testing.assert_frame_equal(vc_zscores1.data_df, pd.DataFrame(
             {'A': [-4.7214, -3.3725, -10.0], # check for thresholding
              'C': [-2.0235, -1.349, 10.0],
              'B': [-7.4194, 0.6745, 0.0],
              'E': [0.6745, 0.6745, 0.0],
              'D': [-3.3725, -3.3725, -10.0],
-             'F': [-0.6745, -0.6745, 0.0]},
-            columns=['A', 'C', 'B', 'E', 'D', 'F']))
+             'F': [-0.6745, -0.6745, 0.0]}))
 
-        pd.testing.assert_frame_equal(vc_zscores2.data_df, pd.DataFrame(
+        pd.util.testing.assert_frame_equal(vc_zscores2.data_df, pd.DataFrame(
             {'A': [-2.0235, -0.6745, -0.3372],
              'C': [0.6745, 0.6745, 0.6745],
              'B': [-4.7214, 2.0235, 0.1686],
              'E': [3.3725, 2.0235, 0.1686],
              'D': [-0.6745, -0.6745, -0.6745],
-             'F': [2.0235, 1.1242, 0.1686]},
-            columns=['A', 'C', 'B', 'E', 'D', 'F']))
+             'F': [2.0235, 1.1242, 0.1686]}))
 
         # test group_val assertion
         with self.assertRaises(AssertionError) as e:
