@@ -12,7 +12,6 @@ install:
 # environments to use for tests (below)
 env: 
   - TEST_DIR=cmapPy/pandasGEXpress/tests
-  - TEST_DIR=cmapPy/pandasGEXpress/tests_py3/tests
   - TEST_DIR=cmapPy/set_io/tests
   - TEST_DIR=cmapPy/math/tests
 
