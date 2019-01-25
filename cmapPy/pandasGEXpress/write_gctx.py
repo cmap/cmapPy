@@ -181,4 +181,3 @@ def write_metadata(hdf5_out, dim, metadata_df, convert_back_to_neg_666, gzip_com
                                 data=array_write,
                                 compression=gzip_compression)
 
-#np.array([np.string_(s) for s in list(b)])
