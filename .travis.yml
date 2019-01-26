@@ -3,6 +3,7 @@ language: python
 # python versioning 
 python:
   - 2.7
+  - 3.5
 
 # requirements
 install: 
@@ -11,7 +12,9 @@ install:
 
 # environments to use for tests (below)
 env: 
+  - TEST_DIR=cmapPy/pandasGEXpress/tests
   - TEST_DIR=cmapPy/pandasGEXpress/tests/python2_tests
+  - TEST_DIR=cmapPy/pandasGEXpress/tests/python3_tests
   - TEST_DIR=cmapPy/set_io/tests
   - TEST_DIR=cmapPy/math/tests
 
@@ -22,4 +25,4 @@ script: cd $TEST_DIR && python -m unittest discover -p "test_*.py"
 branches:
   only:
     - master
-    - python3_compatible
+    - travis_testing
