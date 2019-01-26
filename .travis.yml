@@ -1,7 +1,5 @@
 language: python
 
-<<<<<<< HEAD
-=======
 # python versioning 
 python:
   - 2.7
