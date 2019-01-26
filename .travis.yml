@@ -11,12 +11,20 @@ install:
   - python setup.py develop
 
 # environments to use for tests (below)
-env: 
-  - TEST_DIR=cmapPy/pandasGEXpress/tests
-  - TEST_DIR=cmapPy/pandasGEXpress/tests/python2_tests
-  - TEST_DIR=cmapPy/pandasGEXpress/tests/python3_tests
-  - TEST_DIR=cmapPy/set_io/tests
-  - TEST_DIR=cmapPy/math/tests
+matrix:
+        include:
+                - python: "2.7"
+                  env:
+                          - TEST_DIR=cmapPy/pandasGEXpress/tests
+                          - TEST_DIR=cmapPy/pandasGEXpress/tests/python2_tests
+                          - TEST_DIR=cmapPy/set_io/tests
+                          - TEST_DIR=cmapPy/math/tests
+                  -python: "3.6"
+                  env:
+                          - TEST_DIR=cmapPy/pandasGEXpress/tests
+                          - TEST_DIR=cmapPy/pandasGEXpress/tests/python3_tests
+                          - TEST_DIR=cmapPy/set_io/tests
+                          - TEST_DIR=cmapPy/math/tests
 
 # run all tests in each test dir 
 script: cd $TEST_DIR && python -m unittest discover -p "test_*.py"
