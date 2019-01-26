@@ -1,26 +1,26 @@
 language: python
 
-# python versioning 
-python:
-  - 2.7
-
 # requirements
 install: 
   - pip install -r requirements.txt
   - python setup.py develop
 
-# environments to use for tests (below)
-env: 
-  - TEST_DIR=cmapPy/pandasGEXpress/tests/python2_tests
-  - IO_TEST_DIR=cmapPy/set_io/tests
-  - MATH_TEST_DIR=cmapPy/math/tests
+matrix:
+  include:
+    - language: python
+      python: 2.7
+      before_script:
+        - cd cmapPy/pandasGEXpress/tests/python2_tests
+      script:
+        - python -m unittest discover -p "test_*.py"
 
-# run all tests in each test dir 
-script:
-  - cd $TEST_DIR && python -m unittest discover -p "test_*.py"
-  - cd $IO_TEST_DIR && python -m unittest discover -p "test_*.py"
-  - cd $MATH_TEST_DIR && python -m unittest discover -p "test_*.py"
-
+    - language: python
+      python: 3.5
+      before_script:
+        - cd cmapPy/pandasGEXpress/tests/python3_tests
+      script:
+        - python -m unittest discover -p "test_*.py"
+      
 # what branches of github to use
 branches:
   only:
