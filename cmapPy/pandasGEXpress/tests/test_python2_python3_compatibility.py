@@ -19,7 +19,7 @@ FUNCTIONAL_TESTS_PATH = "functional_tests"
 logger = logging.getLogger(setup_logger.LOGGER_NAME)
 
 
-class TestWriteGct(unittest.TestCase):
+class TestPython2Python3Compatibility(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         # Create GCtoo object with same high precision values.
