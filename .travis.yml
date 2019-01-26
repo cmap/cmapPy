@@ -19,9 +19,9 @@ env:
 
 # run all tests in each test dir 
 script:
-        - cd $TEST_DIR && python -m unittest discover -p "test_*.py"
-        - cd $IO_TEST_DIR && python -m unittest discover -p "test_*.py"
-        - cd $MATH_TEST_DIR && python -m unittest discover -p "test_*.py"
+  - cd $TEST_DIR && python -m unittest discover -p "test_*.py"
+  - cd $IO_TEST_DIR && python -m unittest discover -p "test_*.py"
+  - cd $MATH_TEST_DIR && python -m unittest discover -p "test_*.py"
 
 # what branches of github to use
 branches:
