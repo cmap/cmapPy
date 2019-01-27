@@ -14,32 +14,44 @@ matrix:
       script:
         - cd $TEST_DIR && python -m unittest discover -p "test_*.py"
 
-    # run pandasGEXpress python2_tests         
+    # run pandasGEXpress python3_tests         
     - python: "3.6"
       env: TEST_DIR=cmapPy/pandasGEXpress/tests/python3_tests
       script:
         - cd $TEST_DIR && python -m unittest discover -p "test_*.py"
     
-    # run set_io tests for python2 and python3    
-    - python: 
-        - "2.7"
-        - "3.6"
+    # run set_io tests for python2    
+    - python: "2.7"
       env: TEST_DIR=cmapPy/set_io/tests
       script:
         - cd $TEST_DIR && python -m unittest discover -p "test_*.py"
-     
-    # run math tests for python2 and python3
-    - python:
-        - "2.7"
-        - "3.6"
-      env: TEST_DIR=cmapPy/math/tests
+
+    # run set_io tests for python3    
+    - python: "3.6"
+      env: TEST_DIR=cmapPy/set_io/tests
       script:
         - cd $TEST_DIR && python -m unittest discover -p "test_*.py"
       
-    # run python2_python3_comaptibility test for python2 and python3        
-    - python: 
-        - "2.7"
-        - "3.6"
+    # run math tests for python2
+    - python: "2.7"
+      env: TEST_DIR=cmapPy/math/tests
+      script:
+        - cd $TEST_DIR && python -m unittest discover -p "test_*.py"
+    
+     # run math tests for python3
+    - python: "3.6"
+      env: TEST_DIR=cmapPy/math/tests
+      script:
+        - cd $TEST_DIR && python -m unittest discover -p "test_*.py"
+
+    # run python2_python3_comaptibility tests for python2      
+    - python: "2.7"
+      env: TEST_DIR=cmapPy/pandasGEXpress/tests
+      script:
+        - cd $TEST_DIR && python -m unittest discover -p test_python2_python3_compatibility.py
+   
+    # run python2_python3_comaptibility tests for python3        
+    - python: "3.6"
       env: TEST_DIR=cmapPy/pandasGEXpress/tests
       script:
         - cd $TEST_DIR && python -m unittest discover -p test_python2_python3_compatibility.py
