@@ -39,17 +39,13 @@ matrix:
 
     - language: python
       python: 2.7
-      env:
-        - TEST_DIR == cmapPy/pandasGEXpress/tests/     
       script:
-        - cd $TEST_DIR && python -m unittest discover -p test_python2_python3_compatibility.py
+        - python -m unittest discover -p cmapPy/pandasGEXpress/tests/test_python2_python3_compatibility.py
 
     - language: python
       python: 3.5
-      env:      
-        - TEST_DIR = cmapPy/pandasGEXpress/tests/             
       script:
-        - cd $TEST_DIR && python -m unittest discover -p test_python2_python3_compatibility.py
+        - python -m unittest discover -p cmapPy/pandasGEXpress/tests/test_python2_python3_compatibility.py
      
 # what branches of github to use
 branches:
