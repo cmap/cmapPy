@@ -24,18 +24,22 @@ matrix:
     - language: python
       python: 
         - "2.7"
-      python:
         - "3.5"
-      env:
-        - TEST_DIR=cmapPy/math/tests
-        - TEST_DIR=cmapPy/set_io/tests
+      env: TEST_DIR=cmapPy/set_io/tests
       script:
         - cd $TEST_DIR && python -m unittest discover -p "test_*.py"
-
+     
+    - language: python
+      python:
+        - "2.7"
+        - "3.5"
+      env: TEST_DIR=cmapPy/math/tests
+      script:
+        - cd $TEST_DIR && python -m unittest discover -p "test_*.py"
+      
     - language: python
       python: 
         - "2.7"
-      python:
         - "3.5"
       before_script:
         - cd cmapPy/pandasGEXpress/tests/
