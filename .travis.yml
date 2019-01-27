@@ -1,3 +1,4 @@
+# set language
 language: python
 
 # requirements
@@ -7,44 +8,41 @@ install:
 
 matrix:
   include:
-    - language: python
-      python: 2.7
-      before_script:
-        - cd cmapPy/pandasGEXpress/tests/python2_tests
+    # run pandasGEXpress python2_tests      
+    - python: 2.7
+      env: TEST_DIR=cmapPy/pandasGEXpress/tests/python2_tests 
       script:
-        - python -m unittest discover -p "test_*.py"
+        - cd $TEST_DIR && python -m unittest discover -p "test_*.py"
 
-    - language: python
-      python: 3.5
-      before_script:
-              - cd cmapPy/pandasGEXpress/tests/python3_tests
+    # run pandasGEXpress python2_tests         
+    - python: 3.5
+      env: TEST_DIR=cmapPy/pandasGEXpress/tests/python3_tests
       script:
-        - python -m unittest discover -p "test_*.py"
-
-    - language: python
-      python: 
+        - cd $TEST_DIR && python -m unittest discover -p "test_*.py"
+    
+    # run set_io tests for python2 and python3    
+    - python: 
         - "2.7"
         - "3.5"
       env: TEST_DIR=cmapPy/set_io/tests
       script:
         - cd $TEST_DIR && python -m unittest discover -p "test_*.py"
      
-    - language: python
-      python:
+    # run math tests for python2 and python3
+    - python:
         - "2.7"
         - "3.5"
       env: TEST_DIR=cmapPy/math/tests
       script:
         - cd $TEST_DIR && python -m unittest discover -p "test_*.py"
       
-    - language: python
-      python: 
+    # run python2_python3_comaptibility test for python2 and python3        
+    - python: 
         - "2.7"
         - "3.5"
-      before_script:
-        - cd cmapPy/pandasGEXpress/tests/
+      env: TEST_DIR=cmapPy/pandasGEXpress/tests
       script:
-        - python -m unittest discover -p test_python2_python3_compatibility.py
+        - cd $TEST_DIR && python -m unittest discover -p test_python2_python3_compatibility.py
 
 # what branches of github to use
 branches:
