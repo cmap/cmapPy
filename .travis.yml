@@ -9,13 +9,13 @@ install:
 matrix:
   include:
     # run pandasGEXpress python2_tests      
-    - python: 2.7
+    - python: "2.7"
       env: TEST_DIR=cmapPy/pandasGEXpress/tests/python2_tests 
       script:
         - cd $TEST_DIR && python -m unittest discover -p "test_*.py"
 
     # run pandasGEXpress python2_tests         
-    - python: 3.5
+    - python: "3.6"
       env: TEST_DIR=cmapPy/pandasGEXpress/tests/python3_tests
       script:
         - cd $TEST_DIR && python -m unittest discover -p "test_*.py"
@@ -23,7 +23,7 @@ matrix:
     # run set_io tests for python2 and python3    
     - python: 
         - "2.7"
-        - "3.5"
+        - "3.6"
       env: TEST_DIR=cmapPy/set_io/tests
       script:
         - cd $TEST_DIR && python -m unittest discover -p "test_*.py"
@@ -31,7 +31,7 @@ matrix:
     # run math tests for python2 and python3
     - python:
         - "2.7"
-        - "3.5"
+        - "3.6"
       env: TEST_DIR=cmapPy/math/tests
       script:
         - cd $TEST_DIR && python -m unittest discover -p "test_*.py"
@@ -39,7 +39,7 @@ matrix:
     # run python2_python3_comaptibility test for python2 and python3        
     - python: 
         - "2.7"
-        - "3.5"
+        - "3.6"
       env: TEST_DIR=cmapPy/pandasGEXpress/tests
       script:
         - cd $TEST_DIR && python -m unittest discover -p test_python2_python3_compatibility.py
