@@ -56,14 +56,11 @@ class TestFastCorr(unittest.TestCase):
         x, y = TestFastCorr.build_standard_x_y()
 
         combined = numpy.hstack([x, y])
-        print(combined.shape)
         logger.debug("combined:  {}".format(combined))
         logger.debug("combined.shape:  {}".format(combined.shape))
 
         off_diag_ind = int(combined.shape[1] / 2)
-        print(off_diag_ind)
         raw_ex = numpy.corrcoef(combined, rowvar=False)
-        print(raw_ex)
         logger.debug("raw expected produced from numpy.cov on full combined - raw_ex:  {}".format(raw_ex))
         ex = raw_ex[:off_diag_ind, off_diag_ind:]
         logger.debug("expected ex:  {}".format(ex))
