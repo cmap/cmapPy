@@ -24,16 +24,16 @@ matrix:
     - language: python
       python: 2.7
       env:
-        - TEST_DIR = cmapPy/math/tests
-        - TEST_DIR = cmapPy/set_io/tests
+        - TEST_DIR=cmapPy/math/tests
+        - TEST_DIR=cmapPy/set_io/tests
       script:
         - cd $TEST_DIR && python -m unittest discover -p "test_*.py"
     
     - language: python
       python: 3.5
       env:
-        - TEST_DIR = cmapPy/math/tests
-        - TEST_DIR = cmapPy/set_io/tests
+        - TEST_DIR=cmapPy/math/tests
+        - TEST_DIR=cmapPy/set_io/tests
       script:
         - cd $TEST_DIR && python -m unittest discover -p "test_*.py"
 
