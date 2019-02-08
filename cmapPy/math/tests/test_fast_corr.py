@@ -59,8 +59,7 @@ class TestFastCorr(unittest.TestCase):
         logger.debug("combined:  {}".format(combined))
         logger.debug("combined.shape:  {}".format(combined.shape))
 
-        off_diag_ind = combined.shape[1] / 2
-
+        off_diag_ind = int(combined.shape[1] / 2)
         raw_ex = numpy.corrcoef(combined, rowvar=False)
         logger.debug("raw expected produced from numpy.cov on full combined - raw_ex:  {}".format(raw_ex))
         ex = raw_ex[:off_diag_ind, off_diag_ind:]
@@ -81,7 +80,7 @@ class TestFastCorr(unittest.TestCase):
         logger.debug("*************happy path x and y, other direction - combined:  {}".format(combined))
         logger.debug("combined.shape:  {}".format(combined.shape))
 
-        off_diag_ind = combined.shape[1] / 2
+        off_diag_ind = int(combined.shape[1] / 2)
 
         raw_ex = numpy.corrcoef(combined, rowvar=False)
         logger.debug("raw expected produced from numpy.cov on full combined - raw_ex:  {}".format(raw_ex))
@@ -118,7 +117,7 @@ class TestFastCorr(unittest.TestCase):
     def test_fast_corr_functional(self):
         logger.debug("*************happy path functional test using randomly generated matrices")
 
-        for i in xrange(num_iterations_functional_tests):
+        for i in range(num_iterations_functional_tests):
             #the dimension containing the observations must have at least size 2
             x_shape = [numpy.random.randint(2, max_dimension_functional_tests),
                 numpy.random.randint(1, max_dimension_functional_tests)]

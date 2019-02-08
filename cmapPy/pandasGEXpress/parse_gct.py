@@ -162,7 +162,7 @@ def parse(file_path, convert_neg_666=True, rid=None, cid=None,
 
 def read_version_and_dims(file_path):
     # Open file
-    f = open(file_path, "rb")
+    f = open(file_path, "r")
 
     # Get version from the first line
     version = f.readline().strip().lstrip("#")

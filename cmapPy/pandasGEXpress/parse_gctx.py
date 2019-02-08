@@ -255,12 +255,14 @@ def parse_metadata_df(dim, meta_group, convert_neg_666):
         curr_dset = meta_group[k]
         temp_array = np.empty(curr_dset.shape, dtype=curr_dset.dtype)
         curr_dset.read_direct(temp_array)
+        # convert all values to str in temp_array so that
+        # to_numeric works consistently with gct and gct_x parser
+        temp_array = temp_array.astype('str')
         header_values[str(k)] = temp_array
         array_index = array_index + 1
 
-    # need to temporarily make dtype of all values str so that to_numeric
-    # works consistently with gct vs gctx parser.
-    meta_df = pd.DataFrame.from_dict(header_values).astype(str)
+
+    meta_df = pd.DataFrame.from_dict(header_values)
 
     # save the ids for later use in the index; we do not want to convert them to
     # numeric

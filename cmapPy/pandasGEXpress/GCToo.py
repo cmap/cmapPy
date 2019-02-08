@@ -227,17 +227,25 @@ def multi_index_df_to_component_dfs(multi_index_df, rid="rid", cid="cid"):
     cids = list(multi_index_df.columns.get_level_values(cid))
 
     # It's possible that the index and/or columns of multi_index_df are not
-    # actually multi-index; need to check for this
-    if isinstance(multi_index_df.index, pd.core.index.MultiIndex):
+    # actually multi-index; need to check for this and there are more than one level in index(python3)
+    if isinstance(multi_index_df.index, pd.MultiIndex):
 
-        # If so, drop rid because it won't go into the body of the metadata
-        mi_df_index = multi_index_df.index.droplevel(rid)
+        # check if there are more than one levels in index (python3)
+        if len(multi_index_df.index.names) > 1:
 
-        # Names of the multiindex levels become the headers
-        rhds = list(mi_df_index.names)
+            # If so, drop rid because it won't go into the body of the metadata
+            mi_df_index = multi_index_df.index.droplevel(rid)
 
-        # Assemble metadata values
-        row_metadata = np.array([mi_df_index.get_level_values(level).values for level in list(rhds)]).T
+            # Names of the multiindex levels become the headers
+            rhds = list(mi_df_index.names)
+
+            # Assemble metadata values
+            row_metadata = np.array([mi_df_index.get_level_values(level).values for level in list(rhds)]).T
+
+        # if there is one level in index (python3), then rhds and row metadata should be empty
+        else:
+            rhds = []
+            row_metadata = []
 
     # If the index is not multi-index, then rhds and row metadata should be empty
     else:
@@ -245,17 +253,24 @@ def multi_index_df_to_component_dfs(multi_index_df, rid="rid", cid="cid"):
         row_metadata = []
 
     # Check if columns of multi_index_df are in fact multi-index
-    if isinstance(multi_index_df.columns, pd.core.index.MultiIndex):
+    if isinstance(multi_index_df.columns, pd.MultiIndex):
 
-        # If so, drop cid because it won't go into the body of the metadata
-        mi_df_columns = multi_index_df.columns.droplevel(cid)
+        # Check if there are more than one levels in columns(python3)
+        if len(multi_index_df.columns.names) > 1:
 
-        # Names of the multiindex levels become the headers
-        chds = list(mi_df_columns.names)
+            # If so, drop cid because it won't go into the body of the metadata
+            mi_df_columns = multi_index_df.columns.droplevel(cid)
 
-        # Assemble metadata values
-        col_metadata = np.array([mi_df_columns.get_level_values(level).values for level in list(chds)]).T
+            # Names of the multiindex levels become the headers
+            chds = list(mi_df_columns.names)
 
+            # Assemble metadata values
+            col_metadata = np.array([mi_df_columns.get_level_values(level).values for level in list(chds)]).T
+
+        # If there is one level in columns (python3), then rhds and row metadata should be empty
+        else:
+            chds = []
+            col_metadata = []
     # If the columns are not multi-index, then rhds and row metadata should be empty
     else:
         chds = []

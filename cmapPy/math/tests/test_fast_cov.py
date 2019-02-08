@@ -151,7 +151,7 @@ class TestFastCov(unittest.TestCase):
         logger.debug("combined:  {}".format(combined))
         logger.debug("combined.shape:  {}".format(combined.shape))
 
-        off_diag_ind = combined.shape[1] / 2
+        off_diag_ind = int(combined.shape[1] / 2)
 
         raw_ex = numpy.cov(combined, rowvar=False)
         logger.debug("raw expected produced from numpy.cov on full combined - raw_ex:  {}".format(raw_ex))
@@ -171,7 +171,7 @@ class TestFastCov(unittest.TestCase):
 
         #happy path x and y, other direction
         combined = numpy.hstack([x.T, y.T])
-        off_diag_ind = combined.shape[1] / 2
+        off_diag_ind = int(combined.shape[1] / 2)
 
         raw_ex = numpy.cov(combined, rowvar=False)
         logger.debug("happy path x and y, other direction, raw expected produced from numpy.cov on full combined - raw_ex:  {}".format(raw_ex))

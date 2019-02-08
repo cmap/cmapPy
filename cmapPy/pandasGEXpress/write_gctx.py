@@ -46,11 +46,11 @@ def write(gctoo_object, out_file_name, convert_back_to_neg_666=True, gzip_compre
     chunk_size = set_data_matrix_chunk_size(gctoo_object.data_df.shape, max_chunk_kb, elem_per_kb)
 
     # write data matrix
-    hdf5_out.create_dataset(data_matrix_node, data=gctoo_object.data_df.transpose().as_matrix(), 
+    hdf5_out.create_dataset(data_matrix_node, data=gctoo_object.data_df.transpose().values,
         dtype=matrix_dtype)
 
     # write col metadata
-    write_metadata(hdf5_out, "col", gctoo_object.col_metadata_df, convert_back_to_neg_666, 
+    write_metadata(hdf5_out, "col", gctoo_object.col_metadata_df, convert_back_to_neg_666,
         gzip_compression=gzip_compression_level)
 
     # write row metadata
@@ -161,7 +161,7 @@ def write_metadata(hdf5_out, dim, metadata_df, convert_back_to_neg_666, gzip_com
         logger.error("'dim' argument must be either 'row' or 'col'!")
 
     # write id field to expected node
-    hdf5_out.create_dataset(metadata_node_name + "/id", data=[str(x) for x in metadata_df.index], 
+    hdf5_out.create_dataset(metadata_node_name + "/id", data=[numpy.string_(x) for x in metadata_df.index],
         compression=gzip_compression)
 
     metadata_fields = list(metadata_df.columns.copy())
@@ -173,6 +173,11 @@ def write_metadata(hdf5_out, dim, metadata_df, convert_back_to_neg_666, gzip_com
 
     # write metadata columns to their own arrays
     for field in [entry for entry in metadata_fields if entry != "ind"]:
+        if numpy.array(metadata_df.loc[:, field]).dtype.type in (numpy.str_, numpy.object_):
+            array_write = numpy.array(metadata_df.loc[:, field]).astype('S')
+        else:
+            array_write = numpy.array(metadata_df.loc[:, field])
         hdf5_out.create_dataset(metadata_node_name + "/" + field,
-                                data=numpy.array(list(metadata_df.loc[:, field])), 
+                                data=array_write,
                                 compression=gzip_compression)
+
