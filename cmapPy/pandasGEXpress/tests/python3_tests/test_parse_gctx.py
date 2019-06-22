@@ -135,6 +135,21 @@ class TestParseGctx(unittest.TestCase):
         mg12 = parse_gctx.parse("../functional_tests/mini_gctoo_for_testing.gctx", col_meta_only=True)
         pandas_testing.assert_frame_equal(mg12, mg1.col_metadata_df)
 
+        # test with sort_row_meta False and ridx
+        mg13 = parse_gctx.parse("../functional_tests/mini_gctoo_for_testing.gctx",)
+
+        # test with sort_col_meta False and cidx
+        mg14 = 
+
+        
+        # test with sort_row_meta and sort_col_meta both False and ridx and cidx
+        mg15 = 
+
+
+        # test with sort_row_meta and sort_col_meta both False and string rid and cid
+        mg16 = 
+
+
     def test_parse_rid_as_entrez_id(self):
         input_file = "../functional_tests/test_parse_gctx_rid_entrez_id.gctx"
         g = parse_gctx.parse(input_file)
