@@ -41,7 +41,8 @@ def make(convert_neg_666=True):
     mini_meta_dict["zmad_ref"] = zmad_ref
     mini_meta_dict["distil_nsample"] = distil_nsample
     mini_meta_dict["mfc_plate_id"] = mfc_plate_id
-    mini_row_metadata = pandas.DataFrame(mini_meta_dict)
+    mini_row_metadata = pandas.DataFrame(mini_meta_dict,
+                                         columns=['id', 'count_cv', 'distil_nsample', 'distil_ss', 'mfc_plate_id', 'zmad_ref'])
 
     if convert_neg_666:
         mini_row_metadata = mini_row_metadata.replace([-666, "-666", -666.0], [numpy.nan, numpy.nan, numpy.nan])
@@ -72,12 +73,12 @@ def make(convert_neg_666=True):
     mini_src = "mini_gctoo.gctx"
 
     mini_row_metadata_df = mini_row_metadata
-    mini_row_metadata_df.set_index("id", inplace=True)
+    mini_row_metadata_df.set_index("id", inplace=True, drop=True)
     mini_row_metadata.index.name = "rid"
     mini_row_metadata_df.columns.name = "rhd"
 
     mini_col_metadata_df = mini_col_metadata
-    mini_col_metadata_df.set_index("id", inplace=True)
+    mini_col_metadata_df.set_index("id", inplace=True, drop=True)
     mini_col_metadata.index.name = "cid"
     mini_col_metadata_df.columns.name = "chd"
 
