@@ -5,7 +5,7 @@ import cmapPy.pandasGEXpress.setup_GCToo_logger as setup_logger
 import cmapPy.set_io.gmt as gmt
 
 logger = logging.getLogger(setup_logger.LOGGER_NAME)
-FUNCTIONAL_TESTS_DIR = "functional_tests"
+FUNCTIONAL_TESTS_DIR = "cmapPy/set_io/tests/functional_tests/"
 
 
 class TestGMT(unittest.TestCase):
