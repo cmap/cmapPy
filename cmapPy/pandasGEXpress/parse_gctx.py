@@ -76,12 +76,19 @@ def parse(gctx_file_path, convert_neg_666=True, rid=None, cid=None,
         row_meta = parse_metadata_df("row", row_dset, convert_neg_666)
 
         # validate optional input ids & get indexes to subset by
-        (sorted_ridx, sorted_cidx) = check_and_order_id_inputs(rid, ridx, cid, cidx, row_meta, None, sort_row_meta, sort_col_meta)
+        (sorted_ridx, sorted_cidx) = check_and_order_id_inputs(rid, ridx, cid, cidx, row_meta, None, 
+                                                                sort_row_meta = True, sort_col_meta = True)
 
         gctx_file.close()
 
         # subset if specified, then return
         row_meta = row_meta.iloc[sorted_ridx]
+
+        if not sort_row_meta:
+            (unsorted_ridx, _) = check_and_order_id_inputs(rid, ridx, cid, cidx, row_meta, None,
+                                                      sort_row_meta, sort_row_meta)
+            row_meta = row_meta.iloc[unsorted_ridx]
+
         return row_meta
     elif col_meta_only:
         # read in col metadata
@@ -89,12 +96,21 @@ def parse(gctx_file_path, convert_neg_666=True, rid=None, cid=None,
         col_meta = parse_metadata_df("col", col_dset, convert_neg_666)
 
         # validate optional input ids & get indexes to subset by
-        (sorted_ridx, sorted_cidx) = check_and_order_id_inputs(rid, ridx, cid, cidx, None, col_meta, sort_row_meta, sort_col_meta)
+        (sorted_ridx, sorted_cidx) = check_and_order_id_inputs(rid, ridx, cid, cidx, None, 
+                                                            col_meta, sort_row_meta = True, sort_col_meta = True)
 
         gctx_file.close()
 
         # subset if specified, then return
         col_meta = col_meta.iloc[sorted_cidx]
+        print(col_meta.index)
+
+        if not sort_col_meta:
+            (_, unsorted_cidx) = check_and_order_id_inputs(rid, ridx, cid, cidx, None, col_meta, 
+                                                        sort_row_meta, sort_col_meta)
+            print("unsorted cidx", unsorted_cidx)
+            col_meta = col_meta.iloc[unsorted_cidx, :]
+
         return col_meta
     else:
         # read in row metadata
@@ -112,26 +128,17 @@ def parse(gctx_file_path, convert_neg_666=True, rid=None, cid=None,
         data_dset = gctx_file[data_node]
         data_df = parse_data_df(data_dset, sorted_ridx, sorted_cidx, row_meta, col_meta)
 
-        row_mapping_df = row_meta.index.tolist()
-        col_mapping_df = col_meta.index.tolist()
-
-        print("here")
-        print(row_mapping_df)
-        print(col_mapping_df)
-
         # (if subsetting) subset metadata
         row_meta = row_meta.iloc[sorted_ridx]
         col_meta = col_meta.iloc[sorted_cidx]
 
+        print(col_meta.index)
         if not sort_col_meta:
             ## in the subsetted and re-indexed dataframe get where new indexes lie
             (_, unsorted_cidx) = check_and_order_id_inputs(rid, ridx, cid, cidx, row_meta, col_meta, 
                                                         sort_row_meta, sort_col_meta)
             
-            #d = {i:t for (i,t) in enumerate(sorted([20,10,15]))}
-            #l = [d[x] for x in [20,10,15]]
-            #[b.index(i) for i in a] 
-            print("unsorted cid", unsorted_cidx)
+            print("unsorted cidx", unsorted_cidx)
             data_df = data_df.iloc[:,unsorted_cidx]
             col_meta = col_meta.iloc[unsorted_cidx,:]
         
