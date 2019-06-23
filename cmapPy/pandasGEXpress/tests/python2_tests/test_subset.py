@@ -12,7 +12,7 @@ logger = logging.getLogger(setup_logger.LOGGER_NAME)
 class TestSubset(unittest.TestCase):
 
     def test_read_arg(self):
-        arg_path = os.path.join("../functional_tests", "test_subset_rid.grp")
+        arg_path = os.path.join("cmapPy/pandasGEXpress/tests/functional_tests/", "test_subset_rid.grp")
         rids = sg._read_arg([arg_path])
         self.assertItemsEqual(rids, ["a", "Bb", "c"])
 
@@ -27,10 +27,10 @@ class TestSubset(unittest.TestCase):
 
     def test_subset_main(self):
 
-        in_gct_path = os.path.join("../functional_tests", "test_subset_in.gct")
-        rid_grp_path = os.path.join("../functional_tests", "test_subset_rid.grp")
-        out_name = os.path.join("../functional_tests", "test_subset_out.gct")
-        expected_out_path = os.path.join("../functional_tests", "test_subset_expected.gct")
+        in_gct_path = os.path.join("cmapPy/pandasGEXpress/tests/functional_tests/", "test_subset_in.gct")
+        rid_grp_path = os.path.join("cmapPy/pandasGEXpress/tests/functional_tests/", "test_subset_rid.grp")
+        out_name = os.path.join("cmapPy/pandasGEXpress/tests/functional_tests/", "test_subset_out.gct")
+        expected_out_path = os.path.join("cmapPy/pandasGEXpress/tests/functional_tests/", "test_subset_expected.gct")
 
         args_string = "-i {} --rid {} -ec {} -o {}".format(
             in_gct_path, rid_grp_path, "f", out_name)

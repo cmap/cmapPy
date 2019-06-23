@@ -17,7 +17,7 @@ import cmapPy.pandasGEXpress.write_gctx as write_gctx
 __author__ = "Oana Enache"
 __email__ = "oana@broadinstitute.org"
 
-FUNCTIONAL_TESTS_PATH = "../functional_tests"
+FUNCTIONAL_TESTS_PATH = "cmapPy/pandasGEXpress/tests/functional_tests/"
 
 logger = logging.getLogger(setup_logger.LOGGER_NAME)
 
@@ -44,7 +44,7 @@ class TestParseGctx(unittest.TestCase):
     def test_parse(self):
         # parse whole thing
         mg1 = mini_gctoo_for_testing.make()
-        mg2 = parse_gctx.parse("../functional_tests/mini_gctoo_for_testing.gctx")
+        mg2 = parse_gctx.parse("cmapPy/pandasGEXpress/tests/functional_tests//mini_gctoo_for_testing.gctx")
 
         pandas_testing.assert_frame_equal(mg1.data_df, mg2.data_df)
         pandas_testing.assert_frame_equal(mg1.row_metadata_df, mg2.row_metadata_df)
@@ -54,7 +54,7 @@ class TestParseGctx(unittest.TestCase):
         test_rids = ['LJP007_MCF10A_24H:TRT_CP:BRD-K93918653:3.33', 'LJP007_MCF7_24H:CTL_VEHICLE:DMSO:-666']
         test_cids = ['LJP007_MCF7_24H:TRT_POSCON:BRD-A61304759:10']
         mg3 = subset_gctoo.subset_gctoo(mg1, rid=test_rids, cid=test_cids)
-        mg4 = parse_gctx.parse("../functional_tests/mini_gctoo_for_testing.gctx",
+        mg4 = parse_gctx.parse("cmapPy/pandasGEXpress/tests/functional_tests//mini_gctoo_for_testing.gctx",
                                rid=test_rids, cid=test_cids)
         pandas_testing.assert_frame_equal(mg3.data_df, mg4.data_df)
         pandas_testing.assert_frame_equal(mg3.row_metadata_df, mg4.row_metadata_df)
@@ -104,14 +104,14 @@ class TestParseGctx(unittest.TestCase):
         # test with ridx/cidx
         mg7 = subset_gctoo.subset_gctoo(mg1, rid=['LJP007_MCF7_24H:CTL_VEHICLE:DMSO:-666'],
                                     cid=['LJP007_MCF7_24H:CTL_VEHICLE:DMSO:-666'])
-        mg8 = parse_gctx.parse("../functional_tests/mini_gctoo_for_testing.gctx", ridx=[4], cidx=[4])
+        mg8 = parse_gctx.parse("cmapPy/pandasGEXpress/tests/functional_tests//mini_gctoo_for_testing.gctx", ridx=[4], cidx=[4])
 
         pandas_testing.assert_frame_equal(mg7.data_df, mg8.data_df)
         pandas_testing.assert_frame_equal(mg7.row_metadata_df, mg8.row_metadata_df)
         pandas_testing.assert_frame_equal(mg7.col_metadata_df, mg8.col_metadata_df)
 
         # test with rid/cidx
-        mg9 = parse_gctx.parse("../functional_tests/mini_gctoo_for_testing.gctx",
+        mg9 = parse_gctx.parse("cmapPy/pandasGEXpress/tests/functional_tests//mini_gctoo_for_testing.gctx",
                                rid=['LJP007_MCF7_24H:CTL_VEHICLE:DMSO:-666'],
                                cidx=[4])
 
@@ -120,7 +120,7 @@ class TestParseGctx(unittest.TestCase):
         pandas_testing.assert_frame_equal(mg7.col_metadata_df, mg9.col_metadata_df)
 
         # test with ridx/cid
-        mg10 = parse_gctx.parse("../functional_tests/mini_gctoo_for_testing.gctx", ridx=[4],
+        mg10 = parse_gctx.parse("cmapPy/pandasGEXpress/tests/functional_tests//mini_gctoo_for_testing.gctx", ridx=[4],
                                 cid=['LJP007_MCF7_24H:CTL_VEHICLE:DMSO:-666'])
 
         pandas_testing.assert_frame_equal(mg7.data_df, mg10.data_df)
@@ -128,15 +128,15 @@ class TestParseGctx(unittest.TestCase):
         pandas_testing.assert_frame_equal(mg7.col_metadata_df, mg10.col_metadata_df)
 
         # test with row_meta_only
-        mg11 = parse_gctx.parse("../functional_tests/mini_gctoo_for_testing.gctx", row_meta_only=True)
+        mg11 = parse_gctx.parse("cmapPy/pandasGEXpress/tests/functional_tests//mini_gctoo_for_testing.gctx", row_meta_only=True)
         pandas_testing.assert_frame_equal(mg11, mg1.row_metadata_df)
 
         # test with col_meta_only
-        mg12 = parse_gctx.parse("../functional_tests/mini_gctoo_for_testing.gctx", col_meta_only=True)
+        mg12 = parse_gctx.parse("cmapPy/pandasGEXpress/tests/functional_tests//mini_gctoo_for_testing.gctx", col_meta_only=True)
         pandas_testing.assert_frame_equal(mg12, mg1.col_metadata_df)
 
     def test_parse_rid_as_entrez_id(self):
-        input_file = "../functional_tests/test_parse_gctx_rid_entrez_id.gctx"
+        input_file = "cmapPy/pandasGEXpress/tests/functional_tests//test_parse_gctx_rid_entrez_id.gctx"
         g = parse_gctx.parse(input_file)
         self.assertEqual((5, 5), g.data_df.shape)
         logger.debug("g.data_df.index:  {}".format(g.data_df.index))
@@ -162,19 +162,19 @@ class TestParseGctx(unittest.TestCase):
 
         # case 1: row and col lists are populated and same type
         self.assertEqual((sorted(ridx), sorted(cidx)),
-                         parse_gctx.check_and_order_id_inputs(None, ridx, None, cidx, row_meta, col_meta))
+                         parse_gctx.check_and_order_id_inputs(None, ridx, None, cidx, row_meta, col_meta, sort_row_meta = True, sort_col_meta = True))
 
         # case 2: row & col lists are populated, but of different types
         self.assertEqual((sorted(ridx), [0, 1, 2, 3]),
-                         parse_gctx.check_and_order_id_inputs(None, ridx, cid, None, row_meta, col_meta))
+                         parse_gctx.check_and_order_id_inputs(None, ridx, cid, None, row_meta, col_meta, sort_row_meta = True, sort_col_meta = True))
 
         # case 3: row list and col lists are both None
         self.assertEqual(([0, 1, 2, 3], [0, 1, 2, 3, 4, 5]),
-                         parse_gctx.check_and_order_id_inputs(None, None, None, None, row_meta, col_meta))
+                         parse_gctx.check_and_order_id_inputs(None, None, None, None, row_meta, col_meta, sort_row_meta = True, sort_col_meta = True))
 
         # case 4: row list is populated, col list is None
         self.assertEqual(([0, 1, 2], [0, 1, 2, 3, 4, 5]),
-                         parse_gctx.check_and_order_id_inputs(rid, None, None, None, row_meta, col_meta))
+                         parse_gctx.check_and_order_id_inputs(rid, None, None, None, row_meta, col_meta, sort_row_meta = True, sort_col_meta = True))
 
     def test_check_id_idx_exclusivity(self):
         ids = ["a", "b", "c"]
@@ -203,7 +203,7 @@ class TestParseGctx(unittest.TestCase):
         logger.debug("mini_row_meta.columns:  {}".format(mini_row_meta.columns))
         logger.debug("mini_row_meta.dtypes:  {}".format(mini_row_meta.dtypes))
 
-        gctx_file = h5py.File("../functional_tests/mini_gctoo_for_testing.gctx", "r")
+        gctx_file = h5py.File("cmapPy/pandasGEXpress/tests/functional_tests//mini_gctoo_for_testing.gctx", "r")
         row_dset = gctx_file[row_meta_group_node]
         col_dset = gctx_file[col_meta_group_node]
 
@@ -270,19 +270,19 @@ class TestParseGctx(unittest.TestCase):
         mg = mini_gctoo_for_testing.make()
 
         # case 1: id_type == None
-        case1 = parse_gctx.get_ordered_idx(None, [], mg.row_metadata_df)
+        case1 = parse_gctx.get_ordered_idx(None, [], mg.row_metadata_df, sort_idx = True)
         self.assertEqual(case1, list(range(0, 6)),
                          "Expected ordered idx to be {} but got {}".format(list(range(0, 6)), case1))
 
         # case 2: id_type == "id"
         case2 = parse_gctx.get_ordered_idx("id",
-                                           ['LJP007_MCF7_24H:CTL_VEHICLE:DMSO:-666'], mg.col_metadata_df)
+                                           ['LJP007_MCF7_24H:CTL_VEHICLE:DMSO:-666'], mg.col_metadata_df, sort_idx = True)
         self.assertEqual(case2, [4],
                          "Expected ordered idx to be {} but got {}".format([4], case2))
 
         # case 3: id_type == ridx
         case3 = parse_gctx.get_ordered_idx("idx",
-                                           [5, 1, 3], mg.col_metadata_df)
+                                           [5, 1, 3], mg.col_metadata_df, sort_idx = True)
         self.assertEqual(case3, [1, 3, 5],
                          "Expected ordered idx to be {} but got {}".format([1, 3, 5], case3))
 
@@ -295,12 +295,12 @@ class TestParseGctx(unittest.TestCase):
         mini_data_df.columns.name = "cid"
 
         # create h5py File instance
-        mini_gctx = h5py.File("../functional_tests/mini_gctx_with_metadata_n2x3.gctx", "r")
+        mini_gctx = h5py.File("cmapPy/pandasGEXpress/tests/functional_tests//mini_gctx_with_metadata_n2x3.gctx", "r")
         data_dset = mini_gctx[data_node]
 
         # get relevant metadata fields
-        col_meta = parse_gctx.get_column_metadata("../functional_tests/mini_gctx_with_metadata_n2x3.gctx")
-        row_meta = parse_gctx.get_row_metadata("../functional_tests/mini_gctx_with_metadata_n2x3.gctx")
+        col_meta = parse_gctx.get_column_metadata("cmapPy/pandasGEXpress/tests/functional_tests//mini_gctx_with_metadata_n2x3.gctx")
+        row_meta = parse_gctx.get_row_metadata("cmapPy/pandasGEXpress/tests/functional_tests//mini_gctx_with_metadata_n2x3.gctx")
 
         # case 1: no subsetting
         data_df1 = parse_gctx.parse_data_df(data_dset, [0, 1, 2], [0, 1], row_meta, col_meta)
@@ -352,11 +352,11 @@ class TestParseGctx(unittest.TestCase):
         id_list = [0,1,2]
         df = pd.DataFrame({}, index=range(5))
         logger.debug("df.shape:  {}".format(df.shape))
-        parse_gctx.check_idx_validity(id_list, df)
+        parse_gctx.check_idx_validity(id_list, df, sort_id = True)
 
         id_list[0] = -1
         with self.assertRaises(Exception) as context:
-            parse_gctx.check_idx_validity(id_list, df)
+            parse_gctx.check_idx_validity(id_list, df, sort_id = True)
         logger.debug("context.exception:  {}".format(context.exception))
         self.assertIn("some of indexes being used to subset the data are not valid", str(context.exception))
         self.assertIn("[-1]", str(context.exception))
@@ -364,7 +364,7 @@ class TestParseGctx(unittest.TestCase):
         invalid_high = df.shape[0] + 1
         id_list[0] = invalid_high
         with self.assertRaises(Exception) as context:
-            parse_gctx.check_idx_validity(id_list, df)
+            parse_gctx.check_idx_validity(id_list, df, sort_id = True)
         logger.debug("context.exception:  {}".format(context.exception))
         self.assertIn("some of indexes being used to subset the data are not valid", str(context.exception))
         self.assertIn("[{}]".format(invalid_high), str(context.exception))
