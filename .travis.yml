@@ -10,54 +10,45 @@ matrix:
   include:
     # run pandasGEXpress python2_tests      
     - python: "2.7"
-      env: TEST_DIR=cmapPy/pandasGEXpress/tests/python2_tests 
       script:
-        - cd $TEST_DIR && python -m unittest discover -p "test_*.py"
+        - python -m unittest discover -p "test_*.py" -s cmapPy/pandasGEXpress/tests/python2_tests/
 
     # run pandasGEXpress python3_tests         
     - python: "3.6"
-      env: TEST_DIR=cmapPy/pandasGEXpress/tests/python3_tests
       script:
-        - cd $TEST_DIR && python -m unittest discover -p "test_*.py"
+        - python -m unittest discover -p "test_*.py" -s cmapPy/pandasGEXpress/tests/python3_tests/
     
     # run set_io tests for python2    
     - python: "2.7"
-      env: TEST_DIR=cmapPy/set_io/tests
       script:
-        - cd $TEST_DIR && python -m unittest discover -p "test_*.py"
+        - python -m unittest discover -p "test_*.py" cmapPy/set_io/tests/
 
     # run set_io tests for python3    
     - python: "3.6"
-      env: TEST_DIR=cmapPy/set_io/tests
       script:
-        - cd $TEST_DIR && python -m unittest discover -p "test_*.py"
+        - python -m unittest discover -p "test_*.py" cmapPy/set_io/tests/
       
     # run math tests for python2
     - python: "2.7"
-      env: TEST_DIR=cmapPy/math/tests
       script:
-        - cd $TEST_DIR && python -m unittest discover -p "test_*.py"
+        - python -m unittest discover -p "test_*.py" cmapPy/math/tests/
     
      # run math tests for python3
     - python: "3.6"
-      env: TEST_DIR=cmapPy/math/tests
       script:
-        - cd $TEST_DIR && python -m unittest discover -p "test_*.py"
+        - python -m unittest discover -p "test_*.py" cmapPy/math/tests/
 
     # run python2_python3_comaptibility tests for python2      
     - python: "2.7"
-      env: TEST_DIR=cmapPy/pandasGEXpress/tests
       script:
-        - cd $TEST_DIR && python -m unittest discover -p test_python2_python3_compatibility.py
+        - python -m unittest cmapPy/pandasGEXpress/tests/test_python2_python3_compatibility.py
    
     # run python2_python3_comaptibility tests for python3        
     - python: "3.6"
-      env: TEST_DIR=cmapPy/pandasGEXpress/tests
       script:
-        - cd $TEST_DIR && python -m unittest discover -p test_python2_python3_compatibility.py
+        - python -m unittest cmapPy/pandasGEXpress/tests/test_python2_python3_compatibility.py
 
 # what branches of github to use
 branches:
   only:
     - master
-    - travis_testing
