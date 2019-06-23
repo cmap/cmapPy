@@ -46,7 +46,7 @@ def parse(gctx_file_path, convert_neg_666=True, rid=None, cid=None,
         - make_multiindex (bool): whether to create a multi-index df combining
             the 3 component dfs
         - sort_col_meta (bool) : whether to sort the column metadata by indexes. Default = True
-        - sort_row_meta (bool) : whether to sort the row metadata by indexes. Default = False
+        - sort_row_meta (bool) : whether to sort the row metadata by indexes. Default = True
     Output:
         - myGCToo (GCToo): A GCToo instance containing content of parsed gctx file. Note: if meta_only = True,
             this will be a GCToo instance where the data_df is empty, i.e. data_df = pd.DataFrame(index=rids,
@@ -165,6 +165,8 @@ def check_and_order_id_inputs(rid, ridx, cid, cidx, row_meta_df, col_meta_df, so
         - ridx (list or None): if not None, a list of indexes
         - cid (list or None): if not None, a list of cids
         - cidx (list or None): if not None, a list of indexes
+        - sort_row_meta (bool): boolean indicating whether to return sorted row indexes
+        - sort_col_meta (bool): boolean indicating whether to return sorted column indexes
     Output:
         - a tuple of the ordered ridx and cidx
     """
@@ -255,6 +257,8 @@ def get_ordered_idx(id_type, id_list, meta_df, sort_idx):
     Input:
         - id_type (str): either "id", "idx" or None
         - id_list (list): either a list of indexes or id names
+        - meta_df (dataframe): dataframe 
+        - sort_idx (bool): boolean indicating whether to return sorted indexes or not
     Output:
         - a sorted list of indexes to subset a dimension by
     """
