@@ -21,32 +21,32 @@ matrix:
     # run set_io tests for python2    
     - python: "2.7"
       script:
-        - python -m unittest discover -p "test_*.py" cmapPy/set_io/tests/
+        - python -m unittest discover -p "test_*.py" -s cmapPy/set_io/tests/
 
     # run set_io tests for python3    
     - python: "3.6"
       script:
-        - python -m unittest discover -p "test_*.py" cmapPy/set_io/tests/
+        - python -m unittest discover -p "test_*.py" -s cmapPy/set_io/tests/
       
     # run math tests for python2
     - python: "2.7"
       script:
-        - python -m unittest discover -p "test_*.py" cmapPy/math/tests/
+        - python -m unittest discover -p "test_*.py" -s cmapPy/math/tests/
     
      # run math tests for python3
     - python: "3.6"
       script:
-        - python -m unittest discover -p "test_*.py" cmapPy/math/tests/
+        - python -m unittest discover -p "test_*.py" -s cmapPy/math/tests/
 
     # run python2_python3_comaptibility tests for python2      
     - python: "2.7"
       script:
-        - python -m unittest cmapPy/pandasGEXpress/tests/test_python2_python3_compatibility.py
+        - python -m unittest discover -p "test_python2_python3_*.py" -s cmapPy/pandasGEXpress/tests/
    
     # run python2_python3_comaptibility tests for python3        
     - python: "3.6"
       script:
-        - python -m unittest cmapPy/pandasGEXpress/tests/test_python2_python3_compatibility.py
+        - python -m unittest discover -p "test_python2_python3_*.py" -s cmapPy/pandasGEXpress/tests/
 
 # what branches of github to use
 branches:
