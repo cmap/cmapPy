@@ -103,12 +103,10 @@ def parse(gctx_file_path, convert_neg_666=True, rid=None, cid=None,
 
         # subset if specified, then return
         col_meta = col_meta.iloc[sorted_cidx]
-        print(col_meta.index)
 
         if not sort_col_meta:
             (_, unsorted_cidx) = check_and_order_id_inputs(rid, ridx, cid, cidx, None, col_meta, 
                                                         sort_row_meta, sort_col_meta)
-            print("unsorted cidx", unsorted_cidx)
             col_meta = col_meta.iloc[unsorted_cidx, :]
 
         return col_meta
@@ -132,20 +130,17 @@ def parse(gctx_file_path, convert_neg_666=True, rid=None, cid=None,
         row_meta = row_meta.iloc[sorted_ridx]
         col_meta = col_meta.iloc[sorted_cidx]
 
-        print(col_meta.index)
         if not sort_col_meta:
             ## in the subsetted and re-indexed dataframe get where new indexes lie
             (_, unsorted_cidx) = check_and_order_id_inputs(rid, ridx, cid, cidx, row_meta, col_meta, 
                                                         sort_row_meta, sort_col_meta)
             
-            print("unsorted cidx", unsorted_cidx)
             data_df = data_df.iloc[:,unsorted_cidx]
             col_meta = col_meta.iloc[unsorted_cidx,:]
         
         if not sort_row_meta:
             (unsorted_ridx, _) = check_and_order_id_inputs(rid, ridx, cid, cidx, row_meta, col_meta,
                                                       sort_row_meta, sort_row_meta)
-            print("unsorted_ridx", unsorted_ridx)
             data_df = data_df.iloc[unsorted_ridx,:]
             row_meta = row_meta.iloc[unsorted_ridx,:]
 
@@ -177,8 +172,6 @@ def check_and_order_id_inputs(rid, ridx, cid, cidx, row_meta_df, col_meta_df, so
     (col_type, col_ids) = check_id_idx_exclusivity(cid, cidx)
 
 
-    print("row_ids", row_ids)
-    print("col_ids", col_ids)
     row_ids = check_and_convert_ids(row_type, row_ids, row_meta_df, sort_col_meta)
     ordered_ridx = get_ordered_idx(row_type, row_ids, row_meta_df, sort_row_meta)
 
@@ -224,7 +217,6 @@ def check_and_convert_ids(id_type, id_list, meta_df, sort_id):
 
 
 def check_id_validity(id_list, meta_df):
-    print(id_list)
     id_set = set(id_list)
     meta_set = set(meta_df.index)
     mismatch_ids = id_set - meta_set
