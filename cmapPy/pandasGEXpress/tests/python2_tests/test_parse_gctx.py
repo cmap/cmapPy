@@ -135,6 +135,49 @@ class TestParseGctx(unittest.TestCase):
         mg12 = parse_gctx.parse("cmapPy/pandasGEXpress/tests/functional_tests//mini_gctoo_for_testing.gctx", col_meta_only=True)
         pandas_testing.assert_frame_equal(mg12, mg1.col_metadata_df)
 
+        # test with sort_col_meta False and cidx
+        mg13 = parse_gctx.parse("cmapPy/pandasGEXpress/tests/functional_tests//mini_gctoo_for_testing.gctx", 
+                                                cidx = [4,1,3], sort_col_meta= False)
+
+        pandas_testing.assert_frame_equal(mg13.data_df, mg1.data_df.iloc[:, [4,1,3]])
+        pandas_testing.assert_frame_equal(mg13.col_metadata_df, mg1.col_metadata_df.iloc[[4,1,3],:])
+        pandas_testing.assert_frame_equal(mg13.row_metadata_df, mg1.row_metadata_df)
+
+
+        # test with sort_row_meta False and ridx
+        mg14 = parse_gctx.parse("cmapPy/pandasGEXpress/tests/functional_tests//mini_gctoo_for_testing.gctx", 
+                                                ridx = [3,0,1], sort_row_meta= False)
+
+        pandas_testing.assert_frame_equal(mg14.data_df, mg1.data_df.iloc[[3,0,1],:])
+        pandas_testing.assert_frame_equal(mg14.col_metadata_df, mg1.col_metadata_df)
+        pandas_testing.assert_frame_equal(mg14.row_metadata_df, mg1.row_metadata_df.iloc[[3,0,1],:])
+
+        # test with sort_col_meta False and cidx and col_meta_only
+        mg15 = parse_gctx.parse("cmapPy/pandasGEXpress/tests/functional_tests//mini_gctoo_for_testing.gctx", 
+                                                cidx = [4,1,3], sort_col_meta= False, col_meta_only=True)
+        pandas_testing.assert_frame_equal(mg15, mg1.col_metadata_df.iloc[[4,1,3],:])
+
+        # test with sort_row_meta False and ridx and row_meta_only
+        mg16 = parse_gctx.parse("cmapPy/pandasGEXpress/tests/functional_tests//mini_gctoo_for_testing.gctx", 
+                                                ridx = [3,0,1], sort_row_meta= False, row_meta_only=True)
+        pandas_testing.assert_frame_equal(mg16, mg1.row_metadata_df.iloc[[3,0,1],:])
+
+        # test with sort_col_meta False and cid 
+        cid_unsorted = ['LJP007_MCF7_24H:TRT_POSCON:BRD-K81418486:10','LJP007_MCF10A_24H:TRT_CP:BRD-K93918653:3.33']
+        mg17 =  parse_gctx.parse("cmapPy/pandasGEXpress/tests/functional_tests//mini_gctoo_for_testing.gctx", 
+                                                cid = cid_unsorted, sort_col_meta= False)
+        pandas_testing.assert_frame_equal(mg17.data_df, mg1.data_df.iloc[:, [2,0]])
+        pandas_testing.assert_frame_equal(mg17.col_metadata_df, mg1.col_metadata_df.iloc[[2,0],:])
+        pandas_testing.assert_frame_equal(mg17.row_metadata_df, mg1.row_metadata_df)
+
+        # test with sort_row_meta False and rid
+        rid_unsorted = ['LJP007_MCF7_24H:TRT_CP:BRD-K64857848:10', 'MISC003_A375_24H:TRT_CP:BRD-K93918653:3.33']
+        mg18 = parse_gctx.parse("cmapPy/pandasGEXpress/tests/functional_tests/mini_gctoo_for_testing.gctx",
+                                                rid = rid_unsorted, sort_row_meta=False)
+        pandas_testing.assert_frame_equal(mg18.data_df, mg1.data_df.iloc[[5,1], :])
+        pandas_testing.assert_frame_equal(mg18.col_metadata_df, mg1.col_metadata_df)
+        pandas_testing.assert_frame_equal(mg18.row_metadata_df, mg1.row_metadata_df.iloc[[5,1],:])
+
     def test_parse_rid_as_entrez_id(self):
         input_file = "cmapPy/pandasGEXpress/tests/functional_tests//test_parse_gctx_rid_entrez_id.gctx"
         g = parse_gctx.parse(input_file)
