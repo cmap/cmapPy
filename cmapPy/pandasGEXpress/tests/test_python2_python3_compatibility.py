@@ -15,7 +15,7 @@ import cmapPy.pandasGEXpress.write_gctx as write_gctx
 __author__ = "Saksham Malhotra"
 __email__ = "saksham2196@gmail.com"
 
-FUNCTIONAL_TESTS_PATH = "functional_tests"
+FUNCTIONAL_TESTS_PATH = "cmapPy/pandasGEXpress/tests/functional_tests/"
 logger = logging.getLogger(setup_logger.LOGGER_NAME)
 
 
