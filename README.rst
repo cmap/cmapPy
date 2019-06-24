@@ -36,4 +36,4 @@ Citation
 
 If you use cmapPy and/or GCTx for your research, please cite `Enache et al.`_
 
-.. _Enache et al.: https://www.biorxiv.org/content/early/2017/11/30/227041
+.. _Enache et al.: https://academic.oup.com/bioinformatics/article/35/8/1427/5094509
