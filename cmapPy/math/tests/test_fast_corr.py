@@ -322,7 +322,6 @@ class TestFastCorr(unittest.TestCase):
         logger.debug("ex:\n{}".format(ex))
         logger.debug("ex.shape:  {}".format(ex.shape))
 
-        import pdb; pdb.set_trace()
         r = fast_corr.nan_fast_corr(x, z)
         logger.debug("r:\n{}".format(r))
         logger.debug("r.shape:  {}".format(r.shape))
