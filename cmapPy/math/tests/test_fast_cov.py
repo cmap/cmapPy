@@ -13,12 +13,24 @@ logger = logging.getLogger(setup_logger.LOGGER_NAME)
 class TestFastCov(unittest.TestCase):
     @staticmethod
     def build_standard_x_y():
-        x = numpy.array([[1,2,3], [5,7,11]])
+        x = numpy.array([[1,2,3], [5,7,11]], dtype=float)
         logger.debug("x:  {}".format(x))
         logger.debug("x.shape:  {}".format(x.shape))
 
-        y = numpy.array([[13, 17, 19], [23, 29, 31]])
+        y = numpy.array([[13, 17, 19], [23, 29, 31]], dtype=float)
         logger.debug("y:  {}".format(y))
+        logger.debug("y.shape:  {}".format(y.shape))
+
+        return x, y
+
+    @staticmethod
+    def build_nan_containing_x_y():
+        x = numpy.array([[1,numpy.nan,2], [3,5,7], [11,13,17]], dtype=float)
+        logger.debug("x:\n{}".format(x))
+        logger.debug("x.shape:  {}".format(x.shape))
+
+        y = numpy.array([[19, 23, 29], [31, 37, 41], [numpy.nan, 43, 47]], dtype=float)
+        logger.debug("y:\n{}".format(y))
         logger.debug("y.shape:  {}".format(y.shape))
 
         return x, y
@@ -211,6 +223,140 @@ class TestFastCov(unittest.TestCase):
         logger.debug("happy path x and y different shapes, using destination - r:  {}".format(r))
         self.assertIs(dest, r)
         self.assertTrue(numpy.allclose(ex, dest))
+
+    def test_calculate_non_mask_overlaps(self):
+        x = numpy.zeros((3,3))
+        x[0,1] = numpy.nan
+        x = numpy.ma.array(x, mask=numpy.isnan(x))
+        logger.debug("happy path x has 1 nan - x:\n{}".format(x))
+
+        r = fast_cov.calculate_non_mask_overlaps(x.mask, x.mask)
+        logger.debug("r:\n{}".format(r))
+        
+        expected = numpy.array([[3,2,3], [2,2,2], [3,2,3]], dtype=int)
+        self.assertTrue(numpy.array_equal(expected, r))
+
+    def test_nan_fast_cov_just_x(self):
+        logger.debug("*************happy path just x")
+        x, _ = TestFastCov.build_nan_containing_x_y()
+
+        ex_with_nan = numpy.cov(x, rowvar=False)
+        logger.debug("expected with nan's - ex_with_nan:\n{}".format(ex_with_nan))
+
+        r = fast_cov.nan_fast_cov(x)
+        logger.debug("r:\n{}".format(r))
+        
+        non_nan_locs = ~numpy.isnan(ex_with_nan)
+        self.assertTrue(numpy.allclose(ex_with_nan[non_nan_locs], r[non_nan_locs]))
+
+        check_nominal_nans = []
+        u = x[1:, 1]
+        for i in range(3):
+            t = x[1:, i]
+            c = numpy.cov(t, u, bias=False)[0,1]
+            check_nominal_nans.append(c)
+        logger.debug("calculate entries that would be nan - check_nominal_nans:  {}".format(check_nominal_nans))
+        self.assertTrue(numpy.allclose(check_nominal_nans, r[:, 1]))
+        self.assertTrue(numpy.allclose(check_nominal_nans, r[1, :]))
+
+    def test_nan_fast_cov_x_and_y(self):
+        logger.debug("*************happy path x and y")
+        x, y = TestFastCov.build_nan_containing_x_y()
+
+        combined = numpy.hstack([x, y])
+        logger.debug("combined:\n{}".format(combined))
+        logger.debug("combined.shape:  {}".format(combined.shape))
+
+        off_diag_ind = int(combined.shape[1] / 2)
+
+        raw_ex = numpy.cov(combined, rowvar=False)
+        logger.debug("raw expected produced from numpy.cov on full combined - raw_ex:\n{}".format(raw_ex))
+        ex = raw_ex[:off_diag_ind, off_diag_ind:]
+        logger.debug("expected ex:\n{}".format(ex))
+
+        r = fast_cov.nan_fast_cov(x, y)
+        logger.debug("r:\n{}".format(r))
+
+        non_nan_locs = ~numpy.isnan(ex)
+        logger.debug("ex[non_nan_locs]:  {}".format(ex[non_nan_locs]))
+        logger.debug("r[non_nan_locs]:  {}".format(r[non_nan_locs]))
+        self.assertTrue(numpy.allclose(ex[non_nan_locs], r[non_nan_locs]))
+
+        check_nominal_nans = []
+        t = x[1:, 1]
+        for i in [1,2]:
+            u = y[1:, i]
+            c = numpy.cov(t,u)
+            check_nominal_nans.append(c[0,1])
+        logger.debug("calculate entries that would be nan - check_nominal_nans:  {}".format(check_nominal_nans))
+        logger.debug("r values to compare to - r[1, 1:]:  {}".format(r[1, 1:]))
+        self.assertTrue(numpy.allclose(check_nominal_nans, r[1, 1:]))
+        
+        check_nominal_nans = []
+        u = y[:2, 0]
+        for i in [0, 2]:
+            t = x[:2, i]
+            c = numpy.cov(t,u)
+            check_nominal_nans.append(c[0,1])
+        logger.debug("calculate entries that would be nan - check_nominal_nans:  {}".format(check_nominal_nans))
+        logger.debug("r values to compare to - r[[0,2], 0]:  {}".format(r[[0,2], 0]))
+        self.assertTrue(numpy.allclose(check_nominal_nans, r[[0,2], 0]))
+
+        self.assertTrue(numpy.isnan(r[1,0]), """expect this entry to be nan b/c for the intersection of x[:,1] and y[:,0] 
+            there is only one entry in common, therefore covariance is undefined""")
+
+    def test_nan_fast_cov_x_and_y_different_shapes(self):
+        logger.debug("*************happy path x and y different shapes")
+        x, t = TestFastCov.build_nan_containing_x_y()
+        y = numpy.zeros((t.shape[0], t.shape[1]+1))
+        y[:, :t.shape[1]] = t
+        y[:, t.shape[1]] = [53, 59, 61]
+        
+        logger.debug("y.shape:  {}".format(y.shape))
+        logger.debug("y:\n{}".format(y))
+
+        combined = numpy.hstack([x, y])
+        logger.debug("combined:\n{}".format(combined))
+        logger.debug("combined.shape:  {}".format(combined.shape))
+
+        raw_ex = numpy.cov(combined, rowvar=False)
+        logger.debug("raw expected produced from numpy.cov on full combined - raw_ex:\n{}".format(raw_ex))
+        logger.debug("raw_ex.shape:  {}".format(raw_ex.shape))
+
+        ex = raw_ex[:x.shape[1], -y.shape[1]:]
+        logger.debug("expected ex:\n{}".format(ex))
+        logger.debug("ex.shape:  {}".format(ex.shape))
+
+        r = fast_cov.nan_fast_cov(x, y)
+        logger.debug("r:\n{}".format(r))
+
+        non_nan_locs = ~numpy.isnan(ex)
+        logger.debug("ex[non_nan_locs]:  {}".format(ex[non_nan_locs]))
+        logger.debug("r[non_nan_locs]:  {}".format(r[non_nan_locs]))
+        self.assertTrue(numpy.allclose(ex[non_nan_locs], r[non_nan_locs]))
+
+        check_nominal_nans = []
+        t = x[1:, 1]
+        for i in [1,2,3]:
+            u = y[1:, i]
+            c = numpy.cov(t,u)
+            check_nominal_nans.append(c[0,1])
+        logger.debug("calculate entries that would be nan - check_nominal_nans:  {}".format(check_nominal_nans))
+        logger.debug("r values to compare to - r[1, 1:]:  {}".format(r[1, 1:]))
+        self.assertTrue(numpy.allclose(check_nominal_nans, r[1, 1:]))
+        
+        check_nominal_nans = []
+        u = y[:2, 0]
+        for i in [0, 2]:
+            t = x[:2, i]
+            c = numpy.cov(t,u)
+            check_nominal_nans.append(c[0,1])
+        logger.debug("calculate entries that would be nan - check_nominal_nans:  {}".format(check_nominal_nans))
+        logger.debug("r values to compare to - r[[0,2], 0]:  {}".format(r[[0,2], 0]))
+        self.assertTrue(numpy.allclose(check_nominal_nans, r[[0,2], 0]))
+
+        self.assertTrue(numpy.isnan(r[1,0]), """expect this entry to be nan b/c for the intersection of x[:,1] and y[:,0] 
+            there is only one entry in common, therefore covariance is undefined""")
 
 if __name__ == "__main__":
     setup_logger.setup(verbose=True)
