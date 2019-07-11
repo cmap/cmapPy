@@ -128,12 +128,16 @@ def nan_fast_cov(x, y=None, destination=None):
     else:
         y_masked = numpy.ma.array(y, mask=numpy.isnan(y))
 
+    dest_was_None = False
     if destination is None:
         destination = numpy.ma.zeros((x_masked.shape[1], y_masked.shape[1]))
+        dest_was_None = True
 
     r = _fast_cov(numpy.nanmean, _nan_dot_divide, x_masked, y_masked, destination)
 
     r[numpy.isinf(r)] = numpy.nan
+
+    r = numpy.ma.filled(r, fill_value=numpy.nan) if dest_was_None else r
 
     return r
 

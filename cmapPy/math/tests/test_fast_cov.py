@@ -358,6 +358,18 @@ class TestFastCov(unittest.TestCase):
         self.assertTrue(numpy.isnan(r[1,0]), """expect this entry to be nan b/c for the intersection of x[:,1] and y[:,0] 
             there is only one entry in common, therefore covariance is undefined""")
 
+    def test_nan_fast_cov_all_nan(self):
+        x = numpy.zeros(3)
+        x[:] = numpy.nan
+        x = x[:, numpy.newaxis]
+        logger.debug("x:\n{}".format(x))
+
+        r = fast_cov.nan_fast_cov(x)
+        logger.debug("r:\n{}".format(r))
+        
+        self.assertEqual(1, numpy.sum(numpy.isnan(r)))
+        
+        
 if __name__ == "__main__":
     setup_logger.setup(verbose=True)
 
