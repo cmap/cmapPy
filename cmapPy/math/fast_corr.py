@@ -128,7 +128,6 @@ def _fast_spearman(corr_method, x, y, destination):
         logger.debug("y.shape:  {}".format(y.shape))
 
     x_ranks = pandas.DataFrame(x).rank(method="average", na_option="keep").values
-    print(x_ranks)
     logger.debug("some min and max ranks of x_ranks:\n{}\n{}".format(numpy.min(x_ranks[:10], axis=0), numpy.max(x_ranks[:10], axis=0)))
 
     y_ranks = pandas.DataFrame(y).rank(method="average", na_option="keep").values if y is not None else None
