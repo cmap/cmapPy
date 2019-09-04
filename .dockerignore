@@ -1,0 +1,10 @@
+cmapPy
+performance_testing
+tutorials
+.travis.yml
+LICENSE.txt
+MANIFEST.in
+README.rst
+requirements.txt
+setup.cfg
+setup.py
