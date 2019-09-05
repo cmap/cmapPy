@@ -4,3 +4,4 @@ cmapPy.egg-info/
 .vscode
 .gitignore
 .idea
+docs/build
