@@ -6,14 +6,17 @@ Created on Sep 30, 2019
 @contact: navid@broadinstitute.org
 '''
 import logging
-import seaborn as sns
-import matplotlib.pyplot as plt
-import pandas as pd
-import numpy as np
+
 import matplotlib.gridspec as gridspec
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
 
 logger = logging.getLogger()
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+figure_dpi = 150
 
 
 def stratogram(
@@ -78,17 +81,30 @@ def stratogram(
     n_rows = df[category_order].nunique()
     
     n_cols = len(metrics)
-    plt.figure(figsize=figsize)
+    plt.figure(figsize=figsize, dpi=figure_dpi)
     gs = gridspec.GridSpec(n_rows, n_cols)
     gs.update(wspace=0.0, hspace=0.0)
     
+    # Count the total number of test compounds
+    test_categories = [c for c in df[category].dropna().unique() if is_test_category(c)]
+    num_test_compounds = len(df[df[category].isin(test_categories)])
+    
     # Group the data by the category variable and for each stratum
     # Plot a row of histograms in the grid.
-    (
-        df
-        .groupby(category)
-        .apply(
-            plot_row_of_histograms,
+    grouped = df.groupby(category)
+    for name, group in grouped:
+        row_is_test_compounds = is_test_category(name)
+        group.name = name
+        row_label = name
+        n_points = len(group)
+        fraction_of_tests = float(n_points) / num_test_compounds
+        
+        if row_is_test_compounds:
+            row_sublabel = "(n={:,} - {:.0%} of test)".format(n_points, fraction_of_tests)
+        else:
+            row_sublabel = "(n={:,})".format(n_points)
+        plot_row_of_histograms(
+            group,
             gs,
             category_order,
             n_rows,
@@ -96,6 +112,8 @@ def stratogram(
             plot_columns=metrics,
             column_display_names=column_display_names,
             bins=bins,
+            row_label=row_label,
+            row_sublabel=row_sublabel,
             fontfamily=fontfamily,
             colors=colors,
             xtick_orientation=xtick_orientation,
@@ -104,15 +122,109 @@ def stratogram(
             xlabel_fontcolor=xlabel_fontcolor,
             ylabel_fontcolor=ylabel_fontcolor,
             )
-    )
     
     if outfile:
         plt.savefig(outfile, bbox_inches='tight')
 
+def is_test_category(category):
+    '''Determine from the category st ring
+    whether this is a test compound category'''
+    return 'test' in category.lower()
 
-def plot_row_of_histograms(df, gs, category_order, n_rows, n_cols, plot_columns, column_display_names, bins,
-                      fontfamily, colors,
-                      xtick_orientation, ylabel_fontsize, xlabel_fontsize, xlabel_fontcolor, ylabel_fontcolor):
+def get_axis_size(ax):
+    bbox = ax.get_window_extent().transformed(plt.gcf().dpi_scale_trans.inverted())
+    width, height = bbox.width, bbox.height
+    return width, height
+
+
+def _add_annotation_reproducibility(ax, data, metric_label, col_id, row_id, threshold=0.2):
+    logger.info("Adding annotation for column {}".format(metric_label))
+    ylim = ax.get_ylim()
+    n_points = len(data)
+    n_pass = len(data[data >= threshold])
+    width, height = get_axis_size(ax)
+    fontsize = int(height * figure_dpi * 0.08)
+    ax.plot([threshold, threshold], ylim, '--', color="#aaaaaa", alpha=0.5)
+    
+    if row_id == 0:
+        # In data coordinates
+        ax.text(threshold, ylim[1] * 1.1, "{:.2f}".format(threshold),
+                horizontalalignment="center",
+                verticalalignment="bottom",
+                fontsize=fontsize * 0.8,
+                color="#aaaaaa",
+                )
+    if n_points == 0:
+        return
+    ax.text(0.95, 0.9, ">{:.2f} : n={:,}\n({:.0%})".format(threshold, n_pass, float(n_pass) / n_points),
+            horizontalalignment="right",
+            verticalalignment="top",
+            fontsize=fontsize,
+            color="#222222",
+            
+            transform=ax.transAxes
+            )
+    pass
+
+
+def _add_annotation_recall(ax, data, metric_label, col_id, row_id):
+    logger.info("Adding annotation for column {}".format(metric_label))
+    ylim = ax.get_ylim()
+    n_points = len(data)
+    
+    
+    threshold = 0.05
+    
+    n_pass = len(data[data <= threshold])
+    width, height = get_axis_size(ax)
+    fontsize = int(height * figure_dpi * 0.08)
+    ax.plot([threshold, threshold], ylim, '--', color="#aaaaaa", alpha=0.5)
+  
+    if row_id == 0:
+        # In data coordinates
+        ax.text(threshold, ylim[1] * 1.1, "{:.2f}".format(threshold),
+                horizontalalignment="center",
+                verticalalignment="bottom",
+                fontsize=fontsize * 0.8,
+                color="#aaaaaa",
+                )
+    if n_points == 0:
+        return
+    ax.text(0.95, 0.9, "<{:.2f} : n={:,}\n({:.0%})".format(threshold, n_pass, float(n_pass) / n_points),
+            horizontalalignment="right",
+            verticalalignment="top",
+            fontsize=fontsize,
+            color="#222222",
+            
+            transform=ax.transAxes
+            )
+    pass
+
+
+def add_annotations(ax, data, metric_label, col_id, row_id):
+    ''' Depending on the metric being plotted,
+    optionally add further annotations to the
+    axis. For instance, a threshold line or
+    text labels'''
+    metric_label = metric_label.strip()
+#     logger.info('Adding annotations')
+    logger.info(metric_label)
+    if metric_label.lower() == "reproducibility":
+        return _add_annotation_reproducibility(ax, data, metric_label, col_id, row_id)
+    else:
+        logger.info("'{}', '{}'".format(metric_label, 'reproducibility'))
+
+    if 'recall' in metric_label.lower():
+        return _add_annotation_recall(ax, data, metric_label, col_id, row_id) 
+
+
+def plot_row_of_histograms(
+        df, gs, category_order, 
+        n_rows, n_cols, 
+        plot_columns, column_display_names, bins,
+        row_label, row_sublabel,
+        fontfamily, colors,
+        xtick_orientation, ylabel_fontsize, xlabel_fontsize, xlabel_fontcolor, ylabel_fontcolor):
     name = df.name
     row_id = df[category_order].unique()
     assert len(row_id) == 1
@@ -120,7 +232,7 @@ def plot_row_of_histograms(df, gs, category_order, n_rows, n_cols, plot_columns,
     font = fontfamily
     fontweight = 600
     
-    n_points = len(df)
+   
     
     if type(bins) == int:
         bins = np.linspace(0, 1, bins)
@@ -149,10 +261,11 @@ def plot_row_of_histograms(df, gs, category_order, n_rows, n_cols, plot_columns,
                            fontsize=xlabel_fontsize)
                 plt.gca().xaxis.set_label_position('top') 
             if (col_id == 0):
-                plt.text(-0.1, 0.3, "(n={:,})".format(n_points),
+                
+                plt.text(-0.1, 0.3, row_sublabel,
                     horizontalalignment="right", fontsize=ylabel_fontsize * 0.8, color="#444444",
                         transform=ax.transAxes)
-                plt.ylabel("{}  \n".format(name),
+                plt.ylabel("{}  \n".format(row_label),
                            rotation='horizontal',
                            fontweight=fontweight,
                            verticalalignment="center",
@@ -168,6 +281,8 @@ def plot_row_of_histograms(df, gs, category_order, n_rows, n_cols, plot_columns,
                     plt.xticks(rotation="vertical")
                 
             plt.yticks([])
+            
+            add_annotations(plt.gca(), data, colname, col_id, row_id)
             
                 
 def break_lines(s):

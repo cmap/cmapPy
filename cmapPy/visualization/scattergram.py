@@ -1,18 +1,16 @@
 '''
 Created on Sep 30, 2019
-
 @author: Navid Dianati
 @contact: navid@broadinstitute.org
-
 '''
 
-import pandas as pd
-import numpy as np
-import seaborn as sns
 import matplotlib
-import matplotlib.pyplot as plt
 import os
 
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
 
 
 def scattergram(
@@ -139,7 +137,6 @@ def _plot_hist(data, **kwargs):
 def _set_ticks_fontproperties(ax, font_properties):
     ax.set_xticklabels(ax.get_xticks(), font_properties)
     ax.set_yticklabels(ax.get_yticks(), font_properties)
-
 
 
 def plot_selected_points_among_all(*args, **kwargs):

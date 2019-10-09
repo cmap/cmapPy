@@ -5,13 +5,13 @@ Created on Sep 30, 2019
 @contact: navid@broadinstitute.org
 '''
 import unittest
-import scattergram
-import pandas as pd
+
 import matplotlib.pyplot as plt
+import pandas as pd
+import scattergram
 
 
 class Test(unittest.TestCase):
-
 
     def testScattergram(self):
         filename = "./test_files/PBRANT_CYCLE1_key_metrics_expanded_sample.txt"
@@ -19,7 +19,7 @@ class Test(unittest.TestCase):
         plot_columns = ['ss_ltn2', 'cc_q75', 'spec_vi', 'mag_vi']
         column_names = ['Strength', 'Reproducibility', 'specificity', 'magnitude']
         scattergram.scattergram(
-            df, 
+            df,
             columns=plot_columns,
             column_names=column_names,
             title="This is a test"
@@ -29,5 +29,5 @@ class Test(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    #import sys;sys.argv = ['', 'Test.testScattergram']
+    # import sys;sys.argv = ['', 'Test.testScattergram']
     unittest.main()
