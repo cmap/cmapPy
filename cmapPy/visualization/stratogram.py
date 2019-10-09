@@ -126,10 +126,12 @@ def stratogram(
     if outfile:
         plt.savefig(outfile, bbox_inches='tight')
 
+
 def is_test_category(category):
     '''Determine from the category st ring
     whether this is a test compound category'''
     return 'test' in category.lower()
+
 
 def get_axis_size(ax):
     bbox = ax.get_window_extent().transformed(plt.gcf().dpi_scale_trans.inverted())
@@ -137,7 +139,7 @@ def get_axis_size(ax):
     return width, height
 
 
-def _add_annotation_reproducibility(ax, data, metric_label, col_id, row_id, threshold=0.2):
+def _add_annotation_reproducibility(ax, data, metric_label, col_id, row_id, threshold=0.2, **kwargs):
     logger.info("Adding annotation for column {}".format(metric_label))
     ylim = ax.get_ylim()
     n_points = len(data)
@@ -152,6 +154,8 @@ def _add_annotation_reproducibility(ax, data, metric_label, col_id, row_id, thre
                 horizontalalignment="center",
                 verticalalignment="bottom",
                 fontsize=fontsize * 0.8,
+                fontweight="bold",
+                fontname=kwargs.get('fontfamily'),
                 color="#aaaaaa",
                 )
     if n_points == 0:
@@ -161,17 +165,17 @@ def _add_annotation_reproducibility(ax, data, metric_label, col_id, row_id, thre
             verticalalignment="top",
             fontsize=fontsize,
             color="#222222",
-            
+            fontweight="bold",
+            fontname=kwargs.get('fontfamily'),
             transform=ax.transAxes
             )
     pass
 
 
-def _add_annotation_recall(ax, data, metric_label, col_id, row_id):
+def _add_annotation_recall(ax, data, metric_label, col_id, row_id, **kwargs):
     logger.info("Adding annotation for column {}".format(metric_label))
     ylim = ax.get_ylim()
     n_points = len(data)
-    
     
     threshold = 0.05
     
@@ -182,26 +186,32 @@ def _add_annotation_recall(ax, data, metric_label, col_id, row_id):
   
     if row_id == 0:
         # In data coordinates
-        ax.text(threshold, ylim[1] * 1.1, "{:.2f}".format(threshold),
-                horizontalalignment="center",
-                verticalalignment="bottom",
-                fontsize=fontsize * 0.8,
-                color="#aaaaaa",
-                )
+        ax.text(
+            threshold, ylim[1] * 1.1, "{:.2f}".format(threshold),
+            horizontalalignment="center",
+            verticalalignment="bottom",
+            fontweight="bold",
+            fontsize=fontsize * 0.8,
+            fontname=kwargs.get('fontfamily'),
+            color="#aaaaaa",
+            )
+             
     if n_points == 0:
         return
-    ax.text(0.95, 0.9, "<{:.2f} : n={:,}\n({:.0%})".format(threshold, n_pass, float(n_pass) / n_points),
-            horizontalalignment="right",
-            verticalalignment="top",
-            fontsize=fontsize,
-            color="#222222",
-            
-            transform=ax.transAxes
-            )
+    ax.text(
+        0.95, 0.9, "<{:.2f} : n={:,}\n({:.0%})".format(threshold, n_pass, float(n_pass) / n_points),
+        horizontalalignment="right",
+        verticalalignment="top",
+        fontsize=fontsize,
+        color="#222222",
+        fontweight="bold",
+        fontname=kwargs.get('fontfamily'),
+        transform=ax.transAxes
+        )
     pass
 
 
-def add_annotations(ax, data, metric_label, col_id, row_id):
+def add_annotations(ax, data, metric_label, col_id, row_id, **kwargs):
     ''' Depending on the metric being plotted,
     optionally add further annotations to the
     axis. For instance, a threshold line or
@@ -210,17 +220,17 @@ def add_annotations(ax, data, metric_label, col_id, row_id):
 #     logger.info('Adding annotations')
     logger.info(metric_label)
     if metric_label.lower() == "reproducibility":
-        return _add_annotation_reproducibility(ax, data, metric_label, col_id, row_id)
+        return _add_annotation_reproducibility(ax, data, metric_label, col_id, row_id, **kwargs)
     else:
         logger.info("'{}', '{}'".format(metric_label, 'reproducibility'))
 
     if 'recall' in metric_label.lower():
-        return _add_annotation_recall(ax, data, metric_label, col_id, row_id) 
+        return _add_annotation_recall(ax, data, metric_label, col_id, row_id, **kwargs) 
 
 
 def plot_row_of_histograms(
-        df, gs, category_order, 
-        n_rows, n_cols, 
+        df, gs, category_order,
+        n_rows, n_cols,
         plot_columns, column_display_names, bins,
         row_label, row_sublabel,
         fontfamily, colors,
@@ -231,8 +241,6 @@ def plot_row_of_histograms(
     row_id = row_id[0]
     font = fontfamily
     fontweight = 600
-    
-   
     
     if type(bins) == int:
         bins = np.linspace(0, 1, bins)
@@ -282,7 +290,10 @@ def plot_row_of_histograms(
                 
             plt.yticks([])
             
-            add_annotations(plt.gca(), data, colname, col_id, row_id)
+            annotation_kwargs = dict(
+                fontfamily=font,
+                )
+            add_annotations(plt.gca(), data, colname, col_id, row_id, **annotation_kwargs)
             
                 
 def break_lines(s):
