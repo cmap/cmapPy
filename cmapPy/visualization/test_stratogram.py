@@ -20,7 +20,8 @@ class Test(unittest.TestCase):
         column_names = ['Strength', 'Reproducibility', 'specificity', 'magnitude']
         stratogram.stratogram(
             df,
-            category="category_label",
+            category_definition="category_label",
+            category_label="category_label_abridged",
             category_order="category_order",
             metrics=metrics,
             figsize=(20,15),
@@ -32,7 +33,6 @@ class Test(unittest.TestCase):
         ylabel_fontcolor="#555555",
         fontfamily="Roboto"
             )
-#         plt.show()
         plt.savefig("./test_files/stratogram_test.png", dpi=150)
 
 

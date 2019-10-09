@@ -21,7 +21,8 @@ figure_dpi = 150
 
 def stratogram(
     data,
-    category,
+    category_definition,
+    category_label,
     category_order,
     metrics,
     column_display_names,
@@ -39,15 +40,17 @@ def stratogram(
     '''
     Create a stratogram of the data. A stratogram is a grid of histograms
     of various metrics computed for a set of data points, stratified by a
-    "category" variable. Each column of the grid is one metric, and each row
+    "category_definition" variable. Each column of the grid is one metric, and each row
     depicts a stratum of the data.
     @param data: Pandas DataFrame where each row is a data point and the
     metrics and other variables are in the columns.
-    @param category: string name of the column that defines the stratum/
+    @param category_definition: string name of the column that defines the stratum/
     category of each data point.
+    @param category_label: string name of the column that defines the stratum/
+    label for each data point.
     @param category_order: string name of the integer column that defines
     the order in which each stratum should be plotted in the rows. There
-    should be a one-to-one map between the category and category_order
+    should be a one-to-one map between the category_definition and category_order
     variables. 
     @param metrics: list of column names containing numberical values
     whose histogram is plotted.
@@ -68,14 +71,14 @@ def stratogram(
     column_display_names = [name + "\n" for name in column_display_names]
     
     # Make sure necessary columns are in the dataframe
-    assert category in df.columns
+    assert category_definition in df.columns
     assert category_order in df.columns
 
     logger.info('Validating the table')
     for metric in metrics:
         assert metric in df.columns, metric
 
-    # Update category order to "remove" non-existent categories
+    # Update category_definition order to "remove" non-existent categories
     dict_new_order = {x:i for i, x in  enumerate(sorted(df[category_order].unique().tolist()))}
     df[category_order] = df[category_order].apply(lambda x:dict_new_order[x])
     n_rows = df[category_order].nunique()
@@ -86,14 +89,19 @@ def stratogram(
     gs.update(wspace=0.0, hspace=0.0)
     
     # Count the total number of test compounds
-    test_categories = [c for c in df[category].dropna().unique() if is_test_category(c)]
-    num_test_compounds = len(df[df[category].isin(test_categories)])
+    test_categories = [c for c in df[category_definition].dropna().unique() if is_test_category(c)]
+    num_test_compounds = len(df[df[category_definition].isin(test_categories)])
     
-    # Group the data by the category variable and for each stratum
+    # Group the data by the category_definition variable and for each stratum
     # Plot a row of histograms in the grid.
-    grouped = df.groupby(category)
+    grouped = df.groupby(category_definition)
     for name, group in grouped:
         row_is_test_compounds = is_test_category(name)
+        name = group[category_label].unique()
+        print name
+        assert len(name) == 1
+        name = name[0]
+            
         group.name = name
         row_label = name
         n_points = len(group)
