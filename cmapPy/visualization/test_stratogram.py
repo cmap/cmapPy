@@ -24,14 +24,14 @@ class Test(unittest.TestCase):
             category_label="category_label_abridged",
             category_order="category_order",
             metrics=metrics,
-            figsize=(20,15),
+            figsize=(20, 15),
             column_display_names=column_names,
             xtick_orientation="horizontal",
-        ylabel_fontsize=15,
-        xlabel_fontsize=15,
-        xlabel_fontcolor="#555555",
-        ylabel_fontcolor="#555555",
-        fontfamily="Roboto"
+            ylabel_fontsize=15,
+            xlabel_fontsize=15,
+            xlabel_fontcolor="#555555",
+            ylabel_fontcolor="#555555",
+            fontfamily="Roboto"
             )
         plt.savefig("./test_files/stratogram_test.png", dpi=150)
 
