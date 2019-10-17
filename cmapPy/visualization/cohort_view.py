@@ -88,9 +88,9 @@ def _fmt_total_percentages(x, total):
     Formatting function for DataFrame.Style. Formats the 
     "Total" column to show percentages. 
     '''
-    s = '''<span style="width:50%;float: left;text-align:right;font-weight:bold">{:,} </span>
+    s = '''<span style="width:50%;float: left;text-align:right;font-weight:bold">{:,d} </span>
     <span style="font-size:1em;color:#FF7043;width:50%;text-align:left;float: right;padding-left:1em;font-weight:bold">
-    ({:.0%})</span>'''.format(x, float(x) / total)
+    ({:.0%})</span>'''.format(int(x), float(x) / total)
     return s
  
     
