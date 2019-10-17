@@ -19,6 +19,10 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(level
 figure_dpi = 150
 
 
+ANNOTATION_KWARGS = dict(
+        zorder=100
+    )
+
 def stratogram(
     data,
     category_definition,
@@ -175,7 +179,8 @@ def _add_annotation_reproducibility(ax, data, metric_label, col_id, row_id, thre
             color="#222222",
             fontweight="bold",
             fontname=kwargs.get('fontfamily'),
-            transform=ax.transAxes
+            transform=ax.transAxes,
+            **ANNOTATION_KWARGS
             )
     pass
 
@@ -214,7 +219,9 @@ def _add_annotation_recall(ax, data, metric_label, col_id, row_id, **kwargs):
         color="#222222",
         fontweight="bold",
         fontname=kwargs.get('fontfamily'),
-        transform=ax.transAxes
+        transform=ax.transAxes,
+        **ANNOTATION_KWARGS
+
         )
     pass
 
@@ -298,8 +305,9 @@ def plot_row_of_histograms(
                 
             plt.yticks([])
             
-            annotation_kwargs = dict(
-                fontfamily=font,
+            annotation_kwargs = ANNOTATION_KWARGS.copy()
+            annotation_kwargs.update(
+                dict(fontfamily=font)
                 )
             add_annotations(plt.gca(), data, colname, col_id, row_id, **annotation_kwargs)
             
