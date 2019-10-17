@@ -88,8 +88,9 @@ def _fmt_total_percentages(x, total):
     Formatting function for DataFrame.Style. Formats the 
     "Total" column to show percentages. 
     '''
-    s = r'<span style="width:50%;float: left;text-align:right;font-weight:bold">{:,} </span>\
-        <span style="font-size:1em;color:#FF7043;width:50%;text-align:left;float: right;padding-left:1em;font-weight:bold">({:.0%})</span>'.format(x, float(x) / total)
+    s = '''<span style="width:50%;float: left;text-align:right;font-weight:bold">{:,} </span>
+    <span style="font-size:1em;color:#FF7043;width:50%;text-align:left;float: right;padding-left:1em;font-weight:bold">
+    ({:.0%})</span>'''.format(x, float(x) / total)
     return s
  
     
@@ -106,8 +107,9 @@ def _add_row_percentages(s):
     for label, x in s.iteritems():
         if label == "Total":
             continue
-        s[label] = r'<span style="width:50%;float: left;text-align:right">{:,d} </span>\
-        <span style="font-size:1em;color:#888888;width:50%;text-align:left;float: right;padding-left:1em">({:.0%})</span>'.format(int(x), float(x) / total)
+        s[label] = '''<span style="width:50%;float: left;text-align:right">{:,d} </span>
+        <span style="font-size:1em;color:#888888;width:50%;text-align:left;float: right;padding-left:1em">
+        ({:.0%})</span>'''.format(int(x), float(x) / total)
     return s
 
 # 
