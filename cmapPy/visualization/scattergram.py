@@ -59,11 +59,13 @@ def scattergram(
             )
         
         if title:
-            g.fig.suptitle(
+            g.fig.text(1, 1,
                 "{} (N = {:,})".format(title, len(df)),
                 fontsize=30,
                 fontname=fontfamily,
-                fontweight="bold"
+                fontweight="bold",
+                horizontalalignment="right",
+                verticalalignment="top"
                 )
         
         plt.subplots_adjust(wspace=0, hspace=0.0)
