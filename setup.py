@@ -6,18 +6,13 @@ from os import path
 
 here = path.abspath(path.dirname(__file__))
 
-# Make sure isn't using Python 3, since we currently don't support that
-import sys
-if not sys.version_info[0] == 2:
-    sys.exit("Apologies! Python 3 isn't supported yet.")
-
 setup(
     name='cmapPy',
 
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='1.1.1',
+    version='3.3.3',
 
     description='Assorted tools for interacting with .gct, .gctx files and other Connectivity Map (Broad Institute) data/tools',
     long_description="cmapPy: Tools for interacting with .gctx and .gct files, and other Connectivity Map resources. See our documentation at http://cmappy.readthedocs.io/en/latest/, and for more information on the file formats and available resources, please see clue.io/gctx.",
@@ -30,7 +25,7 @@ setup(
     maintainer_email='oana@broadinstitute.org',
 
     # Choose your license
-    license='MIT 3-clause',
+    license='BSD 3-clause',
 
     # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
@@ -38,19 +33,19 @@ setup(
         #   3 - Alpha
         #   4 - Beta
         #   5 - Production/Stable
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
 
         # Indicate who your project is intended for
         'Intended Audience :: Science/Research',
         'Topic :: Scientific/Engineering :: Bio-Informatics',
 
         # Pick your license as you wish (should match "license" above)
-        'License :: OSI Approved :: MIT License',
+        'License :: OSI Approved :: BSD License',
 
         # Specify the Python versions you support here. In particular, ensure
         # that you indicate whether you support Python 2, Python 3 or both.
         'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 2.7'
     ],
 
     # What does your project relate to?
@@ -58,13 +53,13 @@ setup(
 
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().
-    packages=find_packages(exclude=['contrib','docs','tutorials', 'tests']),
+    packages=find_packages(exclude=['contrib','docs','tutorials', 'tests', 'performance_testing']),
 
     # List run-time dependencies here.  These will be installed by pip when
     # your project is installed. For an analysis of "install_requires" vs pip's
     # requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=['numpy>=1.11.2', 'pandas>=0.18', 'h5py>=2.6.0', 'requests>=2.13.0'],
+    install_requires=['numpy>=1.11.2', 'pandas>=0.18', 'h5py>=2.6.0', 'requests>=2.13.0', 'six'],
 
     # List additional groups of dependencies here (e.g. development
     # dependencies). You can install these using the following syntax,
@@ -88,7 +83,7 @@ setup(
     # "scripts" keyword. Entry points provide cross-platform support and allow
     # pip to create the appropriate form of executable for the target platform.
     entry_points={'console_scripts': ['gctx2gct=cmapPy.pandasGEXpress.gctx2gct:main', 'gct2gctx=cmapPy.pandasGEXpress.gct2gctx:main', 
-        'concat_gctoo=cmapPy.pandasGEXpress.concat_gctoo:main', 'slice_gct=cmapPy.pandasGEXpress.slice_gct:main']},
+        'concat=cmapPy.pandasGEXpress.concat:main', 'subset=cmapPy.pandasGEXpress.subset:main']},
 
     tests_require=['unittest']
 )

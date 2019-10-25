@@ -37,15 +37,17 @@ N.B. The df is transposed from how it looks in a gct file.
 
 N.B. rids, cids, rhds, and chds must be:
 - unique
-- matching in both content & order everywhere they're found 
+- matching in both content & order everywhere they're found
 """
 import numpy as np
 import pandas as pd
 import logging
-from cmapPy.pandasGEXpress import setup_GCToo_logger as setup_logger
+import cmapPy.pandasGEXpress.setup_GCToo_logger as setup_logger
+
 
 __authors__ = 'Oana Enache, Lev Litichevskiy, Dave Lahr'
 __email__ = 'dlahr@broadinstitute.org'
+
 
 class GCToo(object):
     """Class representing parsed gct(x) objects as pandas dataframes.
@@ -53,58 +55,71 @@ class GCToo(object):
     and data_df) as well as an assembly of these 3 into a multi index df
     that provides an alternate way of selecting data.
     """
-    def __init__(self, data_df, row_metadata_df, col_metadata_df,
+    def __init__(self, data_df, row_metadata_df=None, col_metadata_df=None,
                  src=None, version=None, make_multiindex=False, logger_name=setup_logger.LOGGER_NAME):
 
         self.logger = logging.getLogger(logger_name)
 
         self.src = src
         self.version = version
-        self.row_metadata_df = row_metadata_df
-        self.col_metadata_df = col_metadata_df
+
+        # Check data_df before setting
+        self.check_df(data_df)
         self.data_df = data_df
-        self.multi_index_df = None
 
-        for df_field in ["row_metadata_df", "col_metadata_df", "data_df"]:
-            df = self.__dict__[df_field]
-            self.check_df(df)
+        if row_metadata_df is None:
+            self.row_metadata_df = pd.DataFrame(index=data_df.index)
+        else:
+            # Lots of checks will occur when this attribute is set (see __setattr__ below)
+            self.row_metadata_df = row_metadata_df
 
-        # check rids match in data & meta
-        self.id_match_check(self.data_df, self.row_metadata_df, "row")
+        if col_metadata_df is None:
+            self.col_metadata_df = pd.DataFrame(index=data_df.columns)
+        else:
+            # Lots of checks will occur when this attribute is set (see __setattr__ below)
+            self.col_metadata_df = col_metadata_df
 
-        # check cids match in data & meta
-        self.id_match_check(self.data_df, self.col_metadata_df, "col")
-
+        # Create multi_index_df if explicitly requested
         if make_multiindex:
             self.assemble_multi_index_df()
+        else:
+            self.multi_index_df = None
 
+        # This GCToo object is now initialized
         self._initialized = True
 
     def __setattr__(self, name, value):
-        if "_initialized" in self.__dict__ and self._initialized:
-            if name in ["data_df", "row_metadata_df", "col_metadata_df"]:
-                if self.check_df(value):
-                    if (name == "row_metadata_df" and self.id_match_check(self.data_df, value, "row")):
-                        value = value.reindex(self.data_df.index)
-                        super(GCToo, self).__setattr__(name, value)
-                    elif (name == "col_metadata_df" and self.id_match_check(self.data_df, value, "col")):
-                        value = value.reindex(self.data_df.columns)
-                        super(GCToo, self).__setattr__(name, value)
-                    elif (name == "data_df" and (self.id_match_check(value, self.row_metadata_df, "row")
-                                                and self.id_match_check(value, self.col_metadata_df, "col"))):
-                        # in this case we need to reindex both row/col metadata so that indexes are ordered
-                        # the same as the new data_df
-                        super(GCToo, self).__setattr__("row_metadata_df", self.row_metadata_df.reindex(value.index))
-                        super(GCToo, self).__setattr__("col_metadata_df", self.col_metadata_df.reindex(value.index))
-            elif name == "multi_index_df":
-                msg = ("Cannot reassign value of multi_index_df attribute; "  +
-                    "if you'd like a new multiindex df, please create a new GCToo instance" +
-                    "with appropriate data_df, row_metadata_df, and col_metadata_df fields.")
-                self.logger.error(msg)
-                raise Exception("GCToo.__setattr__: " + msg)
-            else:
+        # Make sure row/col metadata agree with data_df before setting
+        if name in ["row_metadata_df", "col_metadata_df"]:
+            self.check_df(value)
+            if name == "row_metadata_df":
+                self.id_match_check(self.data_df, value, "row")
+                value = value.reindex(self.data_df.index)
                 super(GCToo, self).__setattr__(name, value)
-        else: # for init we first want to set everything
+            else:
+                self.id_match_check(self.data_df, value, "col")
+                value = value.reindex(self.data_df.columns)
+                super(GCToo, self).__setattr__(name, value)
+
+        # When reassigning data_df after initialization, reindex row/col metadata if necessary
+        # N.B. Need to check if _initialized is present before checking if it's true, or code will break
+        elif name == "data_df" and "_initialized" in self.__dict__ and self._initialized:
+            self.id_match_check(value, self.row_metadata_df, "row")
+            self.id_match_check(value, self.col_metadata_df, "col")
+            super(GCToo, self).__setattr__("row_metadata_df", self.row_metadata_df.reindex(value.index))
+            super(GCToo, self).__setattr__("col_metadata_df", self.col_metadata_df.reindex(value.columns))
+            super(GCToo, self).__setattr__(name, value)
+
+        # Can't reassign multi_index_df after initialization
+        elif name == "multi_index_df" and "_initialized" in self.__dict__ and self._initialized:
+            msg = ("Cannot reassign value of multi_index_df attribute; "  +
+                "if you'd like a new multiindex df, please create a new GCToo instance" +
+                "with appropriate data_df, row_metadata_df, and col_metadata_df fields.")
+            self.logger.error(msg)
+            raise Exception("GCToo.__setattr__: " + msg)
+
+        # Otherwise, use the normal __setattr__ method
+        else:
             super(GCToo, self).__setattr__(name, value)
 
     def check_df(self, df):
@@ -212,17 +227,25 @@ def multi_index_df_to_component_dfs(multi_index_df, rid="rid", cid="cid"):
     cids = list(multi_index_df.columns.get_level_values(cid))
 
     # It's possible that the index and/or columns of multi_index_df are not
-    # actually multi-index; need to check for this
-    if isinstance(multi_index_df.index, pd.core.index.MultiIndex):
+    # actually multi-index; need to check for this and there are more than one level in index(python3)
+    if isinstance(multi_index_df.index, pd.MultiIndex):
 
-        # If so, drop rid because it won't go into the body of the metadata
-        mi_df_index = multi_index_df.index.droplevel(rid)
+        # check if there are more than one levels in index (python3)
+        if len(multi_index_df.index.names) > 1:
 
-        # Names of the multiindex levels become the headers
-        rhds = list(mi_df_index.names)
+            # If so, drop rid because it won't go into the body of the metadata
+            mi_df_index = multi_index_df.index.droplevel(rid)
 
-        # Assemble metadata values
-        row_metadata = np.array([mi_df_index.get_level_values(level).values for level in list(rhds)]).T
+            # Names of the multiindex levels become the headers
+            rhds = list(mi_df_index.names)
+
+            # Assemble metadata values
+            row_metadata = np.array([mi_df_index.get_level_values(level).values for level in list(rhds)]).T
+
+        # if there is one level in index (python3), then rhds and row metadata should be empty
+        else:
+            rhds = []
+            row_metadata = []
 
     # If the index is not multi-index, then rhds and row metadata should be empty
     else:
@@ -230,17 +253,24 @@ def multi_index_df_to_component_dfs(multi_index_df, rid="rid", cid="cid"):
         row_metadata = []
 
     # Check if columns of multi_index_df are in fact multi-index
-    if isinstance(multi_index_df.columns, pd.core.index.MultiIndex):
+    if isinstance(multi_index_df.columns, pd.MultiIndex):
 
-        # If so, drop cid because it won't go into the body of the metadata
-        mi_df_columns = multi_index_df.columns.droplevel(cid)
+        # Check if there are more than one levels in columns(python3)
+        if len(multi_index_df.columns.names) > 1:
 
-        # Names of the multiindex levels become the headers
-        chds = list(mi_df_columns.names)
+            # If so, drop cid because it won't go into the body of the metadata
+            mi_df_columns = multi_index_df.columns.droplevel(cid)
 
-        # Assemble metadata values
-        col_metadata = np.array([mi_df_columns.get_level_values(level).values for level in list(chds)]).T
+            # Names of the multiindex levels become the headers
+            chds = list(mi_df_columns.names)
 
+            # Assemble metadata values
+            col_metadata = np.array([mi_df_columns.get_level_values(level).values for level in list(chds)]).T
+
+        # If there is one level in columns (python3), then rhds and row metadata should be empty
+        else:
+            chds = []
+            col_metadata = []
     # If the columns are not multi-index, then rhds and row metadata should be empty
     else:
         chds = []

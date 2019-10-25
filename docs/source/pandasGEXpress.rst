@@ -1,11 +1,10 @@
 .. _pandasGEXpress:
 
-pandasGEXpress
-==============
+GCT, GCTx (pandasGEXpress)
+==========================
 
 pandasGEXpress package (integrated with Python's `pandas <http://pandas.pydata.org/>`_ package) allowing users to easily read, modify, and write .gct and .gctx files. Note that .gctx files are more performant than .gct, and we recommend their use. 
 
-.. image:: pandasgexpress_fig.png
 
 GCToo Class
 -----------
@@ -26,7 +25,7 @@ Writing
 Concatenating
 -------------
 
-.. automodule:: cmapPy.pandasGEXpress.concat_gctoo
+.. automodule:: cmapPy.pandasGEXpress.concat
    :members:
 
 Converting .gct <-> .gctx
@@ -44,13 +43,13 @@ Extracting from .grp files
 .. automodule:: cmapPy.pandasGEXpress.plategrp
    :members:
 
-Slicing
+Subsetting
 -------
 
 .. automodule:: cmapPy.pandasGEXpress.random_slice
    :members:
 
-.. automodule:: cmapPy.pandasGEXpress.slice_gct
+.. automodule:: cmapPy.pandasGEXpress.subset
    :members:
 
 

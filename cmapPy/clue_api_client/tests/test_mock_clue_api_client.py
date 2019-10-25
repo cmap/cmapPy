@@ -1,7 +1,7 @@
 import unittest
-from cmapPy.clue_api_client import setup_logger as setup_logger 
+import cmapPy.clue_api_client.setup_logger as setup_logger
 import logging
-from cmapPy.clue_api_client import mock_clue_api_client as mock_clue_api_client
+import cmapPy.clue_api_client.mock_clue_api_client as mock_clue_api_client
 
 __authors__ = "David L. Lahr"
 __email__ = "dlahr@broadinstitute.org"

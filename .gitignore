@@ -1,4 +1,7 @@
-.pydevproject
-.project
-*.png
+__pycache__/
 *.pyc
+cmapPy.egg-info/
+.vscode
+.gitignore
+.idea
+docs/build

@@ -58,13 +58,13 @@ assemble_multi_index_df method in GCToo.py assembles them.
                 -36 = number of data columns   
 
 """
-
 import logging
-from cmapPy.pandasGEXpress import setup_GCToo_logger as setup_logger
 import pandas as pd
-import numpy as np 
+import numpy as np
 import os.path
-import GCToo 
+import cmapPy.pandasGEXpress.GCToo as GCToo
+import cmapPy.pandasGEXpress.subset_gctoo as sg
+import cmapPy.pandasGEXpress.setup_GCToo_logger as setup_logger
 
 __author__ = "Lev Litichevskiy, Oana Enache"
 __email__ = "lev@broadinstitute.org"
@@ -79,18 +79,32 @@ column_header_name = "chd"
 DATA_TYPE = np.float32
 
 
-def parse(file_path, convert_neg_666=True, make_multiindex=False):
-    """ The main method.
+def parse(file_path, convert_neg_666=True, rid=None, cid=None,
+          ridx=None, cidx=None, row_meta_only=False, col_meta_only=False, make_multiindex=False):
+    """
+    The main method.
 
     Args:
         - file_path (string): full path to gct(x) file you want to parse
         - convert_neg_666 (bool): whether to convert -666 values to numpy.nan
-            (see Note below for more details). Default = True.
+            (see Note below for more details). Default = False.
+        - rid (list of strings): list of row ids to specifically keep from gct. Default=None.
+        - cid (list of strings): list of col ids to specifically keep from gct. Default=None.
+        - ridx (list of integers): only read the rows corresponding to this
+            list of integer ids. Default=None.
+        - cidx (list of integers): only read the columns corresponding to this
+            list of integer ids. Default=None.
+        - row_meta_only (bool): Whether to load data + metadata (if False), or
+            just row metadata (if True) as pandas DataFrame
+        - col_meta_only (bool): Whether to load data + metadata (if False), or
+            just col metadata (if True) as pandas DataFrame
         - make_multiindex (bool): whether to create a multi-index df combining
             the 3 component dfs
 
     Returns:
-        gctoo_obj (GCToo object)
+        - myGCToo (GCToo object): A GCToo instance containing content of
+            parsed gct file ** OR **
+        - row_metadata (pandas df) ** OR ** col_metadata (pandas df)
 
     Note: why is convert_neg_666 even a thing?
         In CMap--for somewhat obscure historical reasons--we use "-666" as our null value
@@ -99,6 +113,9 @@ def parse(file_path, convert_neg_666=True, make_multiindex=False):
         into numpy.nan values, the pandas default.
 
     """
+    assert sum([row_meta_only, col_meta_only]) <= 1, (
+        "row_meta_only and col_meta_only cannot both be requested.")
+
     nan_values = [
         "#N/A", "N/A", "NA", "#NA", "NULL", "NaN", "-NaN",
         "nan", "-nan", "#N/A!", "na", "NA", "None", "#VALUE!"]
@@ -111,7 +128,7 @@ def parse(file_path, convert_neg_666=True, make_multiindex=False):
     if not os.path.exists(file_path):
         err_msg = "The given path to the gct file cannot be found. gct_path: {}"
         logger.error(err_msg.format(file_path))
-        raise(Exception(err_msg.format(file_path)))
+        raise Exception(err_msg.format(file_path))
     logger.info("Reading GCT: {}".format(file_path))
 
     # Read version and dimensions
@@ -124,15 +141,28 @@ def parse(file_path, convert_neg_666=True, make_multiindex=False):
         num_row_metadata, num_col_metadata, nan_values)
 
     # Create the gctoo object and assemble 3 component dataframes
-    gctoo_obj = create_gctoo_obj(file_path, version,
-        row_metadata, col_metadata, data, make_multiindex)
+    # Not the most efficient if only metadata requested (i.e. creating the
+    # whole GCToo just to return the metadata df), but simplest
+    myGCToo = create_gctoo_obj(file_path, version, row_metadata, col_metadata,
+                               data, make_multiindex)
+    # Subset if requested
+    if (rid is not None) or (ridx is not None) or (cid is not None) or (cidx is not None):
+        logger.info("Subsetting GCT... (note that there are no speed gains when subsetting GCTs)")
+        myGCToo = sg.subset_gctoo(myGCToo, rid=rid, cid=cid, ridx=ridx, cidx=cidx)
 
-    return gctoo_obj
+    if row_meta_only:
+        return myGCToo.row_metadata_df
+
+    elif col_meta_only:
+        return myGCToo.col_metadata_df
+
+    else:
+        return myGCToo
 
 
 def read_version_and_dims(file_path):
     # Open file
-    f = open(file_path, "rb")
+    f = open(file_path, "r")
 
     # Get version from the first line
     version = f.readline().strip().lstrip("#")
@@ -141,7 +171,7 @@ def read_version_and_dims(file_path):
         err_msg = ("Only GCT1.2 and 1.3 are supported. The first row of the GCT " +
                    "file must simply be (without quotes) '#1.3' or '#1.2'")
         logger.error(err_msg.format(version))
-        raise(Exception(err_msg.format(version)))
+        raise Exception(err_msg.format(version))
 
     # Convert version to a string
     version_as_string = "GCT" + str(version)
@@ -156,11 +186,11 @@ def read_version_and_dims(file_path):
     if version == "1.2" and len(dims) != 2:
         error_msg = "GCT1.2 should have 2 dimension-related entries in row 2. dims: {}"
         logger.error(error_msg.format(dims))
-        raise(Exception(error_msg.format(dims)))
-    elif version == "1.3" and len(dims) != 4: 
+        raise Exception(error_msg.format(dims))
+    elif version == "1.3" and len(dims) != 4:
         error_msg = "GCT1.3 should have 4 dimension-related entries in row 2. dims: {}"
         logger.error(error_msg.format(dims))
-        raise(Exception(error_msg.format(dims)))
+        raise Exception(error_msg.format(dims))
 
     # Explicitly define each dimension
     num_data_rows = int(dims[0])
@@ -182,11 +212,13 @@ def parse_into_3_df(file_path, num_data_rows, num_data_cols, num_row_metadata, n
                           dtype=str, na_values=nan_values, keep_default_na=False)
 
     # Check that full_df is the size we expect
-    assert full_df.shape == (num_col_metadata + num_data_rows + 1,
-                             num_row_metadata + num_data_cols + 1), (
-        ("The shape of full_df is not as expected: data is {} x {} " +
-         "but there are {} row meta fields and {} col fields").format(
-            num_data_rows, num_data_cols, num_row_metadata, num_col_metadata))
+    expected_row_num = num_col_metadata + num_data_rows + 1
+    expected_col_num = num_row_metadata + num_data_cols + 1
+    assert full_df.shape == (expected_row_num,
+                             expected_col_num), (
+        ("The shape of full_df is not as expected: expected shape is {} x {} " +
+         "parsed shape is {} x {}").format(expected_row_num, expected_col_num,
+                full_df.shape[0], full_df.shape[1]))
 
     # Assemble metadata dataframes
     row_metadata = assemble_row_metadata(full_df, num_col_metadata, num_data_rows, num_row_metadata)
@@ -277,7 +309,7 @@ def assemble_data(full_df, num_col_metadata, num_data_rows, num_row_metadata, nu
                                    "data.loc['{}', '{}'] = '{}'\nAdd to nan_values if you wish " +
                                    "for this value to be considered NaN.").format(bad_row_label, col, val)
                         logger.error(err_msg)
-                        raise(Exception(err_msg))
+                        raise Exception(err_msg)
 
     # Rename the index name and columns name
     data.index.name = row_index_name

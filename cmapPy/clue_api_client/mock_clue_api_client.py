@@ -1,6 +1,6 @@
 import logging
-import setup_logger
-import clue_api_client
+import cmapPy.clue_api_client.setup_logger as setup_logger
+import cmapPy.clue_api_client.clue_api_client as clue_api_client
 
 __authors__ = "David L. Lahr"
 __email__ = "dlahr@broadinstitute.org"

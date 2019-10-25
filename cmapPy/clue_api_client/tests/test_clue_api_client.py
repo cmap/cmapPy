@@ -1,9 +1,8 @@
 import unittest
-from cmapPy.clue_api_client import setup_logger as setup_logger
+import cmapPy.clue_api_client.setup_logger as setup_logger
 import logging
-from cmapPy.clue_api_client import clue_api_client as clue_api_client
+import cmapPy.clue_api_client.clue_api_client as clue_api_client
 import os.path
-import ConfigParser
 import collections
 
 __authors__ = "David L. Lahr"
@@ -12,7 +11,7 @@ __email__ = "dlahr@broadinstitute.org"
 
 logger = logging.getLogger(setup_logger.LOGGER_NAME)
 
-config_filepath = os.path.expanduser("~/.l1ktools_python.cfg")
+config_filepath = os.path.expanduser("~/.cmapPy.cfg")
 config_section = "test"
 cao = None
 
@@ -22,14 +21,14 @@ test_status = "my fake status"
 class TestClueApiClient(unittest.TestCase):
     def test_run_query(self):
         #get one gene
-        r = cao.run_filter_query("genes", {"where":{"pr_gene_id":5720}})
+        r = cao.run_filter_query("genes", {"where":{"entrez_id":5720}})
         self.assertIsNotNone(r)
         logger.debug("len(r):  {}".format(len(r)))
         logger.debug("r:  {}".format(r))
         self.assertEqual(1, len(r))
 
         #get multiple genes
-        r = cao.run_filter_query("genes", {"where":{"pr_gene_id":{"inq":[5720,207]}}})
+        r = cao.run_filter_query("genes", {"where":{"entrez_id":{"inq":[5720,207]}}})
         self.assertIsNotNone(r)
         logger.debug("len(r):  {}".format(len(r)))
         logger.debug("r:  {}".format(r))
@@ -120,7 +119,7 @@ class TestClueApiClient(unittest.TestCase):
 
 
 def build_clue_api_client_from_default_test_config():
-    cfg = ConfigParser.RawConfigParser()
+    cfg = configparser.RawConfigParser()
     cfg.read(config_filepath)
     cao = clue_api_client.ClueApiClient(base_url=cfg.get(config_section, "clue_api_url"),
                                   user_key=cfg.get(config_section, "clue_api_user_key"))

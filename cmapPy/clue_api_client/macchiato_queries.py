@@ -1,5 +1,5 @@
 import logging
-import setup_logger
+import cmapPy.clue_api_client.setup_logger as setup_logger
 
 __authors__ = "David L. Lahr"
 __email__ = "dlahr@broadinstitute.org"
