@@ -4,13 +4,17 @@ Created on Sep 30, 2019
 @contact: navid@broadinstitute.org
 '''
 
-import matplotlib
+import logging
 import os
+
+import matplotlib
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
+
+logger = logging.getLogger()
 
 
 def scattergram(

@@ -14,7 +14,6 @@ import pandas as pd
 import seaborn as sns
 
 logger = logging.getLogger()
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 figure_dpi = 150
 
@@ -102,7 +101,6 @@ def stratogram(
     for name, group in grouped:
         row_is_test_compounds = is_test_category(name)
         name = group[category_label].unique()
-        print name
         assert len(name) == 1
         name = name[0]
             
@@ -272,7 +270,7 @@ def plot_row_of_histograms(
 
             except Exception as e:
                 plt.text(0.01, 0.5, 'ERROR')
-                print str(e)
+                logger.errot(str(e))
             
             if row_id == 0:
                 plt.xlabel(colname + "  ",
