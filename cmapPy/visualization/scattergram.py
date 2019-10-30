@@ -15,6 +15,8 @@ import seaborn as sns
 
 def scattergram(
     df, columns, column_names, title="",
+    outfile='',
+    fig_dpi=150,
     fontfamily="Roboto"
     ):
     '''
@@ -72,7 +74,9 @@ def scattergram(
         font_properties = dict(family=fontfamily, weight="bold")
         _adjust_axes(g, font_properties)
         _draw_row_labels(g, column_names)
-           
+        
+        if outfile:
+            plt.savefig(outfile, dpi=fig_dpi)
         return g
     
     
