@@ -1,8 +1,13 @@
 
 
+import logging
+
 from IPython.display import display
-import pandas as pd 
+
 import numpy as np
+import pandas as pd 
+
+logger = logging.getLogger()
 
 
 
@@ -69,7 +74,7 @@ def cohort_view_table(df,
 
     df = df.T
     num_categories = len(df.columns)
-    print "num_categories: {}".format(num_categories)
+    logger.info("num_categories: {}".format(num_categories))
 
     # Test comopound fields
     cpd_columns = [c for c in df.columns if 'Test subset' in c]
@@ -158,7 +163,6 @@ def display_cohort_stats_table(table, barplot_column):
     # indexes of the rows corresponding to categories, exludes 
     # the last "total" sums
     group_ids = [x for x in table.index if 'Total' not in x]
-    print group_ids
     
     # Sum of numbers in Total column (excluding Grand Total, obviously)
     total = table.loc['Grand Total', 'Total']

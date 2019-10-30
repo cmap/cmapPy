@@ -1,3 +1,3 @@
-import scattergram
-import stratogram
-import cohort_view
+from . import scattergram
+from . import stratogram
+from . import cohort_view
