@@ -10,7 +10,6 @@ import pandas as pd
 logger = logging.getLogger()
 
 
-
 def _add_row_percentages(s):
     '''Convert all columns except for "Total" to a string
     that shows the integer count as well as the percentage
@@ -56,6 +55,7 @@ def cohort_view_table(df,
     @kwarg add_percentages: whether to display percentages 
     alongside the counts.
     '''
+    assert len(flags) == len(flag_display_labels), '"flags" and "flag_display_labels" should have the same length'
     
     df['Total'] = 1
     columns = ['Total'] + flags 
@@ -68,20 +68,20 @@ def cohort_view_table(df,
         .drop(columns=category_order)
     )
 
-    column_names = ["Total"] +  flag_display_labels 
-    df.columns  = column_names
-    df.index.names=['Category'] 
+    column_names = ["Total"] + flag_display_labels 
+    df.columns = column_names
+    df.index.names = ['Category'] 
 
     df = df.T
     num_categories = len(df.columns)
     logger.info("num_categories: {}".format(num_categories))
 
     # Test comopound fields
-    cpd_columns = [c for c in df.columns if 'Test subset' in c]
-    df['Test Compounds Total'] = df[cpd_columns].sum(1)
-    df['Grand Total'] = df.iloc[:,:num_categories].sum(1)
+    cpd_fields = [c for c in df.columns if 'Test subset' in c]
+    df['Test Compounds Total'] = df[cpd_fields].sum(1)
+    df['Grand Total'] = df.iloc[:, :num_categories].sum(1)
     df = df.T
-    df.index.name=None
+    df.index.name = None
     
     if add_percentages:
         df = df.transform(_add_row_percentages, axis=1)
@@ -97,9 +97,9 @@ def _fmt_total_percentages(x, total):
     <span style="font-size:1em;color:#FF7043;width:50%;text-align:left;float: right;padding-left:1em;font-weight:bold">
     ({:.0%})</span>'''.format(int(x), float(x) / total)
     return s
- 
     
     from IPython.display import display
+
 
 def _add_row_percentages(s):
     '''Convert all columns except for "Total" to a string
@@ -158,7 +158,7 @@ def _add_row_percentages(s):
 
 
 def display_cohort_stats_table(table, barplot_column):
-    font_family="Roboto"
+    font_family = "Roboto"
     idx = pd.IndexSlice
     # indexes of the rows corresponding to categories, exludes 
     # the last "total" sums
@@ -170,7 +170,7 @@ def display_cohort_stats_table(table, barplot_column):
         table
         .style
         .format(
-            lambda s: _fmt_total_percentages(s, total), 
+            lambda s: _fmt_total_percentages(s, total),
             subset=pd.IndexSlice[:, 'Total']
         )
         .applymap(lambda x : 'text-align:center;')
@@ -182,8 +182,8 @@ def display_cohort_stats_table(table, barplot_column):
         .applymap(lambda x: "border-left:solid thin #ddd", subset=idx[:, 'Total'])
          .set_table_styles(
              [
-                 {'selector' : 'table', 
-                  'props' : [('font-family', font_family), ('font-size', '30px'), ('border','solid thin #999')]
+                 {'selector' : 'table',
+                  'props' : [('font-family', font_family), ('font-size', '30px'), ('border', 'solid thin #999')]
                  },
                  {'selector' : 'thead, tbody', 'props' : [
                      ('border', 'solid 1px #ddd'),
@@ -191,37 +191,36 @@ def display_cohort_stats_table(table, barplot_column):
                  },
                  {'selector' :
                   'thead', 'props' : [
-                     ('border-bottom', 'solid 2px #ddd'), 
-                     ('border-top', 'solid 2px #ddd'), 
-                     ('background','#fefefe'), ('text-align','center'), 
+                     ('border-bottom', 'solid 2px #ddd'),
+                     ('border-top', 'solid 2px #ddd'),
+                     ('background', '#fefefe'), ('text-align', 'center'),
                      ('font-family', font_family),
                       ('font-size' , '1em')
                  ]
                  },
-                 {'selector' : 'th', 
+                 {'selector' : 'th',
                   'props' : [ 
-                      ('text-align','center'), 
+                      ('text-align', 'center'),
                       ('color' , '#444'),
                   ]
                  },
-                 {'selector' : 'th.col_heading', 
+                 {'selector' : 'th.col_heading',
                   'props' : [ 
                       ('max-width', '8em')
                   ]
                  },
-                 {'selector' : 'th:not(.blank)', 
+                 {'selector' : 'th:not(.blank)',
                   'props' : [ 
 #                       ('border-left','solid thin #ddd'), 
 #                       ('border-right','solid thin #ddd'), 
                   ]
                  },
                  {'selector' : 'tbody', 'props' : [ 
-                     ('text-align','center'), ('background','#fff'), ('font-size' , '1.em'),
+                     ('text-align', 'center'), ('background', '#fff'), ('font-size' , '1.em'),
                                                    ('font-family', font_family)]},
-                 {'selector' : '.row_heading', 
-                  'props' : [('border-right','solid thin #ddd'), ('text-align','left')]}                 
+                 {'selector' : '.row_heading',
+                  'props' : [('border-right', 'solid thin #ddd'), ('text-align', 'left')]}                 
              ]
           )
         )
-
     
