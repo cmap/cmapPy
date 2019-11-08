@@ -14,8 +14,8 @@ class TestGCT2GCTx(unittest.TestCase):
 
 	def test_gct2gctx_main(self):
 
-		in_name = "../functional_tests/mini_gctoo_for_testing.gct"
-		out_name = "../functional_tests/test_gct2gctx_out.gctx"
+		in_name = "cmapPy/pandasGEXpress/tests/functional_tests//mini_gctoo_for_testing.gct"
+		out_name = "cmapPy/pandasGEXpress/tests/functional_tests//test_gct2gctx_out.gctx"
 		args_string = "-f {} -o {}".format(in_name, out_name)
 		args = gct2gctx.build_parser().parse_args(args_string.split())
 
@@ -29,10 +29,10 @@ class TestGCT2GCTx(unittest.TestCase):
 		pd.util.testing.assert_frame_equal(in_gct.col_metadata_df, out_gctx.col_metadata_df)
 		pd.util.testing.assert_frame_equal(in_gct.row_metadata_df, out_gctx.row_metadata_df)
 
-		no_meta = "../functional_tests/mini_gctoo_for_testing_nometa.gct"
-		added_meta = "../functional_tests/test_gct2gctx_out_annotated.gctx"
-		row_meta = "../functional_tests/test_rowmeta_n6.txt"
-		col_meta = "../functional_tests/test_colmeta_n6.txt"
+		no_meta = "cmapPy/pandasGEXpress/tests/functional_tests//mini_gctoo_for_testing_nometa.gct"
+		added_meta = "cmapPy/pandasGEXpress/tests/functional_tests//test_gct2gctx_out_annotated.gctx"
+		row_meta = "cmapPy/pandasGEXpress/tests/functional_tests//test_rowmeta_n6.txt"
+		col_meta = "cmapPy/pandasGEXpress/tests/functional_tests//test_colmeta_n6.txt"
 		args_string = "-f {} -o {} -row_annot_path {} -col_annot_path {}".format(no_meta, added_meta, row_meta, col_meta)
 		args = gct2gctx.build_parser().parse_args(args_string.split())
 
@@ -51,9 +51,9 @@ class TestGCT2GCTx(unittest.TestCase):
 
 	def test_missing_annotations(self):
 		with self.assertRaises(Exception) as context:
-			no_meta = "../functional_tests/mini_gctoo_for_testing_nometa.gct"
-			added_meta = "../functional_tests/test_gctx2gct_out_annotated.gctx"
-			row_meta = "../functional_tests/test_missing_rowmeta.txt"
+			no_meta = "cmapPy/pandasGEXpress/tests/functional_tests//mini_gctoo_for_testing_nometa.gct"
+			added_meta = "cmapPy/pandasGEXpress/tests/functional_tests//test_gctx2gct_out_annotated.gctx"
+			row_meta = "cmapPy/pandasGEXpress/tests/functional_tests//test_missing_rowmeta.txt"
 			args_string = "-f {} -o {} -row_annot_path {}".format(no_meta, added_meta, row_meta)
 			args = gct2gctx.build_parser().parse_args(args_string.split())
 
@@ -62,9 +62,9 @@ class TestGCT2GCTx(unittest.TestCase):
 		self.assertTrue('Row ids in matrix missing from annotations file' in context.exception)
 
 		with self.assertRaises(Exception) as context:
-			no_meta = "../functional_tests/mini_gctoo_for_testing_nometa.gct"
-			added_meta = "../functional_tests/test_gctx2gct_out_annotated.gctx"
-			col_meta = "../functional_tests/test_missing_colmeta.txt"
+			no_meta = "cmapPy/pandasGEXpress/tests/functional_tests//mini_gctoo_for_testing_nometa.gct"
+			added_meta = "cmapPy/pandasGEXpress/tests/functional_tests//test_gctx2gct_out_annotated.gctx"
+			col_meta = "cmapPy/pandasGEXpress/tests/functional_tests//test_missing_colmeta.txt"
 			args_string = "-f {} -o {} -col_annot_path {}".format(no_meta, added_meta, col_meta)
 			args = gct2gctx.build_parser().parse_args(args_string.split())
 

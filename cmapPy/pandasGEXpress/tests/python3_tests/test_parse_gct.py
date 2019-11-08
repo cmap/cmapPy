@@ -8,7 +8,7 @@ import cmapPy.pandasGEXpress.parse_gct as pg
 import cmapPy.pandasGEXpress.GCToo as GCToo
 
 
-FUNCTIONAL_TESTS_PATH = "../functional_tests"
+FUNCTIONAL_TESTS_PATH = "cmapPy/pandasGEXpress/tests/functional_tests/"
 
 logger = logging.getLogger(setup_logger.LOGGER_NAME)
 

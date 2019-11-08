@@ -47,7 +47,7 @@ def make(convert_neg_666=True):
     if convert_neg_666:
         mini_row_metadata = mini_row_metadata.replace([-666, "-666", -666.0], [numpy.nan, numpy.nan, numpy.nan])
         # if all values in a column are nanpandas.Series(mini_row_metadata.isna().sum() == mini_row_metadata.shape[0]) convert dtype of that column to float
-        all_nan_columns = numpy.array(mini_row_metadata.isnull().sum() == mini_row_metadata.shape[0]).nonzero()[0]
+        all_nan_columns = (mini_row_metadata.isnull().sum() == numpy.array(mini_row_metadata.shape[0])).nonzero()[0]
         mini_row_metadata = mini_row_metadata.astype({d: 'float' for d in mini_row_metadata.columns[all_nan_columns.tolist()]})
     else:
         mini_row_metadata = mini_row_metadata.replace([-666, -666.0], ["-666", "-666"])

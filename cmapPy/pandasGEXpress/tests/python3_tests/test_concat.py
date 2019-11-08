@@ -10,7 +10,7 @@ import tempfile
 
 
 logger = logging.getLogger(setup_logger.LOGGER_NAME)
-FUNCTIONAL_TESTS_DIR = "../functional_tests"
+FUNCTIONAL_TESTS_DIR = "cmapPy/pandasGEXpress/tests/functional_tests/"
 
 
 class TestConcat(unittest.TestCase):
@@ -333,7 +333,7 @@ class TestConcat(unittest.TestCase):
         self.assertEqual({"r3"}, set(r.orig_rid))
 
     def test_concat_main(self):
-        test_dir = "../functional_tests/test_concat/test_main"
+        test_dir = "cmapPy/pandasGEXpress/tests/functional_tests/test_concat/test_main"
 
         g_a = pg.parse(os.path.join(test_dir, "a.gct"))
         logger.debug("g_a:  {}".format(g_a))

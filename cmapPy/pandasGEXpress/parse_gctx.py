@@ -21,7 +21,8 @@ col_meta_group_node = "/0/META/COL"
 
 
 def parse(gctx_file_path, convert_neg_666=True, rid=None, cid=None,
-          ridx=None, cidx=None, row_meta_only=False, col_meta_only=False, make_multiindex=False):
+          ridx=None, cidx=None, row_meta_only=False, col_meta_only=False, make_multiindex=False,
+          sort_col_meta = True, sort_row_meta = True):
     """
     Primary method of script. Reads in path to a gctx file and parses into GCToo object.
 
@@ -44,7 +45,8 @@ def parse(gctx_file_path, convert_neg_666=True, rid=None, cid=None,
             as pandas DataFrame
         - make_multiindex (bool): whether to create a multi-index df combining
             the 3 component dfs
-
+        - sort_col_meta (bool) : whether to sort the column metadata by indexes. Default = True
+        - sort_row_meta (bool) : whether to sort the row metadata by indexes. Default = True
     Output:
         - myGCToo (GCToo): A GCToo instance containing content of parsed gctx file. Note: if meta_only = True,
             this will be a GCToo instance where the data_df is empty, i.e. data_df = pd.DataFrame(index=rids,
@@ -74,12 +76,19 @@ def parse(gctx_file_path, convert_neg_666=True, rid=None, cid=None,
         row_meta = parse_metadata_df("row", row_dset, convert_neg_666)
 
         # validate optional input ids & get indexes to subset by
-        (sorted_ridx, sorted_cidx) = check_and_order_id_inputs(rid, ridx, cid, cidx, row_meta, None)
+        (sorted_ridx, sorted_cidx) = check_and_order_id_inputs(rid, ridx, cid, cidx, row_meta, None, 
+                                                                sort_row_meta = True, sort_col_meta = True)
 
         gctx_file.close()
 
         # subset if specified, then return
         row_meta = row_meta.iloc[sorted_ridx]
+
+        if not sort_row_meta:
+            (unsorted_ridx, _) = check_and_order_id_inputs(rid, ridx, cid, cidx, row_meta, None,
+                                                      sort_row_meta, sort_row_meta)
+            row_meta = row_meta.iloc[unsorted_ridx]
+
         return row_meta
     elif col_meta_only:
         # read in col metadata
@@ -87,12 +96,19 @@ def parse(gctx_file_path, convert_neg_666=True, rid=None, cid=None,
         col_meta = parse_metadata_df("col", col_dset, convert_neg_666)
 
         # validate optional input ids & get indexes to subset by
-        (sorted_ridx, sorted_cidx) = check_and_order_id_inputs(rid, ridx, cid, cidx, None, col_meta)
+        (sorted_ridx, sorted_cidx) = check_and_order_id_inputs(rid, ridx, cid, cidx, None, 
+                                                            col_meta, sort_row_meta = True, sort_col_meta = True)
 
         gctx_file.close()
 
         # subset if specified, then return
         col_meta = col_meta.iloc[sorted_cidx]
+
+        if not sort_col_meta:
+            (_, unsorted_cidx) = check_and_order_id_inputs(rid, ridx, cid, cidx, None, col_meta, 
+                                                        sort_row_meta, sort_col_meta)
+            col_meta = col_meta.iloc[unsorted_cidx, :]
+
         return col_meta
     else:
         # read in row metadata
@@ -104,7 +120,8 @@ def parse(gctx_file_path, convert_neg_666=True, rid=None, cid=None,
         col_meta = parse_metadata_df("col", col_dset, convert_neg_666)
 
         # validate optional input ids & get indexes to subset by
-        (sorted_ridx, sorted_cidx) = check_and_order_id_inputs(rid, ridx, cid, cidx, row_meta, col_meta)
+        (sorted_ridx, sorted_cidx) = check_and_order_id_inputs(rid, ridx, cid, cidx, row_meta, col_meta, 
+                                                                sort_row_meta = True, sort_col_meta = True)
 
         data_dset = gctx_file[data_node]
         data_df = parse_data_df(data_dset, sorted_ridx, sorted_cidx, row_meta, col_meta)
@@ -112,6 +129,20 @@ def parse(gctx_file_path, convert_neg_666=True, rid=None, cid=None,
         # (if subsetting) subset metadata
         row_meta = row_meta.iloc[sorted_ridx]
         col_meta = col_meta.iloc[sorted_cidx]
+
+        if not sort_col_meta:
+            ## in the subsetted and re-indexed dataframe get where new indexes lie
+            (_, unsorted_cidx) = check_and_order_id_inputs(rid, ridx, cid, cidx, row_meta, col_meta, 
+                                                        sort_row_meta, sort_col_meta)
+            
+            data_df = data_df.iloc[:,unsorted_cidx]
+            col_meta = col_meta.iloc[unsorted_cidx,:]
+        
+        if not sort_row_meta:
+            (unsorted_ridx, _) = check_and_order_id_inputs(rid, ridx, cid, cidx, row_meta, col_meta,
+                                                      sort_row_meta, sort_row_meta)
+            data_df = data_df.iloc[unsorted_ridx,:]
+            row_meta = row_meta.iloc[unsorted_ridx,:]
 
         # get version
         my_version = gctx_file.attrs[version_node]
@@ -126,7 +157,7 @@ def parse(gctx_file_path, convert_neg_666=True, rid=None, cid=None,
         return my_gctoo
 
 
-def check_and_order_id_inputs(rid, ridx, cid, cidx, row_meta_df, col_meta_df):
+def check_and_order_id_inputs(rid, ridx, cid, cidx, row_meta_df, col_meta_df, sort_row_meta, sort_col_meta):
     """
     Makes sure that (if entered) id inputs entered are of one type (string id or index)
     Input:
@@ -134,17 +165,20 @@ def check_and_order_id_inputs(rid, ridx, cid, cidx, row_meta_df, col_meta_df):
         - ridx (list or None): if not None, a list of indexes
         - cid (list or None): if not None, a list of cids
         - cidx (list or None): if not None, a list of indexes
+        - sort_row_meta (bool): boolean indicating whether to return sorted row indexes
+        - sort_col_meta (bool): boolean indicating whether to return sorted column indexes
     Output:
         - a tuple of the ordered ridx and cidx
     """
     (row_type, row_ids) = check_id_idx_exclusivity(rid, ridx)
     (col_type, col_ids) = check_id_idx_exclusivity(cid, cidx)
 
-    row_ids = check_and_convert_ids(row_type, row_ids, row_meta_df)
-    ordered_ridx = get_ordered_idx(row_type, row_ids, row_meta_df)
 
-    col_ids = check_and_convert_ids(col_type, col_ids, col_meta_df)
-    ordered_cidx = get_ordered_idx(col_type, col_ids, col_meta_df)
+    row_ids = check_and_convert_ids(row_type, row_ids, row_meta_df, sort_col_meta)
+    ordered_ridx = get_ordered_idx(row_type, row_ids, row_meta_df, sort_row_meta)
+
+    col_ids = check_and_convert_ids(col_type, col_ids, col_meta_df, sort_col_meta)
+    ordered_cidx = get_ordered_idx(col_type, col_ids, col_meta_df, sort_col_meta)
     return (ordered_ridx, ordered_cidx)
 
 
@@ -172,13 +206,13 @@ def check_id_idx_exclusivity(id, idx):
         return (None, [])
 
 
-def check_and_convert_ids(id_type, id_list, meta_df):
+def check_and_convert_ids(id_type, id_list, meta_df, sort_id):
     if meta_df is not None:
         if id_type == "id":
             id_list = convert_ids_to_meta_type(id_list, meta_df)
             check_id_validity(id_list, meta_df)
         else:
-            check_idx_validity(id_list, meta_df)
+            check_idx_validity(id_list, meta_df, sort_id)
         return id_list
     else:
         return None
@@ -195,14 +229,15 @@ def check_id_validity(id_list, meta_df):
         raise Exception("parse_gctx check_id_validity " + msg)
 
 
-def check_idx_validity(id_list, meta_df):
-    N = meta_df.shape[0]
-    out_of_range_ids = [my_id for my_id in id_list if my_id < 0 or my_id >= N]
-    if len(out_of_range_ids):
-        msg = "some of indexes being used to subset the data are not valid max N:  {}  out_of_range_ids:  {}".format(N,
-                                                                                                                     out_of_range_ids)
-        logger.error(msg)
-        raise Exception("parse_gctx check_idx_validity " + msg)
+def check_idx_validity(id_list, meta_df, sort_id):
+    if sort_id:
+        N = meta_df.shape[0]
+        out_of_range_ids = [my_id for my_id in id_list if my_id < 0 or my_id >= N]
+        if len(out_of_range_ids):
+            msg = "some of indexes being used to subset the data are not valid max N:  {}  out_of_range_ids:  {}".format(N,
+                                                                                                     out_of_range_ids)
+            logger.error(msg)
+            raise Exception("parse_gctx check_idx_validity " + msg)
 
 
 def convert_ids_to_meta_type(id_list, meta_df):
@@ -216,12 +251,14 @@ def convert_ids_to_meta_type(id_list, meta_df):
         raise Exception("parse_gctx check_if_ids_in_meta " + msg + "  ValueError ve:  {}".format(ve))
 
 
-def get_ordered_idx(id_type, id_list, meta_df):
+def get_ordered_idx(id_type, id_list, meta_df, sort_idx):
     """
     Gets index values corresponding to ids to subset and orders them.
     Input:
         - id_type (str): either "id", "idx" or None
         - id_list (list): either a list of indexes or id names
+        - meta_df (dataframe): dataframe 
+        - sort_idx (bool): boolean indicating whether to return sorted indexes or not
     Output:
         - a sorted list of indexes to subset a dimension by
     """
@@ -231,6 +268,8 @@ def get_ordered_idx(id_type, id_list, meta_df):
         elif id_type == "id":
             lookup = {x: i for (i,x) in enumerate(meta_df.index)}
             id_list = [lookup[str(i)] for i in id_list]
+        if not sort_idx:
+            return [sorted(id_list).index(i) for i in id_list] 
         return sorted(id_list)
     else:
         return None

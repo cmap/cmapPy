@@ -12,7 +12,7 @@ import cmapPy.pandasGEXpress.mini_gctoo_for_testing as mini_gctoo_for_testing
 __author__ = "Oana Enache"
 __email__ = "oana@broadinstitute.org"
 
-FUNCTIONAL_TESTS_PATH = "../functional_tests"
+FUNCTIONAL_TESTS_PATH = "cmapPy/pandasGEXpress/tests/functional_tests/"
 
 # instantiate logger
 logger = logging.getLogger(setup_logger.LOGGER_NAME)

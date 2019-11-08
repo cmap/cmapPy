@@ -8,7 +8,7 @@ import cmapPy.pandasGEXpress.parse_gct as pg
 import cmapPy.pandasGEXpress.GCToo as GCToo
 
 
-FUNCTIONAL_TESTS_PATH = "../functional_tests"
+FUNCTIONAL_TESTS_PATH = "cmapPy/pandasGEXpress/tests/functional_tests/"
 
 logger = logging.getLogger(setup_logger.LOGGER_NAME)
 
@@ -21,7 +21,7 @@ class TestParseGct(unittest.TestCase):
         dims1 = ["10", "15", "3", "4"]
         fname1 = "testing_testing1"
 
-        f1 = open(fname1, "wb")
+        f1 = open(fname1, "w")
         f1.write(("#" + version1 + "\n"))
         f1.write((dims1[0] + "\t" + dims1[1] + "\t" + dims1[2] + "\t" + dims1[3] + "\n"))
         f1.close()
@@ -40,7 +40,7 @@ class TestParseGct(unittest.TestCase):
         dims2 = ["10", "15"]
         fname2 = "testing_testing2"
 
-        f2 = open(fname2, "wb")
+        f2 = open(fname2, "w")
         f2.write(("#" + version2 + "\n"))
         f2.write((dims2[0] + "\t" + dims2[1] + "\n"))
         f2.close()
