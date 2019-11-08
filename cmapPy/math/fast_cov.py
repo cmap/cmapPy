@@ -6,6 +6,36 @@ import numpy
 logger = logging.getLogger(setup_logger.LOGGER_NAME)
 
 
+def _fast_dot_divide(x, y, destination):
+    """helper method for use within the _fast_cov method - carry out the dot product and subsequent 
+    division to generate the covariance values.  For use when there are no missing values.
+    """
+    numpy.dot(x.T, y, out=destination)
+    numpy.divide(destination, (x.shape[0] - 1), out=destination)
+
+
+def calculate_non_mask_overlaps(x_mask, y_mask):
+    """for two mask arrays (x_mask, y_mask - boolean arrays) determine the number of entries in common there would be for each 
+    entry if their dot product were taken
+    """
+    x_is_not_nan = 1 * ~x_mask
+    y_is_not_nan = 1 * ~y_mask
+
+    r = numpy.dot(x_is_not_nan.T, y_is_not_nan)
+    return r
+
+
+def _nan_dot_divide(x, y, destination):
+    """helper method for use within the _fast_cov method - carry out the dot product and subsequent
+    division to generate the covariance values.  For use when there are missing values.
+    """
+    numpy.ma.dot(x.T, y, out=destination)
+
+    divisor = calculate_non_mask_overlaps(x.mask, y.mask) - 1
+
+    numpy.ma.divide(destination, divisor, out=destination)
+
+
 def fast_cov(x, y=None, destination=None):
     """calculate the covariance matrix for the columns of x (MxN), or optionally, the covariance matrix between the
     columns of x and and the columns of y (MxP).  (In the language of statistics, the columns are variables, the rows
@@ -21,6 +51,12 @@ def fast_cov(x, y=None, destination=None):
             for defaults (y=None), shape is NxN
             if y is provided, shape is NxP
     """
+    r = _fast_cov(numpy.mean, _fast_dot_divide, x, y, destination)
+
+    return r
+
+
+def _fast_cov(mean_method, dot_divide_method, x, y, destination):
     validate_inputs(x, y, destination)
 
     if y is None:
@@ -29,14 +65,13 @@ def fast_cov(x, y=None, destination=None):
     if destination is None:
         destination = numpy.zeros((x.shape[1], y.shape[1]))
 
-    mean_x = numpy.mean(x, axis=0)
-    mean_y = numpy.mean(y, axis=0)
+    mean_x = mean_method(x, axis=0)
+    mean_y = mean_method(y, axis=0)
 
     mean_centered_x = (x - mean_x).astype(destination.dtype)
     mean_centered_y = (y - mean_y).astype(destination.dtype)
     
-    numpy.dot(mean_centered_x.T, mean_centered_y, out=destination)
-    numpy.divide(destination, (x.shape[0] - 1), out=destination)
+    dot_divide_method(mean_centered_x, mean_centered_y, destination)
 
     return destination
 
@@ -69,6 +104,42 @@ def validate_inputs(x, y, destination):
 
     if error_msg != "":
         raise CmapPyMathFastCovInvalidInputXY(error_msg)
+
+
+def nan_fast_cov(x, y=None, destination=None):
+    """calculate the covariance matrix (ignoring nan values) for the columns of x (MxN), or optionally, the covariance matrix between the
+    columns of x and and the columns of y (MxP).  (In the language of statistics, the columns are variables, the rows
+    are observations).
+
+    Args:
+        x (numpy array-like) MxN in shape
+        y (numpy array-like) MxP in shape
+        destination (numpy masked array-like) optional location where to store the results as they are calculated (e.g. a numpy
+            memmap of a file)
+
+        returns (numpy array-like) array of the covariance values
+            for defaults (y=None), shape is NxN
+            if y is provided, shape is NxP
+    """
+    x_masked = numpy.ma.array(x, mask=numpy.isnan(x))
+
+    if y is None:
+        y_masked = x_masked
+    else:
+        y_masked = numpy.ma.array(y, mask=numpy.isnan(y))
+
+    dest_was_None = False
+    if destination is None:
+        destination = numpy.ma.zeros((x_masked.shape[1], y_masked.shape[1]))
+        dest_was_None = True
+
+    r = _fast_cov(numpy.nanmean, _nan_dot_divide, x_masked, y_masked, destination)
+
+    r[numpy.isinf(r)] = numpy.nan
+
+    r = numpy.ma.filled(r, fill_value=numpy.nan) if dest_was_None else r
+
+    return r
 
 
 class CmapPyMathFastCovInvalidInputXY(Exception):
