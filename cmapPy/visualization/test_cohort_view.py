@@ -29,7 +29,7 @@ class Test(unittest.TestCase):
             flag_display_labels=column_names
             
             )
-        print table
+        print(table)
 #         plt.savefig("./test_files/cohort_view_test.html", dpi=150)
 
 
