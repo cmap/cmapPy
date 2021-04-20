@@ -5,3 +5,5 @@ cmapPy.egg-info/
 .gitignore
 .idea
 docs/build
+.DS_Store
+*-checkpoint.ipynb
