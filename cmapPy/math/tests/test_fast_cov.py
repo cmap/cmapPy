@@ -224,6 +224,22 @@ class TestFastCov(unittest.TestCase):
         self.assertIs(dest, r)
         self.assertTrue(numpy.allclose(ex, dest))
 
+    def test_fast_cov_1D_arrays(self):
+        logger.debug("*****************happy path test_fast_cov_1D_arrays")
+        x = numpy.array(range(3))
+        logger.debug("x.shape:  {}".format(x.shape))
+
+        r = fast_cov.fast_cov(x)
+        logger.debug("r:  {}".format(r))
+        self.assertEqual(1., r[0][0])
+
+        y = numpy.array(range(3,6))
+        logger.debug("y.shape:  {}".format(y.shape))
+
+        r = fast_cov.fast_cov(x, y)
+        logger.debug("r:  {}".format(r))
+        self.assertEqual(1., r[0][0])
+
     def test_calculate_non_mask_overlaps(self):
         x = numpy.zeros((3,3))
         x[0,1] = numpy.nan
@@ -367,8 +383,23 @@ class TestFastCov(unittest.TestCase):
         r = fast_cov.nan_fast_cov(x)
         logger.debug("r:\n{}".format(r))
         
-        self.assertEqual(1, numpy.sum(numpy.isnan(r)))
+        self.assertEqual(0, numpy.sum(numpy.isnan(r)))
         
+    def test_nan_fast_cov_1D_arrays(self):
+        logger.debug("*****************happy path test_nan_fast_cov_1D_arrays")
+        x = numpy.array(range(3))
+        logger.debug("x.shape:  {}".format(x.shape))
+
+        r = fast_cov.nan_fast_cov(x)
+        logger.debug("r:  {}".format(r))
+        self.assertEqual(1., r[0][0])
+
+        y = numpy.array(range(3,6))
+        logger.debug("y.shape:  {}".format(y.shape))
+
+        r = fast_cov.fast_cov(x, y)
+        logger.debug("r:  {}".format(r))
+        self.assertEqual(1., r[0][0])
         
 if __name__ == "__main__":
     setup_logger.setup(verbose=True)

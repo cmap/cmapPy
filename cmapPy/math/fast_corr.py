@@ -29,7 +29,12 @@ def fast_corr(x, y=None, destination=None):
     r = fast_cov.fast_cov(x, y, destination=destination)
 
     std_x = numpy.std(x, axis=0, ddof=1)
+    if numpy.isscalar(std_x):
+        std_x = numpy.array((std_x,))
+
     std_y = numpy.std(y, axis=0, ddof=1)
+    if numpy.isscalar(std_y):
+        std_y = numpy.array((std_y,))
 
     numpy.divide(r, std_x[:, numpy.newaxis], out=r)
     numpy.divide(r, std_y[numpy.newaxis, :], out=r)

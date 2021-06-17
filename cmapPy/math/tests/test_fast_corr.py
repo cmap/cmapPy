@@ -104,6 +104,23 @@ class TestFastCorr(unittest.TestCase):
         logger.debug("r:  {}".format(r))
         self.assertTrue(numpy.allclose(ex, r))
     
+    def test_fast_corr_1D_arrays(self):
+        logger.debug("*****************happy path test_fast_corr_1D_arrays")
+        x = numpy.array(range(3))
+        logger.debug("x.shape:  {}".format(x.shape))
+
+        r = fast_corr.fast_corr(x)
+        logger.debug("r:  {}".format(r))
+        self.assertEqual(1., r[0][0])
+
+        y = numpy.array(range(3,6))
+        logger.debug("y.shape:  {}".format(y.shape))
+
+        r = fast_corr.fast_corr(x, y)
+        logger.debug("r:  {}".format(r))
+        self.assertEqual(1., r[0][0])
+
+        
     def test_fast_corr_x_and_y_different_shapes(self):
         logger.debug("*************happy path x and y different shapes")
         x, _ = TestFastCorr.build_standard_x_y()
