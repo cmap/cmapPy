@@ -369,16 +369,26 @@ def parse_data_df(data_dset, ridx, cidx, row_meta, col_meta):
         -row_meta (pandas DataFrame): the parsed in row metadata
         -col_meta (pandas DataFrame): the parsed in col metadata
     """
-    if len(ridx) == len(row_meta.index) and len(cidx) == len(col_meta.index):  # no subset
+    total_rows = len(row_meta.index)
+    total_cols = len(col_meta.index)
+    if len(ridx) == total_rows and len(cidx) == total_cols:  # no subset
         data_array = np.empty(data_dset.shape, dtype=np.float32)
         data_dset.read_direct(data_array)
         data_array = data_array.transpose()
-    elif len(ridx) <= len(cidx):
-        first_subset = data_dset[:, ridx].astype(np.float32)
-        data_array = first_subset[cidx, :].transpose()
-    elif len(cidx) < len(ridx):
-        first_subset = data_dset[cidx, :].astype(np.float32)
-        data_array = first_subset[:, ridx].transpose()
+    else:
+        # We can only subset on a single dimension at a time with h5py.
+        # For the first dimension to use, pick the one that minimizes
+        # the size of the intermediate array.
+        row_first_count = total_cols * len(ridx)
+        col_first_count = total_rows * len(cidx)
+
+        if row_first_count < col_first_count:
+            first_subset = data_dset[:, ridx].astype(np.float32)
+            data_array = first_subset[cidx, :].transpose()
+        else:
+            first_subset = data_dset[cidx, :].astype(np.float32)
+            data_array = first_subset[:, ridx].transpose()
+
     # make DataFrame instance
     data_df = pd.DataFrame(data_array, index=row_meta.index[ridx], columns=col_meta.index[cidx])
     return data_df
