@@ -59,17 +59,20 @@ def fast_cov(x, y=None, destination=None):
 def _fast_cov(mean_method, dot_divide_method, x, y, destination):
     validate_inputs(x, y, destination)
 
+    new_x = x if len(x.shape) == 2 else x[:, numpy.newaxis]
+
     if y is None:
-        y = x
+        y = new_x
+    new_y = y if len(y.shape) == 2 else y[:, numpy.newaxis]
 
     if destination is None:
-        destination = numpy.zeros((x.shape[1], y.shape[1]))
+        destination = numpy.zeros((new_x.shape[1], new_y.shape[1]))
 
-    mean_x = mean_method(x, axis=0)
-    mean_y = mean_method(y, axis=0)
+    mean_x = mean_method(new_x, axis=0)
+    mean_y = mean_method(new_y, axis=0)
 
-    mean_centered_x = (x - mean_x).astype(destination.dtype)
-    mean_centered_y = (y - mean_y).astype(destination.dtype)
+    mean_centered_x = (new_x - mean_x).astype(destination.dtype)
+    mean_centered_y = (new_y - mean_y).astype(destination.dtype)
     
     dot_divide_method(mean_centered_x, mean_centered_y, destination)
 
@@ -87,7 +90,8 @@ def validate_inputs(x, y, destination):
 
     if y is None:
         if destination is not None:
-            expected_shape = (x.shape[1], x.shape[1])
+            expected_dim = x.shape[1] if len(x.shape) == 2 else 1
+            expected_shape = (expected_dim, expected_dim)
             if destination.shape != expected_shape:
                 error_msg += "x and destination provided, therefore destination must have shape matching number of columns of x but it does not - x.shape:  {}  expected_shape:  {}  destination.shape:  {}\n".format(
                     x.shape, expected_shape, destination.shape)
@@ -97,7 +101,9 @@ def validate_inputs(x, y, destination):
         elif x.shape[0] != y.shape[0]:
             error_msg += "the number of rows in the x and y matrices must be the same - x.shape:  {}  y.shape:  {}\n".format(x.shape, y.shape)
         elif destination is not None:
-            expected_shape = (x.shape[1], y.shape[1])
+            expected_rows = x.shape[1] if len(x.shape) == 2 else 1
+            expected_cols = y.shape[1] if len(y.shape) == 2 else 1
+            expected_shape = (expected_rows, expected_cols)
             if destination.shape != expected_shape:
                 error_msg += "x, y, and destination provided, therefore destination must have number of rows matching number of columns of x and destination needs to have number of columns matching number of columns of y - x.shape:  {}  y.shape:  {}  expected_shape:  {}  destination.shape:  {}\n".format(
                     x.shape, y.shape, expected_shape, destination.shape)
@@ -130,7 +136,9 @@ def nan_fast_cov(x, y=None, destination=None):
 
     dest_was_None = False
     if destination is None:
-        destination = numpy.ma.zeros((x_masked.shape[1], y_masked.shape[1]))
+        num_rows = x_masked.shape[1] if len(x_masked.shape) == 2 else 1
+        num_cols = y_masked.shape[1] if len(y_masked.shape) == 2 else 1
+        destination = numpy.ma.zeros((num_rows, num_cols))
         dest_was_None = True
 
     r = _fast_cov(numpy.nanmean, _nan_dot_divide, x_masked, y_masked, destination)
