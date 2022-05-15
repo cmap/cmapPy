@@ -4,6 +4,7 @@ import unittest
 import h5py
 import os
 import numpy
+import pandas
 import cmapPy.pandasGEXpress.parse_gctx as parse_gctx
 import cmapPy.pandasGEXpress.write_gctx as write_gctx
 import cmapPy.pandasGEXpress.mini_gctoo_for_testing as mini_gctoo_for_testing
@@ -207,6 +208,14 @@ class TestWriteGctx(unittest.TestCase):
         for c in list(mini_gctoo.col_metadata_df.columns):
             self.assertTrue(set(mini_gctoo.col_metadata_df[c]) == set(mini_gctoo_col_metadata[c]),
                             "Values in column {} differ between expected metadata and written col metadata!".format(c))
+
+    def test_check_fix_metadata(self):
+        metadata_df = pandas.DataFrame({"a/b":range(3), "c":range(3,6)}, index=["e", "g/h", "i"])
+        logger.debug("preparation - metadata_df:\n{}".format(metadata_df))
+
+        r = write_gctx.check_fix_metadata(metadata_df)
+        logger.debug("r.shape:  {}".format(r.shape))
+        logger.debug("r:\n{}".format(r))
 
 
 if __name__ == "__main__":
