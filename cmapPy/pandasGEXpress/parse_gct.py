@@ -62,6 +62,7 @@ import logging
 import pandas as pd
 import numpy as np
 import os.path
+import gzip
 import cmapPy.pandasGEXpress.GCToo as GCToo
 import cmapPy.pandasGEXpress.subset_gctoo as sg
 import cmapPy.pandasGEXpress.setup_GCToo_logger as setup_logger
@@ -164,8 +165,11 @@ def parse(file_path, convert_neg_666=True, rid=None, cid=None,
 
 
 def read_version_and_dims(file_path):
+    extension = os.path.splitext(file_path)[-1]
+    logger.debug("extension:  {}".format(extension))
+
     # Open file
-    f = open(file_path, "r")
+    f = open(file_path, "r") if ".gct" == extension else gzip.open(file_path, 'rt')
 
     # Get version from the first line
     version = f.readline().strip().lstrip("#")
