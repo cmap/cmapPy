@@ -1,6 +1,7 @@
 import logging
 import h5py
 import numpy
+import pandas
 import cmapPy.pandasGEXpress.setup_GCToo_logger as setup_logger
 
 __author__ = "Oana Enache"
@@ -177,7 +178,18 @@ def write_metadata(hdf5_out, dim, metadata_df, convert_back_to_neg_666, gzip_com
     # write metadata columns to their own arrays
     for field in [entry for entry in metadata_fields if entry != "ind"]:
         if numpy.array(metadata_df.loc[:, field]).dtype.type in (numpy.str_, numpy.object_):
-            array_write = numpy.array(metadata_df.loc[:, field]).astype('S')
+            try:
+                array_write = numpy.array(metadata_df.loc[:, field]).astype('S')
+            except UnicodeEncodeError:
+                for i in range(metadata_df.shape[0]):
+                    try:
+                        numpy.array(metadata_df[field].iloc[i]).astype('S')
+                    except UnicodeEncodeError:
+                        with pandas.option_context('display.max_rows', None, 'display.max_columns', None):
+                            msg = """could not convert this metadata entry to string - field:  {}  i:  {}  metadata_df.iloc[i]:  {}""".format(field, i, metadata_df.iloc[i])
+                            logger.exception(msg)
+                            raise Exception(msg)
+
         else:
             array_write = numpy.array(metadata_df.loc[:, field])
         hdf5_out.create_dataset(metadata_node_name + "/" + field,
