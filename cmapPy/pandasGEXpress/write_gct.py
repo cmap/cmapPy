@@ -94,8 +94,8 @@ def write_top_half(f, row_metadata_df, col_metadata_df, metadata_null, filler_nu
     # Insert the column metadata, but first convert to strings and replace NaNs
     col_metadata_indices = (range(1, top_half_df.shape[0]),
                             range(1 + row_metadata_df.shape[1], top_half_df.shape[1]))
-    # pd.DataFrame.at to insert into dataframe(python3)
-    top_half_df.at[col_metadata_indices[0], col_metadata_indices[1]] = (
+    # pd.DataFrame.loc to insert into dataframe(python3)
+    top_half_df.loc[col_metadata_indices[0], col_metadata_indices[1]] = (
         col_metadata_df.astype(str).replace("nan", value=metadata_null).T.values)
 
     # Write top_half_df to file
