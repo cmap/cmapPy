@@ -1,6 +1,7 @@
 import logging
 import h5py
 import numpy
+import pandas
 import cmapPy.pandasGEXpress.setup_GCToo_logger as setup_logger
 
 __author__ = "Oana Enache"
@@ -46,15 +47,18 @@ def write(gctoo_object, out_file_name, convert_back_to_neg_666=True, gzip_compre
     chunk_size = set_data_matrix_chunk_size(gctoo_object.data_df.shape, max_chunk_kb, elem_per_kb)
 
     # write data matrix
-    hdf5_out.create_dataset(data_matrix_node, data=gctoo_object.data_df.transpose().values,
+    data_df = check_fix_metadata(gctoo_object.data_df)
+    hdf5_out.create_dataset(data_matrix_node, data=data_df.transpose().values,
         dtype=matrix_dtype)
 
     # write col metadata
-    write_metadata(hdf5_out, "col", gctoo_object.col_metadata_df, convert_back_to_neg_666,
+    col_metadata_df = check_fix_metadata(gctoo_object.col_metadata_df)
+    write_metadata(hdf5_out, "col", col_metadata_df, convert_back_to_neg_666,
         gzip_compression=gzip_compression_level)
 
     # write row metadata
-    write_metadata(hdf5_out, "row", gctoo_object.row_metadata_df, convert_back_to_neg_666,
+    row_metadata_df = check_fix_metadata(gctoo_object.row_metadata_df)
+    write_metadata(hdf5_out, "row", row_metadata_df, convert_back_to_neg_666,
         gzip_compression=gzip_compression_level)
 
     # close gctx file
@@ -174,10 +178,44 @@ def write_metadata(hdf5_out, dim, metadata_df, convert_back_to_neg_666, gzip_com
     # write metadata columns to their own arrays
     for field in [entry for entry in metadata_fields if entry != "ind"]:
         if numpy.array(metadata_df.loc[:, field]).dtype.type in (numpy.str_, numpy.object_):
-            array_write = numpy.array(metadata_df.loc[:, field]).astype('S')
+            try:
+                array_write = numpy.array(metadata_df.loc[:, field]).astype('S')
+            except UnicodeEncodeError:
+                for i in range(metadata_df.shape[0]):
+                    try:
+                        numpy.array(metadata_df[field].iloc[i]).astype('S')
+                    except UnicodeEncodeError:
+                        with pandas.option_context('display.max_rows', None, 'display.max_columns', None):
+                            msg = """could not convert this metadata entry to string - field:  {}  i:  {}  metadata_df.iloc[i]:  {}""".format(field, i, metadata_df.iloc[i])
+                            logger.exception(msg)
+                            raise Exception(msg)
+
         else:
             array_write = numpy.array(metadata_df.loc[:, field])
         hdf5_out.create_dataset(metadata_node_name + "/" + field,
                                 data=array_write,
                                 compression=gzip_compression)
 
+
+def check_fix_metadata(metadata_df):
+    work_on = [
+        ("column", metadata_df.columns), ("index", metadata_df.index)
+    ]
+
+    results = []
+    for name, generic_index in work_on:
+        new_list = generic_index.to_list()
+        results.append(new_list)
+
+        for i, gnrc_indx in enumerate(new_list):
+            if "/" in gnrc_indx:
+                new_gnrc_indx = gnrc_indx.replace("/", "|")
+                logger.warning("forward slash / character in {} of metadata_df is not allowed in hdf5 gctx - will be replaced with | - gnrc_indx:  {}  new_gnrc_indx:  {}".format(
+                    name, gnrc_indx, new_gnrc_indx))
+                new_list[i] = new_gnrc_indx
+
+    new_metadata_df = metadata_df.copy()
+    new_metadata_df.columns = results[0]
+    new_metadata_df.index = results[1]
+
+    return new_metadata_df

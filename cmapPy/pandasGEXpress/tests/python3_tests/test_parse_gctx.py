@@ -47,7 +47,13 @@ class TestParseGctx(unittest.TestCase):
         mg2 = parse_gctx.parse("cmapPy/pandasGEXpress/tests/functional_tests/mini_gctoo_for_testing.gctx")
 
         pandas_testing.assert_frame_equal(mg1.data_df, mg2.data_df)
+
+        logger.debug("expected - mg1.row_metadata_df:\n{}".format(mg1.row_metadata_df))
+        logger.debug("parsed - mg2.row_metadata_df:\n{}".format(mg2.row_metadata_df))
         pandas_testing.assert_frame_equal(mg1.row_metadata_df, mg2.row_metadata_df)
+
+        logger.debug("expected - mg1.col_metadata_df:\n{}".format(mg1.col_metadata_df))
+        logger.debug("parsed - mg2.col_metadata_df:\n{}".format(mg2.col_metadata_df))
         pandas_testing.assert_frame_equal(mg1.col_metadata_df, mg2.col_metadata_df)
 
         # test with string rid/cid

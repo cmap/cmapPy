@@ -1,6 +1,6 @@
 """ Reads in a gct file as a gctoo object.
 
-The main method is parse. parse_into_3_dfs creates the row
+The main method is parse. parse_into_3_df creates the row
 metadata, column metadata, and data dataframes, while the
 assemble_multi_index_df method in GCToo.py assembles them.
 
@@ -62,6 +62,7 @@ import logging
 import pandas as pd
 import numpy as np
 import os.path
+import gzip
 import cmapPy.pandasGEXpress.GCToo as GCToo
 import cmapPy.pandasGEXpress.subset_gctoo as sg
 import cmapPy.pandasGEXpress.setup_GCToo_logger as setup_logger
@@ -76,11 +77,12 @@ row_index_name = "rid"
 column_index_name = "cid"
 row_header_name = "rhd"
 column_header_name = "chd"
-DATA_TYPE = np.float32
+DEFAULT_DATA_TYPE = np.float32
 
 
 def parse(file_path, convert_neg_666=True, rid=None, cid=None,
-          ridx=None, cidx=None, row_meta_only=False, col_meta_only=False, make_multiindex=False):
+          ridx=None, cidx=None, row_meta_only=False, col_meta_only=False, make_multiindex=False,
+          data_type=DEFAULT_DATA_TYPE):
     """
     The main method.
 
@@ -100,6 +102,8 @@ def parse(file_path, convert_neg_666=True, rid=None, cid=None,
             just col metadata (if True) as pandas DataFrame
         - make_multiindex (bool): whether to create a multi-index df combining
             the 3 component dfs
+        - data_type (numpy datatype):  type of data to try to convert strings in matrix into,
+            i.e. default is numpy float32
 
     Returns:
         - myGCToo (GCToo object): A GCToo instance containing content of
@@ -138,7 +142,7 @@ def parse(file_path, convert_neg_666=True, rid=None, cid=None,
     # Read in metadata and data
     (row_metadata, col_metadata, data) = parse_into_3_df(
         file_path, num_data_rows, num_data_cols,
-        num_row_metadata, num_col_metadata, nan_values)
+        num_row_metadata, num_col_metadata, nan_values, data_type)
 
     # Create the gctoo object and assemble 3 component dataframes
     # Not the most efficient if only metadata requested (i.e. creating the
@@ -161,8 +165,11 @@ def parse(file_path, convert_neg_666=True, rid=None, cid=None,
 
 
 def read_version_and_dims(file_path):
+    extension = os.path.splitext(file_path)[-1]
+    logger.debug("extension:  {}".format(extension))
+
     # Open file
-    f = open(file_path, "r")
+    f = open(file_path, "r") if ".gct" == extension else gzip.open(file_path, 'rt')
 
     # Get version from the first line
     version = f.readline().strip().lstrip("#")
@@ -206,7 +213,7 @@ def read_version_and_dims(file_path):
     return version_as_string, num_data_rows, num_data_cols, num_row_metadata, num_col_metadata
 
 
-def parse_into_3_df(file_path, num_data_rows, num_data_cols, num_row_metadata, num_col_metadata, nan_values):
+def parse_into_3_df(file_path, num_data_rows, num_data_cols, num_row_metadata, num_col_metadata, nan_values, data_type=DEFAULT_DATA_TYPE):
     # Read the gct file beginning with line 3
     full_df = pd.read_csv(file_path, sep="\t", header=None, skiprows=2,
                           dtype=str, na_values=nan_values, keep_default_na=False)
@@ -225,7 +232,7 @@ def parse_into_3_df(file_path, num_data_rows, num_data_cols, num_row_metadata, n
     col_metadata = assemble_col_metadata(full_df, num_col_metadata, num_row_metadata, num_data_cols)
 
     # Assemble data dataframe
-    data = assemble_data(full_df, num_col_metadata, num_data_rows, num_row_metadata, num_data_cols)
+    data = assemble_data(full_df, num_col_metadata, num_data_rows, num_row_metadata, num_data_cols, data_type)
 
     # Return 3 dataframes
     return row_metadata, col_metadata, data
@@ -279,7 +286,7 @@ def assemble_col_metadata(full_df, num_col_metadata, num_row_metadata, num_data_
     return col_metadata
 
 
-def assemble_data(full_df, num_col_metadata, num_data_rows, num_row_metadata, num_data_cols):
+def assemble_data(full_df, num_col_metadata, num_data_rows, num_row_metadata, num_data_cols, data_type=DEFAULT_DATA_TYPE):
     # Extract values
     data_row_inds = range(num_col_metadata + 1, num_col_metadata + num_data_rows + 1)
     data_col_inds = range(num_row_metadata + 1, num_row_metadata + num_data_cols + 1)
@@ -293,16 +300,16 @@ def assemble_data(full_df, num_col_metadata, num_data_rows, num_row_metadata, nu
 
     # Convert from str to float
     try:
-        data = data.astype(DATA_TYPE)
+        data = data.astype(data_type)
     except:
         # If that fails, return the first value that could not be converted
         for col in data:
             try:
-                data[col].astype(DATA_TYPE)
+                data[col].astype(data_type)
             except:
                 for row_idx, val in enumerate(data[col]):
                     try:
-                        DATA_TYPE(val)
+                        data_type(val)
                     except:
                         bad_row_label = data[col].index[row_idx]
                         err_msg = ("First instance of value that could not be converted: " +

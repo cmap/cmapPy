@@ -19,7 +19,7 @@ class TestParseGct(unittest.TestCase):
         version1 = "1.3"
         version1_as_string = "GCT1.3"
         dims1 = ["10", "15", "3", "4"]
-        fname1 = "testing_testing1"
+        fname1 = "testing_testing1.gct"
 
         f1 = open(fname1, "w")
         f1.write(("#" + version1 + "\n"))
@@ -38,7 +38,7 @@ class TestParseGct(unittest.TestCase):
         version2 = "1.2"
         version2_as_string = "GCT1.2"
         dims2 = ["10", "15"]
-        fname2 = "testing_testing2"
+        fname2 = "testing_testing2.gct"
 
         f2 = open(fname2, "w")
         f2.write(("#" + version2 + "\n"))
