@@ -29,7 +29,7 @@ class TestGctoo(unittest.TestCase):
         my_gctoo2 = GCToo.GCToo(data_df=data_df, row_metadata_df=row_metadata_df,
                     col_metadata_df=col_metadata_df, make_multiindex = True)
 
-        self.assertTrue(isinstance(my_gctoo2.multi_index_df.index, pd.core.index.MultiIndex),
+        self.assertTrue(isinstance(my_gctoo2.multi_index_df.index, pd.MultiIndex),
             "Expected a multi_index DataFrame but instead found {}". format(my_gctoo2.multi_index_df))
 
         #happy path, no metadata provided
