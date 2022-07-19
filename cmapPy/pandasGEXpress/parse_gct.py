@@ -77,12 +77,12 @@ row_index_name = "rid"
 column_index_name = "cid"
 row_header_name = "rhd"
 column_header_name = "chd"
-# DATA_TYPE = np.float32
+DEFAULT_DATA_TYPE = np.float32
 
 
 def parse(file_path, convert_neg_666=True, rid=None, cid=None,
           ridx=None, cidx=None, row_meta_only=False, col_meta_only=False, make_multiindex=False,
-          data_type=np.float32):
+          data_type=DEFAULT_DATA_TYPE):
     """
     The main method.
 
@@ -213,7 +213,7 @@ def read_version_and_dims(file_path):
     return version_as_string, num_data_rows, num_data_cols, num_row_metadata, num_col_metadata
 
 
-def parse_into_3_df(file_path, num_data_rows, num_data_cols, num_row_metadata, num_col_metadata, nan_values, data_type):
+def parse_into_3_df(file_path, num_data_rows, num_data_cols, num_row_metadata, num_col_metadata, nan_values, data_type=DEFAULT_DATA_TYPE):
     # Read the gct file beginning with line 3
     full_df = pd.read_csv(file_path, sep="\t", header=None, skiprows=2,
                           dtype=str, na_values=nan_values, keep_default_na=False)
@@ -286,7 +286,7 @@ def assemble_col_metadata(full_df, num_col_metadata, num_row_metadata, num_data_
     return col_metadata
 
 
-def assemble_data(full_df, num_col_metadata, num_data_rows, num_row_metadata, num_data_cols, data_type):
+def assemble_data(full_df, num_col_metadata, num_data_rows, num_row_metadata, num_data_cols, data_type=DEFAULT_DATA_TYPE):
     # Extract values
     data_row_inds = range(num_col_metadata + 1, num_col_metadata + num_data_rows + 1)
     data_col_inds = range(num_row_metadata + 1, num_row_metadata + num_data_cols + 1)
