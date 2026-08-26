@@ -16,6 +16,7 @@
 **cmapPy:** Tools for interacting with .gctx and .gct files, and other Connectivity Map resources
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 **Connectivity Map, Broad Institute of MIT and Harvard**
+
 **This repo is no longer actively maintained please consider using this fork instead:** https://github.com/dllahr/cmapPy
 
 Documentation: `<https://clue.io/cmapPy/index.html>`_
